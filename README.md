@@ -9,44 +9,46 @@ A second-hand marketplace where buyers silently bid on items. No buyer-seller ch
 ### 1. Prerequisites
 
 - **Node.js** v18+
-- **MySQL** 8.0+
+- **PostgreSQL** (Neon Cloud recommended)
 
-### 2. Install Dependencies
+### 2. Set Up Environment
+
+Create a `.env` file and add your credentials:
+
+```env
+DATABASE_URL=your_postgresql_url
+JWT_SECRET=your_random_secret
+PORT=3005
+```
+
+### 3. Install & Start
 
 ```bash
 npm install
+npm run dev
 ```
 
-### 3. Set Up Environment
-
-Edit `.env` with your MySQL credentials:
-
-```env
-DB_HOST=localhost
-DB_PORT=3306
-DB_USER=root
-DB_PASS=your_password_here
-DB_NAME=haggle_arena
-JWT_SECRET=change_this_super_long_secret_string_here
-```
-
-### 4. Create the Database
-
-```bash
-node init-db.js
-```
-
-### 5. Start the Server
-
-```bash
-npm start
-```
-
-Open **http://localhost:3000** in your browser.
+Open **http://localhost:3005** in your browser.
 
 ---
 
-## 🔌 API Reference
+## 🎨 Theme: SepiaDog
+
+The application features a premium **SepiaDog** theme with:
+
+- **Background**: `#0D0D0D` / `#1C1C1C`
+- **Text**: `#B9986F` (Sepia)
+- **Accents**: Gold (`#E6C07B`) and Terra (`#D5805E`)
+
+---
+
+## � Deployment
+
+This project is configured for **Vercel** via `vercel.json`.
+
+---
+
+## �🔌 API Reference
 
 All protected routes require: `Authorization: Bearer <token>`
 
@@ -69,36 +71,17 @@ All protected routes require: `Authorization: Bearer <token>`
 
 ### Bids
 
-| Method | Route                  | Description                       |
-| ------ | ---------------------- | --------------------------------- | ------ | ------ |
-| POST   | `/api/bids`            | Place bid → returns `tension: red | yellow | green` |
-| GET    | `/api/bids/:listingId` | Own bid history + latest tension  |
-
-### Transactions
-
-| Method | Route                   | Description                            |
-| ------ | ----------------------- | -------------------------------------- |
-| GET    | `/api/transactions/my`  | All transactions                       |
-| GET    | `/api/transactions/:id` | Single transaction (buyer/seller only) |
+| Method | Route                  | Description                   |
+| ------ | ---------------------- | ----------------------------- |
+| POST   | `/api/bids`            | Place bid → returns `tension` |
+| GET    | `/api/bids/:listingId` | Own bid history               |
 
 ---
 
 ## 🔒 Security Highlights
 
-- **Reserve floor**: Selected only for internal resolution logic; stripped from every API response.
-- **SQL Injection**: Fully parameterized queries via `mysql2`.
+- **Reserve floor**: Stripped from every API response.
+- **SQL Injection**: Fully parameterized queries via `pg`.
 - **Passwords**: `bcryptjs` with 12 rounds.
-- **JWT**: HS256, 7-day expiry.
-- **Input sanitization**: HTML-encoded user inputs before DB writes.
-- **File uploads**: Type-checked, size-limited (5MB), stored locally.
-
----
-
-## 🗄️ Database Tables
-
-| Table          | Purpose                                       |
-| -------------- | --------------------------------------------- |
-| `Users`        | Accounts                                      |
-| `Listings`     | Items for sale; `reserve_floor` internal only |
-| `Bids`         | All bids with amount and timestamp            |
-| `Transactions` | Post-match deal records                       |
+- **JWT**: Secure tokens for session management.
+- **Vercel Routing**: Protected SPA endpoints.
