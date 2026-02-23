@@ -35,9 +35,7 @@ Open **http://localhost:3005** in your browser.
 ---
 
 ## 🎨 Theme: SepiaDog
-
 The application features a premium **SepiaDog** theme with:
-
 - **Background**: `#0D0D0D` / `#1A1510`
 - **Headings/Titles**: `#FFF5E6` (Cream)
 - **Body Text**: `#B9986F` (Sepia)
@@ -47,7 +45,6 @@ The application features a premium **SepiaDog** theme with:
 ---
 
 ## 🚀 Deployment
-
 This project is deployed on **Vercel** via `vercel.json`.
 
 **Live URL:** [https://last-price-phi.vercel.app/](https://last-price-phi.vercel.app/)
@@ -77,10 +74,10 @@ All protected routes require: `Authorization: Bearer <token>`
 
 ### Bids
 
-| Method | Route                  | Description                   |
-| ------ | ---------------------- | ----------------------------- |
-| POST   | `/api/bids`            | Place bid → returns `tension` |
-| GET    | `/api/bids/:listingId` | Own bid history               |
+| Method | Route                  | Description                       |
+| ------ | ---------------------- | --------------------------------- |
+| POST   | `/api/bids`            | Place bid → returns `tension`     |
+| GET    | `/api/bids/:listingId` | Own bid history                   |
 
 ---
 
