@@ -3,7 +3,7 @@
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>Arena – HaggleArena</title>
+        <title>Listing – LastPrice</title>
         <script src="https://cdn.tailwindcss.com"></script>
         <script>
             tailwind.config = {
@@ -11,12 +11,14 @@
                     extend: {
                         colors: {
                             brand: {
-                                300: "#E6C07B",
+                                300: "#F2D499",
                                 400: "#E6C07B",
                                 500: "#D5805E",
-                                600: "#D5805E",
+                                600: "#C06A48",
                                 700: "#1C1C1C",
                             },
+                            sepia: "#B9986F",
+                            cream: "#FFF5E6",
                         },
                     },
                 },
@@ -24,48 +26,38 @@
         </script>
         <style>
             @import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap");
-
             * {
                 font-family: "Inter", sans-serif;
             }
-
-            .bg-[#0D0D0D] {
-                background: linear-gradient(135deg, #0D0D0D, #1C1C1C, #0D0D0D);
+            body {
+                background: linear-gradient(135deg, #0d0d0d 0%, #1a1510 50%, #0d0d0d 100%);
                 min-height: 100vh;
             }
-
             .glass {
-                background: rgba(28, 28, 28, 0.8);
+                background: rgba(28, 28, 28, 0.85);
                 backdrop-filter: blur(12px);
-                border: 1px solid #2A2A2A;
+                border: 1px solid rgba(185, 152, 111, 0.15);
             }
-
             input:focus {
                 outline: none;
-                border-color: #a855f7;
-                box-shadow: 0 0 0 3px rgba(229, 192, 123, 0.4);
+                border-color: #e6c07b;
+                box-shadow: 0 0 0 3px rgba(230, 192, 123, 0.25);
             }
-
-            /* Price Tension Indicator */
             .tension-red {
                 background: radial-gradient(circle, #ef4444 0%, #7f1d1d 100%);
                 box-shadow: 0 0 30px rgba(239, 68, 68, 0.5);
             }
-
             .tension-yellow {
                 background: radial-gradient(circle, #f59e0b 0%, #78350f 100%);
                 box-shadow: 0 0 30px rgba(245, 158, 11, 0.5);
             }
-
             .tension-green {
                 background: radial-gradient(circle, #22c55e 0%, #14532d 100%);
                 box-shadow: 0 0 30px rgba(34, 197, 94, 0.5);
             }
-
             .tension-none {
                 background: rgba(28, 28, 28, 0.8);
             }
-
             .tension-orb {
                 width: 80px;
                 height: 80px;
@@ -73,83 +65,71 @@
                 transition: all 0.6s ease;
                 animation: pulsate 2s infinite ease-in-out;
             }
-
             @keyframes pulsate {
                 0%,
                 100% {
                     transform: scale(1);
                 }
-
                 50% {
                     transform: scale(1.08);
                 }
             }
-
-            /* Countdown ring */
             .countdown-ring {
                 font-variant-numeric: tabular-nums;
             }
         </style>
     </head>
 
-    <body class="bg-[#0D0D0D] text-[#B9986F]">
+    <body class="text-sepia">
         <nav class="glass sticky top-0 z-50 px-6 py-4">
             <div class="max-w-5xl mx-auto flex items-center justify-between">
                 <a
                     href="/listings.html"
-                    class="flex items-center gap-2 text-[#B9986F]/60 hover:text-[#B9986F] transition text-sm"
-                    >← Back to Arenas</a
+                    class="flex items-center gap-2 text-sepia/60 hover:text-brand-400 transition text-sm"
+                    >← Back to Listings</a
                 >
             </div>
         </nav>
 
         <main class="max-w-5xl mx-auto px-4 sm:px-6 py-10">
-            <div id="loading-state" class="text-center text-[#B9986F]/30 py-32 text-sm">
-                Loading arena…
+            <div id="loading-state" class="text-center text-sepia/30 py-32 text-sm">
+                Loading listing…
             </div>
             <div id="arena-content" class="hidden">
-                <!-- TOP SECTION: Photo + Info -->
+                <!-- TOP SECTION -->
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
-                    <!-- Image -->
                     <div
                         class="glass rounded-3xl overflow-hidden aspect-square flex items-center justify-center text-8xl"
                         id="listing-img-wrap"
                     >
                         🏷️
                     </div>
-
-                    <!-- Listing Info -->
                     <div class="flex flex-col gap-5">
                         <div>
-                            <div class="text-[#B9986F]/40 text-sm mb-1" id="seller-name">–</div>
-                            <h1 class="text-3xl font-bold" id="listing-title">–</h1>
-                            <p class="text-[#B9986F]/50 mt-3 text-sm leading-relaxed" id="listing-desc">
+                            <div class="text-sepia/50 text-sm mb-1" id="seller-name">–</div>
+                            <h1 class="text-3xl font-bold text-cream" id="listing-title">–</h1>
+                            <p class="text-sepia/60 mt-3 text-sm leading-relaxed" id="listing-desc">
                                 –
                             </p>
                         </div>
-
                         <div class="glass rounded-2xl p-5">
-                            <div class="text-[#B9986F]/40 text-xs mb-1">
+                            <div class="text-sepia/50 text-xs mb-1">
                                 Display Price (Starting Point)
                             </div>
                             <div class="text-4xl font-black text-brand-400" id="display-price">
                                 –
                             </div>
-                            <div class="text-[#B9986F]/30 text-xs mt-2">
+                            <div class="text-sepia/30 text-xs mt-2">
                                 ⚠️ Reserve floor is hidden from everyone
                             </div>
                         </div>
-
-                        <!-- Countdown -->
                         <div class="glass rounded-2xl p-5">
-                            <div class="text-[#B9986F]/40 text-xs mb-2">Arena Ends In</div>
+                            <div class="text-sepia/50 text-xs mb-2">Listing Ends In</div>
                             <div class="countdown-ring text-3xl font-black" id="countdown-display">
                                 –
                             </div>
-                            <div class="mt-2 text-[#B9986F]/30 text-xs" id="end-time-label">–</div>
+                            <div class="mt-2 text-sepia/30 text-xs" id="end-time-label">–</div>
                         </div>
-
-                        <!-- Arena stats -->
                         <div class="flex gap-4">
                             <div class="glass rounded-xl p-4 flex-1 text-center">
                                 <div
@@ -158,7 +138,7 @@
                                 >
                                     –
                                 </div>
-                                <div class="text-[#B9986F]/40 text-xs mt-1">Bidders</div>
+                                <div class="text-sepia/50 text-xs mt-1">Bidders</div>
                             </div>
                         </div>
                     </div>
@@ -166,49 +146,43 @@
 
                 <!-- BIDDING SECTION -->
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
-                    <!-- PRICE TENSION INDICATOR -->
                     <div class="glass rounded-3xl p-8 flex flex-col items-center text-center">
-                        <h2 class="text-lg font-bold mb-6">Price Tension Indicator</h2>
+                        <h2 class="text-lg font-bold mb-6 text-cream">Price Tension Indicator</h2>
                         <div class="tension-orb tension-none mb-6" id="tension-orb"></div>
-                        <div class="font-bold text-lg" id="tension-label">
+                        <div class="font-bold text-lg text-cream" id="tension-label">
                             Place a bid to see indicator
                         </div>
-                        <div class="text-[#B9986F]/40 text-xs mt-2" id="tension-desc">
+                        <div class="text-sepia/50 text-xs mt-2" id="tension-desc">
                             🔴 Far below reserve · 🟡 Getting close · 🟢 Meets or exceeds reserve
                         </div>
                         <div
-                            class="mt-4 bg-[#1C1C1C] rounded-xl p-4 text-xs text-[#B9986F]/30 leading-relaxed"
+                            class="mt-4 bg-[#141414] rounded-xl p-4 text-xs text-sepia/40 leading-relaxed"
                         >
                             The indicator shows how close your bid is to the seller's secret
                             reserve. The exact reserve value is never revealed.
                         </div>
                     </div>
 
-                    <!-- BID FORM -->
                     <div class="glass rounded-3xl p-8 flex flex-col">
-                        <h2 class="text-lg font-bold mb-6">Place Silent Bid</h2>
-
-                        <!-- Status boxes -->
-
+                        <h2 class="text-lg font-bold mb-6 text-cream">Place Silent Bid</h2>
                         <div
                             id="not-logged-in"
-                            class="hidden mb-5 bg-brand-700/20 border border-brand-500/30 rounded-2xl p-5"
+                            class="hidden mb-5 bg-brand-500/10 border border-brand-500/20 rounded-2xl p-5"
                         >
-                            <div class="font-semibold text-[#E6C07B] mb-1">🔐 Sign in to Bid</div>
+                            <div class="font-semibold text-brand-400 mb-1">🔐 Sign in to Bid</div>
                             <a
                                 href="/login.html"
-                                class="inline-block mt-2 px-4 py-2 rounded-xl bg-brand-600 hover:bg-brand-500 text-sm font-semibold transition"
+                                class="inline-block mt-2 px-4 py-2 rounded-xl bg-brand-500 hover:bg-brand-600 text-sm font-semibold text-cream transition"
                                 >Sign In / Register</a
                             >
                         </div>
-
                         <div id="bid-form-wrap" class="hidden flex-1 flex flex-col">
                             <div
                                 id="alert-bid"
                                 class="hidden mb-4 p-3 rounded-xl text-sm font-medium"
                             ></div>
                             <div class="mb-5">
-                                <label class="block text-[#B9986F]/60 text-sm mb-2"
+                                <label class="block text-sepia/70 text-sm mb-2"
                                     >Your Bid Amount ($)</label
                                 >
                                 <input
@@ -217,48 +191,46 @@
                                     step="0.01"
                                     min="0.01"
                                     placeholder="Enter your offer…"
-                                    class="w-full bg-[#1C1C1C] border border-[#2A2A2A] rounded-xl px-4 py-3 text-[#B9986F] placeholder-white/30 text-lg font-semibold transition"
+                                    class="w-full bg-[#141414] border border-sepia/15 rounded-xl px-4 py-3 text-cream placeholder-sepia/30 text-lg font-semibold transition"
                                 />
                             </div>
                             <div class="flex-1"></div>
                             <button
                                 onclick="placeBid()"
                                 id="bid-btn"
-                                class="w-full py-4 rounded-2xl bg-brand-600 hover:bg-brand-500 font-bold text-lg transition"
+                                class="w-full py-4 rounded-2xl bg-brand-500 hover:bg-brand-600 font-bold text-lg text-cream transition"
                             >
                                 🤫 Place Silent Bid
                             </button>
-                            <p class="text-center text-[#B9986F]/30 text-xs mt-3">
+                            <p class="text-center text-sepia/30 text-xs mt-3">
                                 Bids are final. Your bid is kept confidential.
                             </p>
                         </div>
-
                         <div id="arena-ended" class="hidden mb-5">
-                            <div class="bg-[#1C1C1C] rounded-2xl p-6 text-center">
+                            <div class="bg-[#141414] rounded-2xl p-6 text-center">
                                 <div class="text-4xl mb-3">🔔</div>
-                                <div class="font-semibold text-[#B9986F]/70">This arena has ended</div>
-                                <div class="text-sm text-[#B9986F]/40 mt-1">
+                                <div class="font-semibold text-sepia/80">
+                                    This listing has ended
+                                </div>
+                                <div class="text-sm text-sepia/40 mt-1">
                                     Check your dashboard for match results
                                 </div>
                             </div>
                         </div>
-
                         <div id="is-seller" class="hidden mb-5">
-                            <div class="bg-[#1C1C1C] rounded-2xl p-6 text-center">
+                            <div class="bg-[#141414] rounded-2xl p-6 text-center">
                                 <div class="text-4xl mb-3">🏷️</div>
-                                <div class="font-semibold text-[#B9986F]/70">This is your listing</div>
+                                <div class="font-semibold text-sepia/80">This is your listing</div>
                                 <a
                                     href="/seller-panel.html"
-                                    class="inline-block mt-3 px-5 py-2.5 rounded-xl bg-brand-600 hover:bg-brand-500 text-sm font-semibold transition"
+                                    class="inline-block mt-3 px-5 py-2.5 rounded-xl bg-brand-500 hover:bg-brand-600 text-sm font-semibold text-cream transition"
                                     >View Seller Panel</a
                                 >
                             </div>
                         </div>
-
-                        <!-- My bid history -->
                         <div class="mt-5" id="my-bids-section">
                             <div
-                                class="text-[#B9986F]/40 text-xs font-medium mb-3 uppercase tracking-wider"
+                                class="text-sepia/50 text-xs font-medium mb-3 uppercase tracking-wider"
                             >
                                 My Bid History
                             </div>
@@ -276,9 +248,9 @@
             const listingId = params.get("id");
             if (!listingId) window.location.href = "/listings.html";
 
-            let listing = null;
-            let arenaStatus = null;
-            let countdownInterval = null;
+            let listing = null,
+                arenaStatus = null,
+                countdownInterval = null;
             const loggedIn = authHelper.isLoggedIn();
             const user = authHelper.getUser();
 
@@ -314,19 +286,19 @@
             function startCountdown() {
                 if (countdownInterval) clearInterval(countdownInterval);
                 function update() {
-                    const now = new Date();
-                    const end = new Date(listing.arena_end_time);
-                    const diff = end - now;
+                    const now = new Date(),
+                        end = new Date(listing.arena_end_time),
+                        diff = end - now;
                     const el = document.getElementById("countdown-display");
                     if (diff <= 0) {
-                        el.textContent = "Arena Ended";
+                        el.textContent = "Ended";
                         el.className = "countdown-ring text-3xl font-black text-red-400";
                         clearInterval(countdownInterval);
                         return;
                     }
-                    const h = Math.floor(diff / 3600000);
-                    const m = Math.floor((diff % 3600000) / 60000);
-                    const s = Math.floor((diff % 60000) / 1000);
+                    const h = Math.floor(diff / 3600000),
+                        m = Math.floor((diff % 3600000) / 60000),
+                        s = Math.floor((diff % 60000) / 1000);
                     el.textContent = h > 0 ? `${h}h ${m}m ${s}s` : `${m}m ${s}s`;
                     el.className =
                         "countdown-ring text-3xl font-black " +
@@ -343,7 +315,6 @@
             function renderUI() {
                 document.getElementById("loading-state").classList.add("hidden");
                 document.getElementById("arena-content").classList.remove("hidden");
-
                 document.getElementById("listing-title").textContent = listing.title;
                 document.getElementById("listing-desc").textContent =
                     listing.description || "No description provided.";
@@ -355,19 +326,13 @@
                     "Ends: " + new Date(listing.arena_end_time).toLocaleString();
                 document.getElementById("participant-count").textContent =
                     listing.participant_count;
-
-                if (listing.photo_url) {
+                if (listing.photo_url)
                     document.getElementById("listing-img-wrap").innerHTML =
                         `<img src="${listing.photo_url}" class="w-full h-full object-cover" alt="${escHtml(listing.title)}">`;
-                }
-
                 startCountdown();
-
-                // Determine which panel to show
                 const isEnded =
                     new Date() >= new Date(listing.arena_end_time) || listing.status !== "live";
                 const isSeller = loggedIn && user && listing.seller_id === user.id;
-
                 if (!loggedIn) {
                     document.getElementById("not-logged-in").classList.remove("hidden");
                     return;
@@ -380,7 +345,6 @@
                     document.getElementById("arena-ended").classList.remove("hidden");
                     return;
                 }
-
                 document.getElementById("bid-form-wrap").classList.remove("hidden");
                 loadMyBids();
             }
@@ -429,17 +393,17 @@
                     const list = document.getElementById("my-bids-list");
                     if (!data.bids.length) {
                         list.innerHTML =
-                            '<div class="text-[#B9986F]/30 text-xs text-center py-2">No bids yet</div>';
+                            '<div class="text-sepia/30 text-xs text-center py-2">No bids yet</div>';
                         return;
                     }
                     list.innerHTML = data.bids
                         .slice(0, 5)
                         .map(
                             (b) => `
-        <div class="flex justify-between items-center glass rounded-xl px-3 py-2">
-          <span class="text-[#B9986F]/50 text-xs">${new Date(b.created_at).toLocaleTimeString()}</span>
-          <span class="font-semibold text-sm text-[#E6C07B]">$${parseFloat(b.amount).toFixed(2)}</span>
-        </div>`,
+                        <div class="flex justify-between items-center glass rounded-xl px-3 py-2">
+                            <span class="text-sepia/50 text-xs">${new Date(b.created_at).toLocaleTimeString()}</span>
+                            <span class="font-semibold text-sm text-brand-400">$${parseFloat(b.amount).toFixed(2)}</span>
+                        </div>`,
                         )
                         .join("");
                 } catch (e) {}
@@ -449,20 +413,16 @@
                 try {
                     const data = await api.get(`/api/listings/${listingId}`);
                     listing = data.listing;
-
-                    if (loggedIn) {
+                    if (loggedIn)
                         arenaStatus = await api
                             .get(`/api/arena/${listingId}/status`)
                             .catch(() => null);
-                    }
-
                     renderUI();
                 } catch (e) {
                     document.getElementById("loading-state").textContent =
-                        "Failed to load arena: " + e.message;
+                        "Failed to load listing: " + e.message;
                 }
             }
-
             init();
         </script>
     </body>

@@ -1,5 +1,5 @@
 /**
- * HaggleArena – Server Entry Point
+ * LastPrice – Server Entry Point
  * Express app with all routes, security middleware, and static file serving.
  */
 require("dotenv").config();
@@ -73,7 +73,7 @@ app.use((err, req, res, next) => {
 app.listen(PORT, () => {
     console.log(`
 ╔══════════════════════════════════════════════╗
-║   🏟️  HaggleArena – The Silent Negotiator    ║
+║   🏟️  LastPrice – The Silent Negotiator    ║
 ║   Server running at http://localhost:${PORT}   ║
 ╚══════════════════════════════════════════════╝
   `);

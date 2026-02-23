@@ -1,9 +1,9 @@
 /**
- * auth.js – JWT management utilities for HaggleArena frontend
+ * auth.js – JWT management utilities for LastPrice frontend
  */
 
-const AUTH_TOKEN_KEY = 'haggle_token';
-const AUTH_USER_KEY = 'haggle_user';
+const AUTH_TOKEN_KEY = "lastprice_token";
+const AUTH_USER_KEY = "lastprice_user";
 
 function setAuth(token, user) {
     localStorage.setItem(AUTH_TOKEN_KEY, token);
@@ -18,7 +18,9 @@ function getUser() {
     try {
         const raw = localStorage.getItem(AUTH_USER_KEY);
         return raw ? JSON.parse(raw) : null;
-    } catch { return null; }
+    } catch {
+        return null;
+    }
 }
 
 function clearAuth() {
@@ -30,7 +32,7 @@ function isLoggedIn() {
     return !!getToken();
 }
 
-function requireAuth(redirectTo = '/login.html') {
+function requireAuth(redirectTo = "/login.html") {
     if (!isLoggedIn()) {
         window.location.href = redirectTo;
         return false;
@@ -38,7 +40,7 @@ function requireAuth(redirectTo = '/login.html') {
     return true;
 }
 
-function redirectIfLoggedIn(redirectTo = '/dashboard.html') {
+function redirectIfLoggedIn(redirectTo = "/dashboard.html") {
     if (isLoggedIn()) {
         window.location.href = redirectTo;
         return true;
@@ -49,10 +51,21 @@ function redirectIfLoggedIn(redirectTo = '/dashboard.html') {
 /** Refresh user profile from server and update cache */
 async function refreshUser() {
     try {
-        const data = await window.api.get('/api/auth/me');
+        const data = await window.api.get("/api/auth/me");
         localStorage.setItem(AUTH_USER_KEY, JSON.stringify(data.user));
         return data.user;
-    } catch { return null; }
+    } catch {
+        return null;
+    }
 }
 
-window.authHelper = { setAuth, getToken, getUser, clearAuth, isLoggedIn, requireAuth, redirectIfLoggedIn, refreshUser };
+window.authHelper = {
+    setAuth,
+    getToken,
+    getUser,
+    clearAuth,
+    isLoggedIn,
+    requireAuth,
+    redirectIfLoggedIn,
+    refreshUser,
+};

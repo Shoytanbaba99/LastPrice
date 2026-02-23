@@ -3,10 +3,10 @@
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>Sign In – HaggleArena</title>
+        <title>Sign In – LastPrice</title>
         <meta
             name="description"
-            content="Sign in or create your HaggleArena account to start bidding."
+            content="Sign in or create your LastPrice account to start bidding."
         />
         <script src="https://cdn.tailwindcss.com"></script>
         <script>
@@ -15,12 +15,14 @@
                     extend: {
                         colors: {
                             brand: {
-                                300: "#E6C07B",
+                                300: "#F2D499",
                                 400: "#E6C07B",
                                 500: "#D5805E",
-                                600: "#D5805E",
+                                600: "#C06A48",
                                 700: "#1C1C1C",
                             },
+                            sepia: "#B9986F",
+                            cream: "#FFF5E6",
                         },
                     },
                 },
@@ -28,35 +30,29 @@
         </script>
         <style>
             @import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap");
-
             * {
                 font-family: "Inter", sans-serif;
             }
-
             .gradient-bg {
-                background: linear-gradient(135deg, #0D0D0D, #1C1C1C, #0D0D0D);
+                background: linear-gradient(135deg, #0d0d0d 0%, #1a1510 50%, #0d0d0d 100%);
             }
-
             .glass {
-                background: rgba(255, 255, 255, 0.06);
+                background: rgba(28, 28, 28, 0.85);
                 backdrop-filter: blur(16px);
-                border: 1px solid rgba(255, 255, 255, 0.12);
+                border: 1px solid rgba(185, 152, 111, 0.15);
             }
-
             input:focus {
                 outline: none;
-                border-color: #a855f7;
-                box-shadow: 0 0 0 3px rgba(229, 192, 123, 0.4);
+                border-color: #e6c07b;
+                box-shadow: 0 0 0 3px rgba(230, 192, 123, 0.25);
             }
-
             .tab-active {
-                background: #9333ea;
-                color: white;
+                background: #d5805e;
+                color: #fff5e6;
             }
-
             .tab-inactive {
                 background: transparent;
-                color: rgba(255, 255, 255, 0.5);
+                color: rgba(185, 152, 111, 0.5);
             }
         </style>
     </head>
@@ -67,19 +63,19 @@
             <div class="text-center mb-8">
                 <a href="/" class="inline-flex items-center gap-3 mb-4">
                     <div
-                        class="w-10 h-10 rounded-xl bg-brand-600 flex items-center justify-center text-xl font-black"
+                        class="w-10 h-10 rounded-xl bg-brand-500 flex items-center justify-center text-xl font-black text-cream"
                     >
-                        H
+                        L
                     </div>
-                    <span class="font-bold text-2xl text-[#B9986F]">HaggleArena</span>
+                    <span class="font-bold text-2xl text-brand-400">LastPrice</span>
                 </a>
-                <p class="text-[#B9986F]/40 text-sm">The Silent Negotiator</p>
+                <p class="text-sepia/50 text-sm">The Silent Negotiator</p>
             </div>
 
             <!-- Card -->
             <div class="glass rounded-3xl p-8">
                 <!-- Tab toggle -->
-                <div class="flex rounded-xl overflow-hidden border border-[#2A2A2A] mb-8 p-1 gap-1">
+                <div class="flex rounded-xl overflow-hidden border border-sepia/15 mb-8 p-1 gap-1">
                     <button
                         id="tab-login"
                         onclick="switchTab('login')"
@@ -99,43 +95,43 @@
                 <!-- Alert box -->
                 <div id="alert" class="hidden mb-6 p-4 rounded-xl text-sm font-medium"></div>
 
-                <!-- ── LOGIN FORM ──────────────────────────────────── -->
+                <!-- ── LOGIN FORM ──────────────────────────────── -->
                 <form id="form-login" onsubmit="handleLogin(event)" class="space-y-5">
                     <div>
-                        <label class="block text-[#B9986F]/70 text-sm font-medium mb-2">Email</label>
+                        <label class="block text-sepia/80 text-sm font-medium mb-2">Email</label>
                         <input
                             id="login-email"
                             type="email"
                             placeholder="you@example.com"
                             autocomplete="email"
-                            class="w-full bg-[#1C1C1C] border border-[#2A2A2A] rounded-xl px-4 py-3 text-[#B9986F] placeholder-white/30 transition"
+                            class="w-full bg-[#141414] border border-sepia/15 rounded-xl px-4 py-3 text-cream placeholder-sepia/30 transition"
                             required
                         />
                     </div>
                     <div>
-                        <label class="block text-[#B9986F]/70 text-sm font-medium mb-2">Password</label>
+                        <label class="block text-sepia/80 text-sm font-medium mb-2">Password</label>
                         <input
                             id="login-password"
                             type="password"
                             placeholder="••••••••"
                             autocomplete="current-password"
-                            class="w-full bg-[#1C1C1C] border border-[#2A2A2A] rounded-xl px-4 py-3 text-[#B9986F] placeholder-white/30 transition"
+                            class="w-full bg-[#141414] border border-sepia/15 rounded-xl px-4 py-3 text-cream placeholder-sepia/30 transition"
                             required
                         />
                     </div>
                     <button
                         type="submit"
                         id="login-btn"
-                        class="w-full py-3.5 rounded-xl bg-brand-600 hover:bg-brand-500 font-semibold text-[#B9986F] transition flex items-center justify-center gap-2"
+                        class="w-full py-3.5 rounded-xl bg-brand-500 hover:bg-brand-600 font-semibold text-cream transition flex items-center justify-center gap-2"
                     >
                         Sign In
                     </button>
-                    <p class="text-center text-[#B9986F]/40 text-sm">
+                    <p class="text-center text-sepia/40 text-sm">
                         Don't have an account?
                         <button
                             type="button"
                             onclick="switchTab('register')"
-                            class="text-brand-400 hover:text-[#E6C07B] transition"
+                            class="text-brand-400 hover:text-brand-300 transition"
                         >
                             Create one →
                         </button>
@@ -145,40 +141,40 @@
                 <!-- ── REGISTER FORM ───────────────────────────────── -->
                 <form id="form-register" onsubmit="handleRegister(event)" class="space-y-5 hidden">
                     <div>
-                        <label class="block text-[#B9986F]/70 text-sm font-medium mb-2">Username</label>
+                        <label class="block text-sepia/80 text-sm font-medium mb-2">Username</label>
                         <input
                             id="reg-username"
                             type="text"
-                            placeholder="haggler123"
+                            placeholder="bidder123"
                             autocomplete="username"
-                            class="w-full bg-[#1C1C1C] border border-[#2A2A2A] rounded-xl px-4 py-3 text-[#B9986F] placeholder-white/30 transition"
+                            class="w-full bg-[#141414] border border-sepia/15 rounded-xl px-4 py-3 text-cream placeholder-sepia/30 transition"
                             required
                             minlength="3"
                             maxlength="50"
                         />
                     </div>
                     <div>
-                        <label class="block text-[#B9986F]/70 text-sm font-medium mb-2">Email</label>
+                        <label class="block text-sepia/80 text-sm font-medium mb-2">Email</label>
                         <input
                             id="reg-email"
                             type="email"
                             placeholder="you@example.com"
                             autocomplete="email"
-                            class="w-full bg-[#1C1C1C] border border-[#2A2A2A] rounded-xl px-4 py-3 text-[#B9986F] placeholder-white/30 transition"
+                            class="w-full bg-[#141414] border border-sepia/15 rounded-xl px-4 py-3 text-cream placeholder-sepia/30 transition"
                             required
                         />
                     </div>
                     <div>
-                        <label class="block text-[#B9986F]/70 text-sm font-medium mb-2"
+                        <label class="block text-sepia/80 text-sm font-medium mb-2"
                             >Password
-                            <span class="text-[#B9986F]/30 font-normal">(min 8 chars)</span></label
+                            <span class="text-sepia/30 font-normal">(min 8 chars)</span></label
                         >
                         <input
                             id="reg-password"
                             type="password"
                             placeholder="••••••••"
                             autocomplete="new-password"
-                            class="w-full bg-[#1C1C1C] border border-[#2A2A2A] rounded-xl px-4 py-3 text-[#B9986F] placeholder-white/30 transition"
+                            class="w-full bg-[#141414] border border-sepia/15 rounded-xl px-4 py-3 text-cream placeholder-sepia/30 transition"
                             required
                             minlength="8"
                         />
@@ -186,16 +182,16 @@
                     <button
                         type="submit"
                         id="reg-btn"
-                        class="w-full py-3.5 rounded-xl bg-brand-600 hover:bg-brand-500 font-semibold text-[#B9986F] transition"
+                        class="w-full py-3.5 rounded-xl bg-brand-500 hover:bg-brand-600 font-semibold text-cream transition"
                     >
                         Create Account
                     </button>
-                    <p class="text-center text-[#B9986F]/40 text-sm">
+                    <p class="text-center text-sepia/40 text-sm">
                         Already have an account?
                         <button
                             type="button"
                             onclick="switchTab('login')"
-                            class="text-brand-400 hover:text-[#E6C07B] transition"
+                            class="text-brand-400 hover:text-brand-300 transition"
                         >
                             Sign in →
                         </button>
@@ -203,7 +199,7 @@
                 </form>
             </div>
 
-            <p class="text-center text-[#B9986F]/20 text-xs mt-6">
+            <p class="text-center text-sepia/20 text-xs mt-6">
                 By joining you agree to our terms of service.
             </p>
         </div>
@@ -211,10 +207,7 @@
         <script src="/js/api.js"></script>
         <script src="/js/auth.js"></script>
         <script>
-            // Redirect if already logged in
             authHelper.redirectIfLoggedIn("/dashboard.html");
-
-            // Check URL param to default to register tab
             if (new URLSearchParams(window.location.search).get("tab") === "register")
                 switchTab("register");
 

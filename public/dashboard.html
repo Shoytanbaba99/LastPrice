@@ -1,184 +1,201 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-
-<head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Dashboard – HaggleArena</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>tailwind.config = {
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Dashboard – LastPrice</title>
+        <script src="https://cdn.tailwindcss.com"></script>
+        <script>
+            tailwind.config = {
                 theme: {
                     extend: {
                         colors: {
                             brand: {
-                                300: "#E6C07B",
+                                300: "#F2D499",
                                 400: "#E6C07B",
                                 500: "#D5805E",
-                                600: "#D5805E",
+                                600: "#C06A48",
                                 700: "#1C1C1C",
                             },
+                            sepia: "#B9986F",
+                            cream: "#FFF5E6",
                         },
                     },
                 },
             };
         </script>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
-
-        * {
-            font-family: 'Inter', sans-serif;
-        }
-
-        .bg-[#0D0D0D] {
-            background: linear-gradient(135deg, #0D0D0D, #1C1C1C, #0D0D0D);
-            min-height: 100vh;
-        }
-
-        .glass {
-            background: rgba(28, 28, 28, 0.8);
-            backdrop-filter: blur(12px);
-            border: 1px solid #2A2A2A;
-        }
-
-    </style>
-</head>
-
-<body class="bg-[#0D0D0D] text-[#B9986F]">
-
-    <!-- NAV -->
-    <nav class="glass sticky top-0 z-50 px-6 py-4">
-        <div class="max-w-7xl mx-auto flex items-center justify-between">
-            <a href="/" class="flex items-center gap-2 font-bold text-xl">
-                <div class="w-8 h-8 rounded-xl bg-brand-600 flex items-center justify-center font-black text-base">H
+        <style>
+            @import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap");
+            * {
+                font-family: "Inter", sans-serif;
+            }
+            body {
+                background: linear-gradient(135deg, #0d0d0d 0%, #1a1510 50%, #0d0d0d 100%);
+                min-height: 100vh;
+            }
+            .glass {
+                background: rgba(28, 28, 28, 0.85);
+                backdrop-filter: blur(12px);
+                border: 1px solid rgba(185, 152, 111, 0.15);
+            }
+        </style>
+    </head>
+    <body class="text-sepia">
+        <!-- NAV -->
+        <nav class="glass sticky top-0 z-50 px-6 py-4">
+            <div class="max-w-7xl mx-auto flex items-center justify-between">
+                <a href="/" class="flex items-center gap-2 font-bold text-xl">
+                    <div
+                        class="w-8 h-8 rounded-xl bg-brand-500 flex items-center justify-center font-black text-base text-cream"
+                    >
+                        L
+                    </div>
+                    <span class="text-brand-400">LastPrice</span>
+                </a>
+                <div class="flex items-center gap-3">
+                    <a
+                        href="/listings.html"
+                        class="hidden md:block px-4 py-2 rounded-xl glass hover:bg-white/5 text-sm font-medium text-sepia/70 hover:text-brand-400 transition"
+                        >Browse Listings</a
+                    >
+                    <button
+                        onclick="logout()"
+                        class="px-4 py-2 rounded-xl border border-sepia/15 hover:border-red-500/50 text-sm text-sepia/60 hover:text-red-400 transition"
+                    >
+                        Sign Out
+                    </button>
                 </div>
-                HaggleArena
-            </a>
-            <div class="flex items-center gap-3">
-
-                <a href="/listings.html"
-                    class="hidden md:block px-4 py-2 rounded-xl glass hover:bg-[#2A2A2A] text-sm font-medium transition">Browse
-                    Arenas</a>
-                <button onclick="logout()"
-                    class="px-4 py-2 rounded-xl border border-[#2A2A2A] hover:border-red-500/50 text-sm text-[#B9986F]/60 hover:text-red-400 transition">Sign
-                    Out</button>
             </div>
-        </div>
-    </nav>
+        </nav>
 
-    <main class="max-w-7xl mx-auto px-4 sm:px-6 py-10">
-
-        <!-- WELCOME CARD -->
-        <div class="glass rounded-3xl p-8 flex flex-col justify-between mb-10">
-            <div>
-                    <div class="text-[#B9986F]/40 text-sm mb-1">Welcome back</div>
-                    <h1 class="text-3xl font-bold" id="welcome-name">–</h1>
-                    <p class="text-[#B9986F]/40 mt-2 text-sm" id="welcome-email">–</p>
+        <main class="max-w-7xl mx-auto px-4 sm:px-6 py-10">
+            <!-- WELCOME CARD -->
+            <div class="glass rounded-3xl p-8 flex flex-col justify-between mb-10">
+                <div>
+                    <div class="text-sepia/50 text-sm mb-1">Welcome back</div>
+                    <h1 class="text-3xl font-bold text-cream" id="welcome-name">–</h1>
+                    <p class="text-sepia/50 mt-2 text-sm" id="welcome-email">–</p>
                 </div>
                 <div class="flex flex-wrap gap-3 mt-8">
-                    <a href="/listings.html"
-                        class="px-5 py-2.5 rounded-xl bg-brand-600 hover:bg-brand-500 font-semibold transition text-sm">🏟️
-                        Browse Arenas</a>
-                    <a href="/create-listing.html"
-                        class="px-5 py-2.5 rounded-xl glass hover:bg-[#2A2A2A] font-semibold transition text-sm">🏷️
-                        Create Listing</a>
-                    <a href="/seller-panel.html"
-                        class="px-5 py-2.5 rounded-xl glass hover:bg-[#2A2A2A] font-semibold transition text-sm">📊 My
-                        Listings</a>
+                    <a
+                        href="/listings.html"
+                        class="px-5 py-2.5 rounded-xl bg-brand-500 hover:bg-brand-600 font-semibold text-cream transition text-sm"
+                        >🏟️ Browse Listings</a
+                    >
+                    <a
+                        href="/create-listing.html"
+                        class="px-5 py-2.5 rounded-xl glass hover:bg-white/5 font-semibold text-brand-400 transition text-sm"
+                        >🏷️ Create Listing</a
+                    >
+                    <a
+                        href="/seller-panel.html"
+                        class="px-5 py-2.5 rounded-xl glass hover:bg-white/5 font-semibold text-brand-400 transition text-sm"
+                        >📊 My Listings</a
+                    >
                 </div>
             </div>
-        </div>
 
-        <!-- THREE COLUMN: STATS + RECENT ACTIVITY -->
-        <div class="grid grid-cols-2 md:grid-cols-3 gap-4 mb-10">
-            <div class="glass rounded-2xl p-5 text-center">
-                <div class="text-2xl font-black text-brand-400" id="stat-bids">–</div>
-                <div class="text-[#B9986F]/40 text-xs mt-1">Active Bids</div>
+            <!-- STATS -->
+            <div class="grid grid-cols-2 md:grid-cols-3 gap-4 mb-10">
+                <div class="glass rounded-2xl p-5 text-center">
+                    <div class="text-2xl font-black text-brand-400" id="stat-bids">–</div>
+                    <div class="text-sepia/50 text-xs mt-1">Active Bids</div>
+                </div>
+                <div class="glass rounded-2xl p-5 text-center">
+                    <div class="text-2xl font-black text-green-400" id="stat-deals">–</div>
+                    <div class="text-sepia/50 text-xs mt-1">Deals Done</div>
+                </div>
+                <div class="glass rounded-2xl p-5 text-center">
+                    <div class="text-2xl font-black text-blue-400" id="stat-listings">–</div>
+                    <div class="text-sepia/50 text-xs mt-1">My Listings</div>
+                </div>
             </div>
-            <div class="glass rounded-2xl p-5 text-center">
-                <div class="text-2xl font-black text-green-400" id="stat-deals">–</div>
-                <div class="text-[#B9986F]/40 text-xs mt-1">Deals Done</div>
+
+            <!-- RECENT TRANSACTIONS -->
+            <div class="glass rounded-3xl p-6 mb-8">
+                <div class="flex items-center justify-between mb-6">
+                    <h2 class="text-xl font-bold text-cream">Recent Transactions</h2>
+                    <a
+                        href="/transaction.html"
+                        class="text-brand-400 hover:text-brand-300 text-sm transition"
+                        >View all →</a
+                    >
+                </div>
+                <div id="transactions-list">
+                    <div class="text-sepia/30 text-center py-10 text-sm">Loading transactions…</div>
+                </div>
             </div>
-            <div class="glass rounded-2xl p-5 text-center">
-                <div class="text-2xl font-black text-blue-400" id="stat-listings">–</div>
-                <div class="text-[#B9986F]/40 text-xs mt-1">My Listings</div>
-            </div>
-        </div>
+        </main>
 
-        <!-- RECENT TRANSACTIONS -->
-        <div class="glass rounded-3xl p-6 mb-8">
-            <div class="flex items-center justify-between mb-6">
-                <h2 class="text-xl font-bold">Recent Transactions</h2>
-                <a href="/transaction.html" class="text-brand-400 hover:text-[#E6C07B] text-sm transition">View all
-                    →</a>
-            </div>
-            <div id="transactions-list">
-                <div class="text-[#B9986F]/30 text-center py-10 text-sm">Loading transactions…</div>
-            </div>
-        </div>
+        <script src="/js/api.js"></script>
+        <script src="/js/auth.js"></script>
+        <script>
+            if (!authHelper.requireAuth()) throw new Error("Not authenticated");
 
+            async function init() {
+                const user = await authHelper.refreshUser();
+                if (!user) return (authHelper.clearAuth(), (window.location.href = "/login.html"));
 
-    </main>
+                document.getElementById("welcome-name").textContent = user.username;
+                document.getElementById("welcome-email").textContent = user.email;
 
-    <script src="/js/api.js"></script>
-    <script src="/js/auth.js"></script>
-    <script>
-        if (!authHelper.requireAuth()) throw new Error('Not authenticated');
+                try {
+                    const txData = await api.get("/api/transactions/my");
+                    const txs = txData.transactions;
+                    const confirmed = txs.filter((t) => t.status === "confirmed").length;
+                    document.getElementById("stat-deals").textContent = confirmed;
+                    document.getElementById("stat-listings").textContent = "–";
 
-        async function init() {
-            const user = await authHelper.refreshUser();
-            if (!user) return authHelper.clearAuth(), window.location.href = '/login.html';
-
-            document.getElementById('welcome-name').textContent = user.username;
-            document.getElementById('welcome-email').textContent = user.email;
-
-            // Load transactions
-            try {
-                const txData = await api.get('/api/transactions/my');
-                const txs = txData.transactions;
-                const confirmed = txs.filter(t => t.status === 'confirmed').length;
-                document.getElementById('stat-deals').textContent = confirmed;
-                document.getElementById('stat-listings').textContent = '–';
-
-                const txList = document.getElementById('transactions-list');
-                if (!txs.length) {
-                    txList.innerHTML = '<div class="text-[#B9986F]/30 text-center py-8 text-sm">No transactions yet. Find an item!</div>';
-                } else {
-                    txList.innerHTML = txs.slice(0, 5).map(t => `
-          <div class="flex items-center justify-between py-3 border-b border-[#2A2A2A] last:border-0">
+                    const txList = document.getElementById("transactions-list");
+                    if (!txs.length) {
+                        txList.innerHTML =
+                            '<div class="text-sepia/30 text-center py-8 text-sm">No transactions yet. Find an item!</div>';
+                    } else {
+                        txList.innerHTML = txs
+                            .slice(0, 5)
+                            .map(
+                                (t) => `
+          <div class="flex items-center justify-between py-3 border-b border-sepia/10 last:border-0">
             <div class="flex items-center gap-3">
-              <div class="w-10 h-10 rounded-xl ${t.photo_url ? '' : 'bg-brand-700/30'} flex items-center justify-center text-lg overflow-hidden">
-                ${t.photo_url ? `<img src="${t.photo_url}" class="w-full h-full object-cover rounded-xl">` : '🏷️'}
+              <div class="w-10 h-10 rounded-xl ${t.photo_url ? "" : "bg-brand-700/30"} flex items-center justify-center text-lg overflow-hidden">
+                ${t.photo_url ? `<img src="${t.photo_url}" class="w-full h-full object-cover rounded-xl">` : "🏷️"}
               </div>
               <div>
-                <div class="font-medium text-sm">${escHtml(t.listing_title)}</div>
-                <div class="text-[#B9986F]/40 text-xs">${t.my_role} · ${fmtStatus(t.status)}</div>
+                <div class="font-medium text-sm text-cream">${escHtml(t.listing_title)}</div>
+                <div class="text-sepia/40 text-xs">${t.my_role} · ${fmtStatus(t.status)}</div>
               </div>
             </div>
             <div class="text-right">
-              <div class="font-semibold text-sm">$${parseFloat(t.final_price).toFixed(2)}</div>
+              <div class="font-semibold text-sm text-brand-400">$${parseFloat(t.final_price).toFixed(2)}</div>
               <a href="/transaction.html?id=${t.id}" class="text-brand-400 text-xs hover:underline">View →</a>
             </div>
-          </div>`).join('');
+          </div>`,
+                            )
+                            .join("");
+                    }
+                } catch (e) {
+                    document.getElementById("transactions-list").innerHTML =
+                        '<div class="text-red-400 text-sm text-center py-4">Could not load transactions</div>';
                 }
-            } catch (e) { document.getElementById('transactions-list').innerHTML = '<div class="text-red-400 text-sm text-center py-4">Could not load transactions</div>'; }
 
+                document.getElementById("stat-bids").textContent = "–";
+            }
 
-            document.getElementById('stat-bids').textContent = '–';
-        }
+            function fmtStatus(s) {
+                return { pending: "⏳ Pending", confirmed: "✅ Confirmed" }[s] || s;
+            }
+            function escHtml(str) {
+                return String(str)
+                    .replace(/&/g, "&amp;")
+                    .replace(/</g, "&lt;")
+                    .replace(/>/g, "&gt;");
+            }
+            function logout() {
+                authHelper.clearAuth();
+                window.location.href = "/";
+            }
 
-        function fmtStatus(s) {
-            return { pending: '⏳ Pending', confirmed: '✅ Confirmed' }[s] || s;
-        }
-        function escHtml(str) {
-            return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-        }
-        function logout() {
-            authHelper.clearAuth();
-            window.location.href = '/';
-        }
-
-        init();
-    </script>
-</body>
-
+            init();
+        </script>
+    </body>
 </html>

@@ -1,7 +1,7 @@
 {
-    "name": "haggle-arena",
+    "name": "last-price",
     "version": "1.0.0",
-    "description": "HaggleArena – The Silent Negotiator. Gamified second-hand marketplace.",
+    "description": "LastPrice – The Silent Negotiator. Gamified second-hand marketplace.",
     "main": "server.js",
     "scripts": {
         "start": "node server.js",

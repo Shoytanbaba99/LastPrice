@@ -1,6 +1,8 @@
-# HaggleArena
+# LastPrice
 
 A second-hand marketplace where buyers silently bid on items. No buyer-seller chat before match. Reserve price is never revealed.
+
+🌐 **Live Demo:** [https://last-price-phi.vercel.app/](https://last-price-phi.vercel.app/)
 
 ---
 
@@ -36,19 +38,23 @@ Open **http://localhost:3005** in your browser.
 
 The application features a premium **SepiaDog** theme with:
 
-- **Background**: `#0D0D0D` / `#1C1C1C`
-- **Text**: `#B9986F` (Sepia)
+- **Background**: `#0D0D0D` / `#1A1510`
+- **Headings/Titles**: `#FFF5E6` (Cream)
+- **Body Text**: `#B9986F` (Sepia)
 - **Accents**: Gold (`#E6C07B`) and Terra (`#D5805E`)
+- **Buttons**: Cream text on Terra backgrounds
 
 ---
 
-## � Deployment
+## 🚀 Deployment
 
-This project is configured for **Vercel** via `vercel.json`.
+This project is deployed on **Vercel** via `vercel.json`.
+
+**Live URL:** [https://last-price-phi.vercel.app/](https://last-price-phi.vercel.app/)
 
 ---
 
-## �🔌 API Reference
+## 🔌 API Reference
 
 All protected routes require: `Authorization: Bearer <token>`
 

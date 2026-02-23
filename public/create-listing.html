@@ -3,7 +3,7 @@
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>Create Listing – HaggleArena</title>
+        <title>Create Listing – LastPrice</title>
         <script src="https://cdn.tailwindcss.com"></script>
         <script>
             tailwind.config = {
@@ -11,12 +11,14 @@
                     extend: {
                         colors: {
                             brand: {
-                                300: "#E6C07B",
+                                300: "#F2D499",
                                 400: "#E6C07B",
                                 500: "#D5805E",
-                                600: "#D5805E",
+                                600: "#C06A48",
                                 700: "#1C1C1C",
                             },
+                            sepia: "#B9986F",
+                            cream: "#FFF5E6",
                         },
                     },
                 },
@@ -24,52 +26,47 @@
         </script>
         <style>
             @import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap");
-
             * {
                 font-family: "Inter", sans-serif;
             }
-
-            .bg-[#0D0D0D] {
-                background: linear-gradient(135deg, #0D0D0D, #1C1C1C, #0D0D0D);
+            body {
+                background: linear-gradient(135deg, #0d0d0d 0%, #1a1510 50%, #0d0d0d 100%);
                 min-height: 100vh;
             }
-
             .glass {
-                background: rgba(28, 28, 28, 0.8);
+                background: rgba(28, 28, 28, 0.85);
                 backdrop-filter: blur(12px);
-                border: 1px solid #2A2A2A;
+                border: 1px solid rgba(185, 152, 111, 0.15);
             }
-
             input,
             textarea {
                 transition:
                     border-color 0.2s,
                     box-shadow 0.2s;
             }
-
             input:focus,
             textarea:focus {
                 outline: none;
-                border-color: #a855f7;
-                box-shadow: 0 0 0 3px rgba(229, 192, 123, 0.4);
+                border-color: #e6c07b;
+                box-shadow: 0 0 0 3px rgba(230, 192, 123, 0.25);
             }
-
             .drop-zone {
-                border: 2px dashed rgba(229, 192, 123, 0.4);
+                border: 2px dashed rgba(185, 152, 111, 0.3);
                 transition: all 0.2s;
             }
-
             .drop-zone.active {
-                border-color: #a855f7;
-                background: rgba(229, 192, 123, 0.4);
+                border-color: #e6c07b;
+                background: rgba(230, 192, 123, 0.08);
             }
         </style>
     </head>
 
-    <body class="bg-[#0D0D0D] text-[#B9986F]">
+    <body class="text-sepia">
         <nav class="glass sticky top-0 z-50 px-6 py-4">
             <div class="max-w-3xl mx-auto flex items-center justify-between">
-                <a href="/dashboard.html" class="text-[#B9986F]/60 hover:text-[#B9986F] text-sm transition"
+                <a
+                    href="/dashboard.html"
+                    class="text-sepia/60 hover:text-brand-400 text-sm transition"
                     >← Dashboard</a
                 >
             </div>
@@ -77,8 +74,8 @@
 
         <main class="max-w-3xl mx-auto px-4 sm:px-6 py-10">
             <div class="mb-8">
-                <h1 class="text-3xl font-bold">Create Listing</h1>
-                <p class="text-[#B9986F]/40 mt-2 text-sm">
+                <h1 class="text-3xl font-bold text-cream">Create Listing</h1>
+                <p class="text-sepia/50 mt-2 text-sm">
                     Your reserve floor is kept completely secret. Buyers only see the display price.
                 </p>
             </div>
@@ -88,7 +85,7 @@
             <form id="listing-form" onsubmit="submitListing(event)" class="space-y-6">
                 <!-- Photo upload -->
                 <div class="glass rounded-2xl p-6">
-                    <label class="block text-[#B9986F]/70 text-sm font-medium mb-3">Item Photo</label>
+                    <label class="block text-sepia/80 text-sm font-medium mb-3">Item Photo</label>
                     <div
                         id="drop-zone"
                         class="drop-zone rounded-xl p-8 text-center cursor-pointer"
@@ -102,9 +99,9 @@
                         </div>
                         <div id="upload-placeholder">
                             <div class="text-4xl mb-3">📷</div>
-                            <p class="text-[#B9986F]/40 text-sm">
+                            <p class="text-sepia/50 text-sm">
                                 Click or drag to upload an image<br /><span
-                                    class="text-[#B9986F]/25 text-xs"
+                                    class="text-sepia/30 text-xs"
                                     >JPG, PNG, WEBP · Max 5MB</span
                                 >
                             </p>
@@ -122,7 +119,7 @@
                 <!-- Item details -->
                 <div class="glass rounded-2xl p-6 space-y-5">
                     <div>
-                        <label class="block text-[#B9986F]/70 text-sm font-medium mb-2"
+                        <label class="block text-sepia/80 text-sm font-medium mb-2"
                             >Item Title *</label
                         >
                         <input
@@ -130,19 +127,19 @@
                             type="text"
                             placeholder="e.g. Vintage Sony Walkman"
                             maxlength="255"
-                            class="w-full bg-[#1C1C1C] border border-[#2A2A2A] rounded-xl px-4 py-3 text-[#B9986F] placeholder-white/30"
+                            class="w-full bg-[#141414] border border-sepia/15 rounded-xl px-4 py-3 text-cream placeholder-sepia/30"
                             required
                         />
                     </div>
                     <div>
-                        <label class="block text-[#B9986F]/70 text-sm font-medium mb-2"
+                        <label class="block text-sepia/80 text-sm font-medium mb-2"
                             >Description</label
                         >
                         <textarea
                             id="description"
                             rows="4"
                             placeholder="Describe the item condition, history, what's included…"
-                            class="w-full bg-[#1C1C1C] border border-[#2A2A2A] rounded-xl px-4 py-3 text-[#B9986F] placeholder-white/30 resize-none"
+                            class="w-full bg-[#141414] border border-sepia/15 rounded-xl px-4 py-3 text-cream placeholder-sepia/30 resize-none"
                         ></textarea>
                     </div>
                 </div>
@@ -151,29 +148,29 @@
                 <div class="glass rounded-2xl p-6 space-y-5">
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
                         <div>
-                            <label class="block text-[#B9986F]/70 text-sm font-medium mb-2"
+                            <label class="block text-sepia/80 text-sm font-medium mb-2"
                                 >Display Price ($) *
-                                <span class="text-[#B9986F]/30 font-normal text-xs"
+                                <span class="text-sepia/30 font-normal text-xs"
                                     >– shown publicly</span
-                                >
-                            </label>
+                                ></label
+                            >
                             <input
                                 id="display-price"
                                 type="number"
                                 step="0.01"
                                 min="0.01"
                                 placeholder="e.g. 100.00"
-                                class="w-full bg-[#1C1C1C] border border-[#2A2A2A] rounded-xl px-4 py-3 text-[#B9986F] placeholder-white/30"
+                                class="w-full bg-[#141414] border border-sepia/15 rounded-xl px-4 py-3 text-cream placeholder-sepia/30"
                                 required
                             />
                         </div>
                         <div>
-                            <label class="block text-[#B9986F]/70 text-sm font-medium mb-2"
+                            <label class="block text-sepia/80 text-sm font-medium mb-2"
                                 >Reserve Floor ($) *
-                                <span class="text-[#B9986F]/30 font-normal text-xs"
+                                <span class="text-sepia/30 font-normal text-xs"
                                     >– your minimum, kept secret</span
-                                >
-                            </label>
+                                ></label
+                            >
                             <div class="relative">
                                 <input
                                     id="reserve-floor"
@@ -181,68 +178,68 @@
                                     step="0.01"
                                     min="0.01"
                                     placeholder="e.g. 80.00"
-                                    class="w-full bg-[#1C1C1C] border border-[#2A2A2A] rounded-xl px-4 py-3 text-[#B9986F] placeholder-white/30"
+                                    class="w-full bg-[#141414] border border-sepia/15 rounded-xl px-4 py-3 text-cream placeholder-sepia/30"
                                     required
                                 />
                                 <div class="absolute right-3 top-3 text-base">🔒</div>
                             </div>
-                            <p class="text-[#B9986F]/25 text-xs mt-1.5">
-                                Never shown to buyers. Arena activates if highest bid ≥ this value.
+                            <p class="text-sepia/30 text-xs mt-1.5">
+                                Never shown to buyers. Match activates if highest bid ≥ this value.
                             </p>
                         </div>
                     </div>
                 </div>
 
-                <!-- Arena timer -->
+                <!-- Timer -->
                 <div class="glass rounded-2xl p-6">
-                    <label class="block text-[#B9986F]/70 text-sm font-medium mb-3"
-                        >Arena End Time *</label
+                    <label class="block text-sepia/80 text-sm font-medium mb-3"
+                        >Listing End Time *</label
                     >
                     <input
                         id="arena-end"
                         type="datetime-local"
-                        class="w-full bg-[#1C1C1C] border border-[#2A2A2A] rounded-xl px-4 py-3 text-[#B9986F]"
+                        class="w-full bg-[#141414] border border-sepia/15 rounded-xl px-4 py-3 text-cream"
                         required
                     />
                     <div class="flex flex-wrap gap-2 mt-3">
                         <button
                             type="button"
                             onclick="setDuration(1)"
-                            class="px-3 py-1.5 rounded-lg glass text-xs hover:bg-[#2A2A2A] transition"
+                            class="px-3 py-1.5 rounded-lg glass text-xs text-sepia/70 hover:text-brand-400 transition"
                         >
                             +1 hour
                         </button>
                         <button
                             type="button"
                             onclick="setDuration(6)"
-                            class="px-3 py-1.5 rounded-lg glass text-xs hover:bg-[#2A2A2A] transition"
+                            class="px-3 py-1.5 rounded-lg glass text-xs text-sepia/70 hover:text-brand-400 transition"
                         >
                             +6 hours
                         </button>
                         <button
                             type="button"
                             onclick="setDuration(24)"
-                            class="px-3 py-1.5 rounded-lg glass text-xs hover:bg-[#2A2A2A] transition"
+                            class="px-3 py-1.5 rounded-lg glass text-xs text-sepia/70 hover:text-brand-400 transition"
                         >
                             +24 hours
                         </button>
                         <button
                             type="button"
                             onclick="setDuration(72)"
-                            class="px-3 py-1.5 rounded-lg glass text-xs hover:bg-[#2A2A2A] transition"
+                            class="px-3 py-1.5 rounded-lg glass text-xs text-sepia/70 hover:text-brand-400 transition"
                         >
                             +3 days
                         </button>
                     </div>
                 </div>
 
-                <!-- Preview summary -->
-                <div class="bg-brand-700/20 border border-brand-500/30 rounded-2xl p-5 text-sm">
-                    <div class="font-semibold text-brand-200 mb-2">📋 Before you publish</div>
-                    <ul class="text-[#B9986F]/50 space-y-1 text-xs">
+                <!-- Preview -->
+                <div class="bg-brand-500/10 border border-brand-500/20 rounded-2xl p-5 text-sm">
+                    <div class="font-semibold text-brand-400 mb-2">📋 Before you publish</div>
+                    <ul class="text-sepia/60 space-y-1 text-xs">
                         <li>✅ Display price is visible to all buyers</li>
                         <li>🔒 Reserve floor is NEVER shown to anyone</li>
-                        <li>⏱ Arena resolves automatically when timer ends</li>
+                        <li>⏱ Listing resolves automatically when timer ends</li>
                         <li>📧 If matched, buyer & seller contact info is revealed</li>
                     </ul>
                 </div>
@@ -250,7 +247,7 @@
                 <button
                     type="submit"
                     id="submit-btn"
-                    class="w-full py-4 rounded-2xl bg-brand-600 hover:bg-brand-500 font-bold text-lg transition"
+                    class="w-full py-4 rounded-2xl bg-brand-500 hover:bg-brand-600 font-bold text-lg text-cream transition"
                 >
                     🏟️ Publish Listing
                 </button>
@@ -261,7 +258,6 @@
         <script src="/js/auth.js"></script>
         <script>
             if (!authHelper.requireAuth()) throw new Error("Not authenticated");
-
             authHelper.refreshUser();
 
             function previewPhoto(e) {
@@ -273,7 +269,6 @@
                 document.getElementById("upload-placeholder").classList.add("hidden");
             }
 
-            // Drag & drop
             const dz = document.getElementById("drop-zone");
             dz.addEventListener("dragover", (e) => {
                 e.preventDefault();
@@ -309,7 +304,6 @@
                 const btn = document.getElementById("submit-btn");
                 btn.textContent = "Publishing…";
                 btn.disabled = true;
-
                 const fd = new FormData();
                 fd.append("title", document.getElementById("title").value);
                 fd.append("description", document.getElementById("description").value);
@@ -321,7 +315,6 @@
                 );
                 const photoFile = document.getElementById("photo-input").files[0];
                 if (photoFile) fd.append("photo", photoFile);
-
                 try {
                     const data = await api.upload("/api/listings", fd);
                     showAlert("Listing published! Redirecting…", "success");
