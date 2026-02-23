@@ -183,15 +183,17 @@
                     }
                     container.innerHTML = listings
                         .map((l) => {
-                            const isExpired = new Date() >= new Date(l.arena_end_time);
+                            const startTime = new Date(l.arena_start_time);
+                            const endTime = new Date(startTime.getTime() + 6 * 60 * 1000);
+                            const isExpired = new Date() >= endTime;
                             const actions = [];
                             if (l.status === "live" && isExpired)
                                 actions.push(
-                                    `<button onclick="resolveArena(${l.id}, this)" class="px-4 py-2 rounded-xl bg-amber-500/20 border border-amber-500/40 text-amber-300 text-sm font-medium hover:bg-amber-500/30 transition">⚡ Resolve</button>`,
+                                    `<button onclick="resolveArena(${l.id}, this)" class="mt-4 px-4 py-2 rounded-xl bg-amber-500/20 border border-amber-500/40 text-amber-300 text-sm font-medium hover:bg-amber-500/30 transition">⚡ Resolve</button>`,
                                 );
                             if (l.status === "unmatched" && l.top_bidder_name)
                                 actions.push(
-                                    `<button onclick="showLastResort('${escHtml(l.top_bidder_name)}','${escHtml(l.top_bidder_name + "@example.com")}','${l.highest_bid}')" class="px-4 py-2 rounded-xl bg-orange-500/20 border border-orange-500/40 text-orange-300 text-sm font-medium hover:bg-orange-500/30 transition">🤝 Last Resort</button>`,
+                                    `<button onclick="showLastResort('${escHtml(l.top_bidder_name)}','${escHtml(l.top_bidder_name + "@example.com")}','${l.highest_bid}')" class="mt-4 ml-2 px-4 py-2 rounded-xl bg-orange-500/20 border border-orange-500/40 text-orange-300 text-sm font-medium hover:bg-orange-500/30 transition">🤝 Last Resort</button>`,
                                 );
                             const img = l.photo_url
                                 ? `<img src="${l.photo_url}" class="w-full h-full object-cover">`
@@ -205,7 +207,7 @@
                                 <div>
                                   <div class="flex items-center gap-2 mb-1">${statusBadge(l.status)}</div>
                                   <h2 class="text-lg font-bold text-cream">${escHtml(l.title)}</h2>
-                                  <div class="text-sepia/40 text-xs mt-1">Display: $${parseFloat(l.display_price).toFixed(2)} · Ends ${new Date(l.arena_end_time).toLocaleDateString()}</div>
+                                  <div class="text-sepia/40 text-xs mt-1">Display: $${parseFloat(l.display_price).toFixed(2)} · Starts ${startTime.toLocaleString()}</div>
                                 </div>
                                 <a href="/listing-detail.html?id=${l.id}" class="text-brand-400 hover:text-brand-300 text-sm transition">View →</a>
                               </div>

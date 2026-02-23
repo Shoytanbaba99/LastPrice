@@ -11,41 +11,41 @@ const db = require("../config/db");
  * @returns {object} Result summary
  */
 async function resolveArena(listingId) {
-    const conn = await db.getConnection();
+    const client = await db.connect();
     try {
-        await conn.beginTransaction();
+        await client.query("BEGIN");
 
         // 1. Fetch listing with reserve_floor (internal use only)
-        const [listings] = await conn.execute(
-            `SELECT id, seller_id, reserve_floor, status, arena_end_time
-       FROM Listings WHERE id = ? FOR UPDATE`,
+        const { rows: listings } = await client.query(
+            `SELECT id, seller_id, reserve_floor, status, arena_start_time 
+             FROM Listings WHERE id = $1 FOR UPDATE`,
             [listingId],
         );
         if (!listings.length) throw new Error("Listing not found");
         const listing = listings[0];
 
         if (listing.status !== "live") {
-            await conn.rollback();
+            await client.query("ROLLBACK");
             return { message: "Listing is not in live status", status: listing.status };
         }
 
         // 2. Find the highest bid
-        const [bids] = await conn.execute(
+        const { rows: bids } = await client.query(
             `SELECT b.id, b.buyer_id, b.amount, u.email AS buyer_email, u.username AS buyer_username
-       FROM Bids b
-       JOIN Users u ON u.id = b.buyer_id
-       WHERE b.listing_id = ?
-       ORDER BY b.amount DESC, b.created_at ASC
-       LIMIT 1`,
+             FROM Bids b
+             JOIN Users u ON u.id = b.buyer_id
+             WHERE b.listing_id = $1
+             ORDER BY b.amount DESC, b.created_at ASC
+             LIMIT 1`,
             [listingId],
         );
 
         if (!bids.length) {
             // No bids – unmatched
-            await conn.execute("UPDATE Listings SET status = 'unmatched' WHERE id = ?", [
+            await client.query("UPDATE Listings SET status = 'unmatched' WHERE id = $1", [
                 listingId,
             ]);
-            await conn.commit();
+            await client.query("COMMIT");
             return { outcome: "unmatched", reason: "No bids placed" };
         }
 
@@ -55,23 +55,23 @@ async function resolveArena(listingId) {
 
         if (bidAmount >= reserve) {
             // ── MATCH ──
-            const [sellerRows] = await conn.execute(
-                "SELECT email, username FROM Users WHERE id = ?",
+            const { rows: sellerRows } = await client.query(
+                "SELECT email, username FROM Users WHERE id = $1",
                 [listing.seller_id],
             );
             const seller = sellerRows[0];
 
             // Create transaction record
-            await conn.execute(
+            await client.query(
                 `INSERT INTO Transactions (listing_id, buyer_id, seller_id, final_price, status)
-         VALUES (?, ?, ?, ?, 'pending')`,
+                 VALUES ($1, $2, $3, $4, 'pending')`,
                 [listingId, highestBid.buyer_id, listing.seller_id, highestBid.amount],
             );
 
             // Update listing status
-            await conn.execute("UPDATE Listings SET status = 'matched' WHERE id = ?", [listingId]);
+            await client.query("UPDATE Listings SET status = 'matched' WHERE id = $1", [listingId]);
 
-            await conn.commit();
+            await client.query("COMMIT");
             return {
                 outcome: "matched",
                 highestBid: bidAmount,
@@ -84,10 +84,10 @@ async function resolveArena(listingId) {
             };
         } else {
             // ── UNMATCHED ──
-            await conn.execute("UPDATE Listings SET status = 'unmatched' WHERE id = ?", [
+            await client.query("UPDATE Listings SET status = 'unmatched' WHERE id = $1", [
                 listingId,
             ]);
-            await conn.commit();
+            await client.query("COMMIT");
             return {
                 outcome: "unmatched",
                 reason: "Reserve not reached",
@@ -100,10 +100,10 @@ async function resolveArena(listingId) {
             };
         }
     } catch (err) {
-        await conn.rollback();
+        await client.query("ROLLBACK");
         throw err;
     } finally {
-        conn.release();
+        client.release();
     }
 }
 

@@ -193,15 +193,22 @@
                 <!-- Timer -->
                 <div class="glass rounded-2xl p-6">
                     <label class="block text-sepia/80 text-sm font-medium mb-3"
-                        >Listing End Time *</label
+                        >Arena Start Time *</label
                     >
                     <input
-                        id="arena-end"
+                        id="arena-start"
                         type="datetime-local"
                         class="w-full bg-[#141414] border border-sepia/15 rounded-xl px-4 py-3 text-cream"
                         required
                     />
                     <div class="flex flex-wrap gap-2 mt-3">
+                        <button
+                            type="button"
+                            onclick="setDuration(0.1)"
+                            class="px-3 py-1.5 rounded-lg glass text-xs text-sepia/70 hover:text-brand-400 transition"
+                        >
+                            +6 mins
+                        </button>
                         <button
                             type="button"
                             onclick="setDuration(1)"
@@ -239,7 +246,10 @@
                     <ul class="text-sepia/60 space-y-1 text-xs">
                         <li>✅ Display price is visible to all buyers</li>
                         <li>🔒 Reserve floor is NEVER shown to anyone</li>
-                        <li>⏱ Listing resolves automatically when timer ends</li>
+                        <li>
+                            ⏱ Once Started, the Arena will run for exactly 6 minutes across 3
+                            bidding rounds.
+                        </li>
                         <li>📧 If matched, buyer & seller contact info is revealed</li>
                     </ul>
                 </div>
@@ -290,7 +300,7 @@
                 const local = new Date(d.getTime() - d.getTimezoneOffset() * 60000)
                     .toISOString()
                     .slice(0, 16);
-                document.getElementById("arena-end").value = local;
+                document.getElementById("arena-start").value = local;
             }
 
             function showAlert(msg, type) {
@@ -310,8 +320,8 @@
                 fd.append("display_price", document.getElementById("display-price").value);
                 fd.append("reserve_floor", document.getElementById("reserve-floor").value);
                 fd.append(
-                    "arena_end_time",
-                    new Date(document.getElementById("arena-end").value).toISOString(),
+                    "arena_start_time",
+                    new Date(document.getElementById("arena-start").value).toISOString(),
                 );
                 const photoFile = document.getElementById("photo-input").files[0];
                 if (photoFile) fd.append("photo", photoFile);

@@ -119,20 +119,25 @@
             const loggedIn = authHelper.isLoggedIn();
             if (loggedIn) authHelper.refreshUser();
 
-            function fmtCountdown(endTime) {
-                const diff = new Date(endTime) - new Date();
-                if (diff <= 0) return { text: "Ended", cls: "countdown-red" };
+            function fmtCountdown(startTimeRaw) {
+                const now = new Date();
+                const startTime = new Date(startTimeRaw);
+                const endTime = new Date(startTime.getTime() + 6 * 60 * 1000); // 6 mins
+
+                if (now >= endTime) return { text: "Ended", cls: "countdown-red" };
+
+                const isWaiting = now < startTime;
+                const diff = isWaiting ? startTime - now : endTime - now;
+
                 const h = Math.floor(diff / 3600000);
                 const m = Math.floor((diff % 3600000) / 60000);
                 const s = Math.floor((diff % 60000) / 1000);
-                const cls =
-                    diff < 3600000
-                        ? "countdown-red"
-                        : diff < 21600000
-                          ? "countdown-yellow"
-                          : "countdown-green";
-                const text = h > 0 ? `${h}h ${m}m` : `${m}m ${s}s`;
-                return { text, cls };
+
+                const timeStr = h > 0 ? `${h}h ${m}m` : `${m}m ${s}s`;
+                return {
+                    text: isWaiting ? `Starts ${timeStr}` : `Ends ${timeStr}`,
+                    cls: isWaiting ? "countdown-yellow" : "countdown-red",
+                };
             }
 
             function escHtml(str) {
@@ -156,7 +161,7 @@
                 }
                 grid.innerHTML = listings
                     .map((l) => {
-                        const cd = fmtCountdown(l.arena_end_time);
+                        const cd = fmtCountdown(l.arena_start_time);
                         const img = l.photo_url
                             ? `<img src="${l.photo_url}" class="w-full h-full object-cover" alt="${escHtml(l.title)}">`
                             : `<div class="w-full h-full flex items-center justify-center text-5xl bg-[#1A1510]">🏷️</div>`;

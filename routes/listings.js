@@ -16,18 +16,9 @@ const { sanitizeString, isPositiveDecimal, isFutureDate } = require("../middlewa
 
 const router = express.Router();
 
-// ── Multer storage (local disk) ──────────────────────────────
-const uploadDir = path.join(__dirname, "..", "public", "uploads");
-if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir, { recursive: true });
-
-const storage = multer.diskStorage({
-    destination: (req, file, cb) => cb(null, uploadDir),
-    filename: (req, file, cb) => {
-        const ext = path.extname(file.originalname).toLowerCase();
-        const name = `listing_${Date.now()}_${Math.random().toString(36).slice(2)}${ext}`;
-        cb(null, name);
-    },
-});
+// ── Multer storage (memory for serverless) ─────────────
+// Note: We use memoryStorage so we can convert the file to a Base64 string.
+const storage = multer.memoryStorage();
 const upload = multer({
     storage,
     limits: { fileSize: parseInt(process.env.MAX_FILE_SIZE || "5242880") },
@@ -52,14 +43,12 @@ router.get("/", async (req, res) => {
     try {
         const { rows } = await db.query(
             `SELECT l.id, l.seller_id, u.username AS seller_name, l.title, l.description,
-              l.photo_url, l.display_price, l.status, l.arena_end_time, l.created_at,
-              COUNT(DISTINCT ap.id) AS participant_count
+              l.photo_url, l.display_price, l.status, l.arena_start_time, l.created_at,
+              (SELECT COUNT(DISTINCT b.buyer_id) FROM Bids b WHERE b.listing_id = l.id) AS participant_count
        FROM Listings l
        JOIN Users u ON u.id = l.seller_id
-       LEFT JOIN ArenaParticipants ap ON ap.listing_id = l.id AND ap.status = 'active'
        WHERE l.status = 'live'
-       GROUP BY l.id
-       ORDER BY l.arena_end_time ASC`,
+       ORDER BY l.arena_start_time ASC`,
         );
         return res.json({ listings: rows }); // reserve_floor never selected
     } catch (err) {
@@ -72,7 +61,7 @@ router.get("/", async (req, res) => {
 router.get("/my", auth, async (req, res) => {
     try {
         const { rows } = await db.query(
-            `SELECT l.id, l.title, l.display_price, l.status, l.arena_end_time, l.created_at,
+            `SELECT l.id, l.title, l.display_price, l.status, l.arena_start_time, l.created_at,
               l.photo_url, l.description,
               (SELECT MAX(b.amount) FROM Bids b WHERE b.listing_id = l.id) AS highest_bid,
               (SELECT COUNT(*) FROM Bids b WHERE b.listing_id = l.id) AS bid_count,
@@ -97,13 +86,11 @@ router.get("/:id", async (req, res) => {
     try {
         const { rows } = await db.query(
             `SELECT l.id, l.seller_id, u.username AS seller_name, l.title, l.description,
-              l.photo_url, l.display_price, l.status, l.arena_end_time, l.created_at,
-              COUNT(DISTINCT ap.id) AS participant_count
+              l.photo_url, l.display_price, l.status, l.arena_start_time, l.created_at,
+              (SELECT COUNT(DISTINCT b.buyer_id) FROM Bids b WHERE b.listing_id = l.id) AS participant_count
        FROM Listings l
        JOIN Users u ON u.id = l.seller_id
-       LEFT JOIN ArenaParticipants ap ON ap.listing_id = l.id AND ap.status = 'active'
-       WHERE l.id = $1
-       GROUP BY l.id`,
+       WHERE l.id = $1`,
             [req.params.id],
         );
         if (!rows.length) return res.status(404).json({ error: "Listing not found" });
@@ -117,14 +104,12 @@ router.get("/:id", async (req, res) => {
 // ── POST /api/listings ───────────────────────────────────────
 router.post("/", auth, upload.single("photo"), async (req, res) => {
     try {
-        const { title, description, display_price, reserve_floor, arena_end_time } = req.body;
+        const { title, description, display_price, reserve_floor, arena_start_time } = req.body;
 
-        if (!title || !display_price || !reserve_floor || !arena_end_time)
-            return res
-                .status(400)
-                .json({
-                    error: "title, display_price, reserve_floor, arena_end_time are required",
-                });
+        if (!title || !display_price || !reserve_floor || !arena_start_time)
+            return res.status(400).json({
+                error: "title, display_price, reserve_floor, arena_start_time are required",
+            });
 
         if (!isPositiveDecimal(display_price))
             return res.status(400).json({ error: "display_price must be a positive number" });
@@ -132,15 +117,22 @@ router.post("/", auth, upload.single("photo"), async (req, res) => {
         if (!isPositiveDecimal(reserve_floor))
             return res.status(400).json({ error: "reserve_floor must be a positive number" });
 
-        if (!isFutureDate(arena_end_time))
-            return res.status(400).json({ error: "arena_end_time must be a future date" });
+        if (!isFutureDate(arena_start_time))
+            return res.status(400).json({ error: "arena_start_time must be a future date" });
 
         const cleanTitle = sanitizeString(title);
         const cleanDesc = sanitizeString(description || "");
-        const photoUrl = req.file ? `/uploads/${req.file.filename}` : null;
+
+        let photoUrl = null;
+        if (req.file) {
+            // Convert file buffer to Base64
+            const b64 = req.file.buffer.toString("base64");
+            const mimeType = req.file.mimetype;
+            photoUrl = `data:${mimeType};base64,${b64}`;
+        }
 
         const { rows: result } = await db.query(
-            `INSERT INTO Listings (seller_id, title, description, photo_url, display_price, reserve_floor, arena_end_time, status)
+            `INSERT INTO Listings (seller_id, title, description, photo_url, display_price, reserve_floor, arena_start_time, status)
        VALUES ($1, $2, $3, $4, $5, $6, $7, 'live') RETURNING id`,
             [
                 req.user.id,
@@ -149,7 +141,7 @@ router.post("/", auth, upload.single("photo"), async (req, res) => {
                 photoUrl,
                 parseFloat(display_price),
                 parseFloat(reserve_floor),
-                new Date(arena_end_time),
+                new Date(arena_start_time),
             ],
         );
 
@@ -163,7 +155,7 @@ router.post("/", auth, upload.single("photo"), async (req, res) => {
                 photo_url: photoUrl,
                 display_price: parseFloat(display_price),
                 status: "live",
-                arena_end_time,
+                arena_start_time,
             },
         });
     } catch (err) {

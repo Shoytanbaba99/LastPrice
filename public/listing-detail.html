@@ -124,7 +124,9 @@
                             </div>
                         </div>
                         <div class="glass rounded-2xl p-5">
-                            <div class="text-sepia/50 text-xs mb-2">Listing Ends In</div>
+                            <div class="text-sepia/50 text-xs mb-2" id="countdown-label">
+                                Time Remaining
+                            </div>
                             <div class="countdown-ring text-3xl font-black" id="countdown-display">
                                 –
                             </div>
@@ -287,26 +289,53 @@
                 if (countdownInterval) clearInterval(countdownInterval);
                 function update() {
                     const now = new Date(),
-                        end = new Date(listing.arena_end_time),
-                        diff = end - now;
-                    const el = document.getElementById("countdown-display");
-                    if (diff <= 0) {
+                        startTime = new Date(listing.arena_start_time),
+                        endTime = new Date(startTime.getTime() + 6 * 60 * 1000); // 6 mins
+
+                    const el = document.getElementById("countdown-display"),
+                        lbl = document.getElementById("countdown-label"),
+                        dtLbl = document.getElementById("end-time-label");
+
+                    if (now >= endTime) {
                         el.textContent = "Ended";
-                        el.className = "countdown-ring text-3xl font-black text-red-400";
+                        el.className = "countdown-ring text-3xl font-black text-red-500";
+                        lbl.textContent = "Arena Status";
+                        dtLbl.textContent = "Arena has concluded";
                         clearInterval(countdownInterval);
                         return;
                     }
+
+                    const isWaiting = now < startTime;
+                    const diff = isWaiting ? startTime - now : endTime - now;
+
                     const h = Math.floor(diff / 3600000),
                         m = Math.floor((diff % 3600000) / 60000),
                         s = Math.floor((diff % 60000) / 1000);
+
                     el.textContent = h > 0 ? `${h}h ${m}m ${s}s` : `${m}m ${s}s`;
-                    el.className =
-                        "countdown-ring text-3xl font-black " +
-                        (diff < 3600000
-                            ? "text-red-400"
-                            : diff < 21600000
-                              ? "text-amber-400"
-                              : "text-green-400");
+
+                    if (isWaiting) {
+                        lbl.textContent = "Starts In";
+                        dtLbl.textContent = "Starts: " + startTime.toLocaleString();
+                        el.className = "countdown-ring text-3xl font-black text-amber-400";
+                        const btn = document.getElementById("bid-btn");
+                        if (btn && btn.textContent !== "Arena starts soon...") {
+                            btn.textContent = "Arena starts soon...";
+                            btn.disabled = true;
+                            btn.classList.add("opacity-50", "cursor-not-allowed");
+                        }
+                    } else {
+                        lbl.textContent = "Arena Active - Ends In";
+                        dtLbl.textContent = "Ends: " + endTime.toLocaleTimeString();
+                        el.className =
+                            "countdown-ring text-3xl font-black text-red-500 animate-pulse";
+                        const btn = document.getElementById("bid-btn");
+                        if (btn && btn.disabled && btn.textContent === "Arena starts soon...") {
+                            btn.textContent = "🤫 Place Silent Bid";
+                            btn.disabled = false;
+                            btn.classList.remove("opacity-50", "cursor-not-allowed");
+                        }
+                    }
                 }
                 update();
                 countdownInterval = setInterval(update, 1000);
@@ -323,15 +352,16 @@
                 document.getElementById("display-price").textContent =
                     "$" + parseFloat(listing.display_price).toFixed(2);
                 document.getElementById("end-time-label").textContent =
-                    "Ends: " + new Date(listing.arena_end_time).toLocaleString();
+                    "Starts: " + new Date(listing.arena_start_time).toLocaleString();
                 document.getElementById("participant-count").textContent =
                     listing.participant_count;
                 if (listing.photo_url)
                     document.getElementById("listing-img-wrap").innerHTML =
                         `<img src="${listing.photo_url}" class="w-full h-full object-cover" alt="${escHtml(listing.title)}">`;
                 startCountdown();
-                const isEnded =
-                    new Date() >= new Date(listing.arena_end_time) || listing.status !== "live";
+                const startTime = new Date(listing.arena_start_time);
+                const endTime = new Date(startTime.getTime() + 6 * 60 * 1000);
+                const isEnded = new Date() >= endTime || listing.status !== "live";
                 const isSeller = loggedIn && user && listing.seller_id === user.id;
                 if (!loggedIn) {
                     document.getElementById("not-logged-in").classList.remove("hidden");

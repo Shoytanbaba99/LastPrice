@@ -52,6 +52,10 @@ This project is deployed on **Vercel** via `vercel.json`.
 
 **Live URL:** [https://last-price-phi.vercel.app/](https://last-price-phi.vercel.app/)
 
+### ⚠️ Note for Deployment
+
+If you are deploying this yourself, you **MUST** add your `DATABASE_URL` and `JWT_SECRET` manually in the Vercel Dashboard (Settings > Environment Variables) for the API to work.
+
 ---
 
 ## 🔌 API Reference

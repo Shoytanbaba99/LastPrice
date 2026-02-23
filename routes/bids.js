@@ -31,7 +31,7 @@ router.post("/", auth, async (req, res) => {
 
         // 1. Fetch listing (including reserve_floor for tension computation)
         const { rows: listings } = await db.query(
-            `SELECT id, seller_id, status, arena_end_time, reserve_floor FROM Listings WHERE id = $1`,
+            `SELECT id, seller_id, status, arena_start_time, reserve_floor FROM Listings WHERE id = $1`,
             [listing_id],
         );
         if (!listings.length) return res.status(404).json({ error: "Listing not found" });
@@ -41,17 +41,41 @@ router.post("/", auth, async (req, res) => {
         if (listing.status !== "live")
             return res.status(400).json({ error: "This arena is not currently live" });
 
-        if (new Date() >= new Date(listing.arena_end_time))
-            return res.status(400).json({ error: "This arena has ended" });
+        const now = new Date();
+        const startTime = new Date(listing.arena_start_time);
+
+        if (now < startTime) return res.status(400).json({ error: "Arena has not started yet" });
+
+        // Calculate current round (2 min intervals)
+        // e.g. 0-2 mins = Round 1. 2-4 mins = Round 2. 4-6 mins = Round 3.
+        const elapsedMinutes = (now - startTime) / (1000 * 60);
+        const currentRound = Math.floor(elapsedMinutes / 2) + 1;
+
+        if (currentRound > 3)
+            return res
+                .status(400)
+                .json({ error: "This arena has concluded (max 3 rounds reached)" });
 
         if (listing.seller_id === req.user.id)
             return res.status(403).json({ error: "Sellers cannot bid on their own listings" });
 
         // 2. Insert bid
-        const { rows: result } = await db.query(
-            "INSERT INTO Bids (listing_id, buyer_id, amount) VALUES ($1, $2, $3) RETURNING id",
-            [listing_id, req.user.id, bidAmount],
-        );
+        let result;
+        try {
+            const { rows } = await db.query(
+                "INSERT INTO Bids (listing_id, buyer_id, amount, round_number) VALUES ($1, $2, $3, $4) RETURNING id",
+                [listing_id, req.user.id, bidAmount, currentRound],
+            );
+            result = rows;
+        } catch (err) {
+            // Check for Postgres unique constraint violation
+            if (err.code === "23505") {
+                return res
+                    .status(400)
+                    .json({ error: "You have already placed a bid in this round" });
+            }
+            throw err;
+        }
 
         // 4. Compute Price Tension Indicator (server-side, never exposes reserve value)
         const reserve = parseFloat(listing.reserve_floor);
@@ -80,7 +104,7 @@ router.post("/", auth, async (req, res) => {
 router.get("/:listingId", auth, async (req, res) => {
     try {
         const { rows } = await db.query(
-            `SELECT b.id, b.amount, b.created_at
+            `SELECT b.id, b.amount, b.created_at, b.round_number
        FROM Bids b
        WHERE b.listing_id = $1 AND b.buyer_id = $2
        ORDER BY b.created_at DESC`,
@@ -109,6 +133,7 @@ router.get("/:listingId", auth, async (req, res) => {
                 id: b.id,
                 amount: parseFloat(b.amount),
                 created_at: b.created_at,
+                round_number: b.round_number,
             })),
             tension_latest, // colour indicator only, no reserve value
         });
