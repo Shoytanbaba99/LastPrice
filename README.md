@@ -95,3 +95,16 @@ All protected routes require: `Authorization: Bearer <token>`
 - **Passwords**: `bcryptjs` with 12 rounds.
 - **JWT**: Secure tokens for session management.
 - **Vercel Routing**: Protected SPA endpoints.
+
+---
+
+## 🎓 Academic Project
+
+This project was developed as part of a **Software Engineering Lab** course. It demonstrates a complete software development lifecycle, from requirement analysis to cloud deployment.
+
+### 👥 Team Members
+
+- **[Shoytanbaba99](https://github.com/Shoytanbaba99)** — Project Refactoring, PostgreSQL/Neon Integration & Cloud Deployment.
+- **[Mehedi032003](https://github.com/Mehedi032003)** — Original Frontend UI/UX Design & Implementation.
+- Member 3 — Documentation & System Requirements.
+- Member 4 — Quality Assurance & Testing.
