@@ -62,12 +62,10 @@ router.get("/", async (req, res) => {
         const { rows } = await db.query(
             `SELECT l.id, l.seller_id, u.username AS seller_name, l.title, l.description,
               l.photo_url, l.display_price, l.status, l.arena_end_time, l.created_at,
-              COUNT(DISTINCT ap.id) AS participant_count
+              (SELECT COUNT(DISTINCT b.buyer_id) FROM Bids b WHERE b.listing_id = l.id) AS participant_count
        FROM Listings l
        JOIN Users u ON u.id = l.seller_id
-       LEFT JOIN ArenaParticipants ap ON ap.listing_id = l.id AND ap.status = 'active'
        WHERE l.status = 'live'
-       GROUP BY l.id
        ORDER BY l.arena_end_time ASC`,
         );
         return res.json({ listings: rows }); // reserve_floor never selected
@@ -107,12 +105,10 @@ router.get("/:id", async (req, res) => {
         const { rows } = await db.query(
             `SELECT l.id, l.seller_id, u.username AS seller_name, l.title, l.description,
               l.photo_url, l.display_price, l.status, l.arena_end_time, l.created_at,
-              COUNT(DISTINCT ap.id) AS participant_count
+              (SELECT COUNT(DISTINCT b.buyer_id) FROM Bids b WHERE b.listing_id = l.id) AS participant_count
        FROM Listings l
        JOIN Users u ON u.id = l.seller_id
-       LEFT JOIN ArenaParticipants ap ON ap.listing_id = l.id AND ap.status = 'active'
-       WHERE l.id = $1
-       GROUP BY l.id`,
+       WHERE l.id = $1`,
             [req.params.id],
         );
         if (!rows.length) return res.status(404).json({ error: "Listing not found" });
