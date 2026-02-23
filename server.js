@@ -18,6 +18,9 @@ const transactionsRoutes = require("./routes/transactions");
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+// Essential for Express Rate Limit on Vercel
+app.set("trust proxy", 1);
+
 // ── Security & Parsing Middleware ────────────────────────────
 app.use(
     cors({
@@ -74,13 +77,16 @@ app.use((err, req, res, next) => {
 });
 
 // ── Start Server ─────────────────────────────────────────────
-app.listen(PORT, () => {
-    console.log(`
+// On Vercel, we export the app and let Vercel handle the server start
+if (!process.env.VERCEL) {
+    app.listen(PORT, () => {
+        console.log(`
 ╔══════════════════════════════════════════════╗
 ║   🏟️  LastPrice – The Silent Negotiator    ║
 ║   Server running at http://localhost:${PORT}   ║
 ╚══════════════════════════════════════════════╝
-  `);
-});
+      `);
+    });
+}
 
 module.exports = app;

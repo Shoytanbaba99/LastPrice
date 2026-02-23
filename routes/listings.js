@@ -16,9 +16,18 @@ const { sanitizeString, isPositiveDecimal, isFutureDate } = require("../middlewa
 
 const router = express.Router();
 
-// ── Multer storage (local disk) ──────────────────────────────
-const uploadDir = path.join(__dirname, "..", "public", "uploads");
-if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir, { recursive: true });
+// ── Multer storage (memory or tmp for serverless) ─────────────
+// Note: Local disk storage won't persist on Vercel between requests.
+const uploadDir = "/tmp"; // Vercel allows writing to /tmp
+if (process.env.NODE_ENV !== "production") {
+    // For local development, try to use public/uploads
+    const localUploadDir = path.join(__dirname, "..", "public", "uploads");
+    try {
+        if (!fs.existsSync(localUploadDir)) fs.mkdirSync(localUploadDir, { recursive: true });
+    } catch (e) {
+        console.warn("Could not create local uploads dir, using /tmp");
+    }
+}
 
 const storage = multer.diskStorage({
     destination: (req, file, cb) => cb(null, uploadDir),
