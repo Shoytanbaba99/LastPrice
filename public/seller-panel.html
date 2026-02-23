@@ -5,118 +5,48 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>My Listings – LastPrice</title>
         <script src="https://cdn.tailwindcss.com"></script>
-        <script>
-            tailwind.config = {
-                theme: {
-                    extend: {
-                        colors: {
-                            brand: {
-                                300: "#F2D499",
-                                400: "#E6C07B",
-                                500: "#D5805E",
-                                600: "#C06A48",
-                                700: "#1C1C1C",
-                            },
-                            sepia: "#B9986F",
-                            cream: "#FFF5E6",
-                        },
-                    },
-                },
-            };
-        </script>
+        <script>tailwind.config = { theme: { extend: { colors: {
+            brand: { 300: "#F2D499", 400: "#E6C07B", 500: "#D5805E", 600: "#C06A48", 700: "#1C1C1C" },
+            sepia: "#B9986F", cream: "#FFF5E6"
+        }}}}</script>
         <style>
             @import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap");
-            * {
-                font-family: "Inter", sans-serif;
-            }
-            body {
-                background: linear-gradient(135deg, #0d0d0d 0%, #1a1510 50%, #0d0d0d 100%);
-                min-height: 100vh;
-            }
-            .glass {
-                background: rgba(28, 28, 28, 0.85);
-                backdrop-filter: blur(12px);
-                border: 1px solid rgba(185, 152, 111, 0.15);
-            }
-            .status-live {
-                background: rgba(34, 197, 94, 0.15);
-                color: #86efac;
-                border: 1px solid rgba(34, 197, 94, 0.3);
-            }
-            .status-matched {
-                background: rgba(230, 192, 123, 0.15);
-                color: #e6c07b;
-                border: 1px solid rgba(230, 192, 123, 0.3);
-            }
-            .status-unmatched {
-                background: rgba(239, 68, 68, 0.15);
-                color: #fca5a5;
-                border: 1px solid rgba(239, 68, 68, 0.3);
-            }
-            .status-completed {
-                background: rgba(99, 102, 241, 0.15);
-                color: #a5b4fc;
-                border: 1px solid rgba(99, 102, 241, 0.3);
-            }
-            .status-draft {
-                background: rgba(100, 116, 139, 0.15);
-                color: #94a3b8;
-                border: 1px solid rgba(100, 116, 139, 0.3);
-            }
+            * { font-family: "Inter", sans-serif; }
+            body { background: linear-gradient(135deg, #0D0D0D 0%, #1A1510 50%, #0D0D0D 100%); min-height: 100vh; }
+            .glass { background: rgba(28,28,28,0.85); backdrop-filter: blur(12px); border: 1px solid rgba(185,152,111,0.15); }
+            .status-live { background: rgba(34,197,94,0.15); color: #86efac; border: 1px solid rgba(34,197,94,0.3); }
+            .status-matched { background: rgba(230,192,123,0.15); color: #E6C07B; border: 1px solid rgba(230,192,123,0.3); }
+            .status-unmatched { background: rgba(239,68,68,0.15); color: #fca5a5; border: 1px solid rgba(239,68,68,0.3); }
+            .status-completed { background: rgba(99,102,241,0.15); color: #a5b4fc; border: 1px solid rgba(99,102,241,0.3); }
+            .status-draft { background: rgba(100,116,139,0.15); color: #94a3b8; border: 1px solid rgba(100,116,139,0.3); }
         </style>
     </head>
 
     <body class="text-sepia">
         <nav class="glass sticky top-0 z-50 px-6 py-4">
             <div class="max-w-6xl mx-auto flex items-center justify-between">
-                <a
-                    href="/dashboard.html"
-                    class="text-sepia/60 hover:text-brand-400 text-sm transition"
-                    >← Dashboard</a
-                >
+                <a href="/dashboard.html" class="text-sepia/60 hover:text-brand-400 text-sm transition">← Dashboard</a>
                 <div class="flex items-center gap-3">
-                    <a
-                        href="/create-listing.html"
-                        class="px-4 py-2 rounded-xl bg-brand-500 hover:bg-brand-600 text-sm font-semibold text-cream transition"
-                        >+ New Listing</a
-                    >
+                    <a href="/create-listing.html" class="px-4 py-2 rounded-xl bg-brand-500 hover:bg-brand-600 text-sm font-semibold text-cream transition">+ New Listing</a>
                 </div>
             </div>
         </nav>
 
         <main class="max-w-6xl mx-auto px-4 sm:px-6 py-10">
             <h1 class="text-3xl font-bold mb-2 text-cream">My Listings</h1>
-            <p class="text-sepia/50 text-sm mb-8">
-                Seller notification panel · Track bids & results
-            </p>
+            <p class="text-sepia/50 text-sm mb-8">Seller notification panel · Track bids & results</p>
             <div id="alert" class="hidden mb-6 p-4 rounded-xl text-sm font-medium"></div>
-            <div id="listings-container">
-                <div class="text-sepia/30 text-center py-24 text-sm">Loading your listings…</div>
-            </div>
+            <div id="listings-container"><div class="text-sepia/30 text-center py-24 text-sm">Loading your listings…</div></div>
         </main>
 
         <!-- LAST-RESORT MODAL -->
-        <div
-            id="modal"
-            class="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 hidden z-50"
-        >
+        <div id="modal" class="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 hidden z-50">
             <div class="glass rounded-3xl p-8 max-w-md w-full">
                 <h2 class="text-xl font-bold mb-3 text-cream">Last Resort Option</h2>
-                <p class="text-sepia/60 text-sm mb-4">
-                    Your reserve was not met. As a last resort, you can view the highest bidder's
-                    contact info and negotiate manually.
-                </p>
-                <div
-                    id="last-resort-info"
-                    class="bg-[#141414] rounded-xl p-4 mb-5 space-y-2 text-sm"
-                ></div>
+                <p class="text-sepia/60 text-sm mb-4">Your reserve was not met. As a last resort, you can view the highest bidder's contact info and negotiate manually.</p>
+                <div id="last-resort-info" class="bg-[#141414] rounded-xl p-4 mb-5 space-y-2 text-sm"></div>
                 <div class="flex gap-3">
-                    <button
-                        onclick="closeModal()"
-                        class="flex-1 py-3 rounded-xl glass hover:bg-white/5 font-medium text-sepia/80 transition"
-                    >
-                        Close
-                    </button>
+                    <button onclick="closeModal()" class="flex-1 py-3 rounded-xl glass hover:bg-white/5 font-medium text-sepia/80 transition">Close</button>
                 </div>
             </div>
         </div>
@@ -127,39 +57,22 @@
             if (!authHelper.requireAuth()) throw new Error("Not authenticated");
             authHelper.refreshUser();
 
-            function escHtml(s) {
-                return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
-            }
+            function escHtml(s) { return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"); }
             function statusBadge(s) {
-                const icons = {
-                    live: "🟢 Live",
-                    matched: "🤝 Matched",
-                    unmatched: "🔴 Unmatched",
-                    completed: "✅ Done",
-                    draft: "⚪ Draft",
-                };
+                const icons = { live: "🟢 Live", matched: "🤝 Matched", unmatched: "🔴 Unmatched", completed: "✅ Done", draft: "⚪ Draft" };
                 return `<span class="status-${s} text-xs font-semibold px-3 py-1 rounded-full">${icons[s] || s}</span>`;
             }
             function showAlert(msg, type = "error") {
-                const el = document.getElementById("alert");
-                el.textContent = msg;
+                const el = document.getElementById("alert"); el.textContent = msg;
                 el.className = `mb-6 p-4 rounded-xl text-sm font-medium ${type === "error" ? "bg-red-500/20 border border-red-500/40 text-red-300" : "bg-green-500/20 border border-green-500/40 text-green-300"}`;
             }
             async function resolveArena(listingId, btn) {
-                btn.textContent = "Resolving…";
-                btn.disabled = true;
+                btn.textContent = "Resolving…"; btn.disabled = true;
                 try {
                     const data = await api.post(`/api/arena/resolve/${listingId}`);
-                    showAlert(
-                        "Resolved: " + data.result.outcome.toUpperCase(),
-                        data.result.outcome === "matched" ? "success" : "error",
-                    );
+                    showAlert("Resolved: " + data.result.outcome.toUpperCase(), data.result.outcome === "matched" ? "success" : "error");
                     setTimeout(loadListings, 1000);
-                } catch (e) {
-                    showAlert(e.message || "Failed to resolve");
-                    btn.textContent = "Resolve";
-                    btn.disabled = false;
-                }
+                } catch (e) { showAlert(e.message || "Failed to resolve"); btn.textContent = "Resolve"; btn.disabled = false; }
             }
             function showLastResort(bidderName, bidderEmail, highestBid) {
                 document.getElementById("last-resort-info").innerHTML = `
@@ -168,9 +81,7 @@
                     <div><span class="text-sepia/50 text-xs">Their Highest Bid</span><div class="font-semibold text-amber-300">$${parseFloat(highestBid).toFixed(2)}</div></div>`;
                 document.getElementById("modal").classList.remove("hidden");
             }
-            function closeModal() {
-                document.getElementById("modal").classList.add("hidden");
-            }
+            function closeModal() { document.getElementById("modal").classList.add("hidden"); }
 
             async function loadListings() {
                 try {
@@ -181,22 +92,13 @@
                         container.innerHTML = `<div class="text-center py-24"><div class="text-6xl mb-4">🏷️</div><div class="text-sepia/40 text-lg mb-4">No listings yet</div><a href="/create-listing.html" class="inline-block px-6 py-3 rounded-xl bg-brand-500 hover:bg-brand-600 font-semibold text-cream transition">Create Your First Listing →</a></div>`;
                         return;
                     }
-                    container.innerHTML = listings
-                        .map((l) => {
-                            const isExpired = new Date() >= new Date(l.arena_end_time);
-                            const actions = [];
-                            if (l.status === "live" && isExpired)
-                                actions.push(
-                                    `<button onclick="resolveArena(${l.id}, this)" class="px-4 py-2 rounded-xl bg-amber-500/20 border border-amber-500/40 text-amber-300 text-sm font-medium hover:bg-amber-500/30 transition">⚡ Resolve</button>`,
-                                );
-                            if (l.status === "unmatched" && l.top_bidder_name)
-                                actions.push(
-                                    `<button onclick="showLastResort('${escHtml(l.top_bidder_name)}','${escHtml(l.top_bidder_name + "@example.com")}','${l.highest_bid}')" class="px-4 py-2 rounded-xl bg-orange-500/20 border border-orange-500/40 text-orange-300 text-sm font-medium hover:bg-orange-500/30 transition">🤝 Last Resort</button>`,
-                                );
-                            const img = l.photo_url
-                                ? `<img src="${l.photo_url}" class="w-full h-full object-cover">`
-                                : `<div class="w-full h-full flex items-center justify-center text-4xl">🏷️</div>`;
-                            return `
+                    container.innerHTML = listings.map(l => {
+                        const isExpired = new Date() >= new Date(l.arena_end_time);
+                        const actions = [];
+                        if (l.status === "live" && isExpired) actions.push(`<button onclick="resolveArena(${l.id}, this)" class="px-4 py-2 rounded-xl bg-amber-500/20 border border-amber-500/40 text-amber-300 text-sm font-medium hover:bg-amber-500/30 transition">⚡ Resolve</button>`);
+                        if (l.status === "unmatched" && l.top_bidder_name) actions.push(`<button onclick="showLastResort('${escHtml(l.top_bidder_name)}','${escHtml(l.top_bidder_name + "@example.com")}','${l.highest_bid}')" class="px-4 py-2 rounded-xl bg-orange-500/20 border border-orange-500/40 text-orange-300 text-sm font-medium hover:bg-orange-500/30 transition">🤝 Last Resort</button>`);
+                        const img = l.photo_url ? `<img src="${l.photo_url}" class="w-full h-full object-cover">` : `<div class="w-full h-full flex items-center justify-center text-4xl">🏷️</div>`;
+                        return `
                         <div class="glass rounded-2xl overflow-hidden mb-5">
                           <div class="flex flex-col md:flex-row">
                             <div class="md:w-40 h-36 md:h-auto bg-[#141414] flex-shrink-0 overflow-hidden">${img}</div>
@@ -212,19 +114,13 @@
                               <div class="flex flex-wrap gap-4 mb-4">
                                 <div class="glass rounded-xl px-4 py-2 text-center"><div class="font-bold text-lg text-amber-400">${l.bid_count ?? 0}</div><div class="text-sepia/40 text-xs">Bids</div></div>
                                 <div class="glass rounded-xl px-4 py-2 text-center"><div class="font-bold text-lg text-brand-400">${l.highest_bid ? "$" + parseFloat(l.highest_bid).toFixed(2) : "No bids"}</div><div class="text-sepia/40 text-xs">Highest Bid</div></div>
-                                ${l.status === "unmatched" ? `<div class="glass rounded-xl px-4 py-2 text-center"><div class="text-xs text-red-300 font-medium">Reserve not reached</div><div class="text-sepia/30 text-xs mt-0.5">Highest: ${l.highest_bid ? "$" + parseFloat(l.highest_bid).toFixed(2) : "none"}</div></div>` : ""}
-                                ${l.status === "matched" ? `<div class="glass rounded-xl px-4 py-2 text-center"><div class="text-xs text-green-300 font-medium">✅ Match!</div><div class="text-sepia/30 text-xs mt-0.5">Awaiting deal confirmation</div></div>` : ""}
                               </div>
                               ${actions.length ? `<div class="flex flex-wrap gap-2">${actions.join("")}</div>` : ""}
                             </div>
                           </div>
                         </div>`;
-                        })
-                        .join("");
-                } catch (e) {
-                    document.getElementById("listings-container").innerHTML =
-                        `<div class="text-red-400 text-center py-16">Failed to load listings: ${e.message}</div>`;
-                }
+                    }).join("");
+                } catch (e) { document.getElementById("listings-container").innerHTML = `<div class="text-red-400 text-center py-16">Failed to load listings: ${e.message}</div>`; }
             }
             loadListings();
         </script>
