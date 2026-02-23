@@ -6,7 +6,7 @@ require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
 const path = require("path");
-const rateLimit = require("express-rate-limit");
+// const rateLimit = require("express-rate-limit");
 
 // ── Route Imports ────────────────────────────────────────────
 const authRoutes = require("./routes/auth");
@@ -31,17 +31,19 @@ app.use(
 );
 
 // Rate limiter – protect auth endpoints from brute force
+/*
 const authLimiter = rateLimit({
     windowMs: 15 * 60 * 1000, // 15 minutes
     limit: 100, // Increased for testing
     message: { error: "Too many requests, please try again later" },
 });
+*/
 
 app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ extended: true, limit: "10mb" }));
 
 // ── API Routes ───────────────────────────────────────────────
-app.use("/api/auth", authLimiter, authRoutes);
+app.use("/api/auth", authRoutes); // Removed authLimiter
 app.use("/api/listings", listingsRoutes);
 app.use("/api/bids", bidsRoutes);
 app.use("/api/arena", arenaRoutes);
