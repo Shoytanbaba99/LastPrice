@@ -13,10 +13,15 @@ if (!connString) {
     console.error("❌ CRITICAL: DATABASE_URL is not set in environment variables!");
 }
 
-const pool = new Pool({
-    connectionString: connString,
+const poolOptions = {
     ssl: connString ? { rejectUnauthorized: false } : false,
-});
+};
+
+if (connString) {
+    poolOptions.connectionString = connString;
+}
+
+const pool = new Pool(poolOptions);
 
 // Test connection on startup (only if we have a string)
 if (connString) {
