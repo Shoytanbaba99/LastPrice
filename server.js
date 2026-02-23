@@ -21,7 +21,8 @@ const PORT = process.env.PORT || 3000;
 // ── Security & Parsing Middleware ────────────────────────────
 app.use(
     cors({
-        origin: process.env.NODE_ENV === "production" ? false : "*",
+        origin: true, // Reflect origin (better for Vercel previews)
+        credentials: true,
         methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
     }),
 );
@@ -29,7 +30,7 @@ app.use(
 // Rate limiter – protect auth endpoints from brute force
 const authLimiter = rateLimit({
     windowMs: 15 * 60 * 1000, // 15 minutes
-    max: 20,
+    max: 100, // Increased for testing
     message: { error: "Too many requests, please try again later" },
 });
 
@@ -52,10 +53,13 @@ app.get("/api/health", (req, res) => {
 });
 
 // ── SPA Fallback (serve index.html for all unmatched routes) ─
-app.get("/*splat", (req, res) => {
+app.get("*", (req, res) => {
+    // Only serve index for non-API routes
+    if (req.path.startsWith("/api")) {
+        return res.status(404).json({ error: "API route not found" });
+    }
     res.sendFile(path.join(__dirname, "public", "index.html"), (err) => {
         if (err) {
-            console.error("SPA Fallback Error:", err);
             res.status(500).send("Server Error: Missing index.html");
         }
     });
