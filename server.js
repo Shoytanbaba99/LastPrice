@@ -33,15 +33,12 @@ app.use(
 // Rate limiter – protect auth endpoints from brute force
 const authLimiter = rateLimit({
     windowMs: 15 * 60 * 1000, // 15 minutes
-    max: 100, // Increased for testing
+    limit: 100, // Increased for testing
     message: { error: "Too many requests, please try again later" },
 });
 
 app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ extended: true, limit: "10mb" }));
-
-// ── Static Files (frontend) ──────────────────────────────────
-app.use(express.static(path.join(__dirname, "public")));
 
 // ── API Routes ───────────────────────────────────────────────
 app.use("/api/auth", authLimiter, authRoutes);
@@ -55,18 +52,19 @@ app.get("/api/health", (req, res) => {
     res.json({ status: "ok", timestamp: new Date().toISOString() });
 });
 
-// ── SPA Fallback (serve index.html for all unmatched routes) ─
-app.get("*", (req, res) => {
-    // Only serve index for non-API routes
-    if (req.path.startsWith("/api")) {
-        return res.status(404).json({ error: "API route not found" });
-    }
-    res.sendFile(path.join(__dirname, "public", "index.html"), (err) => {
-        if (err) {
-            res.status(500).send("Server Error: Missing index.html");
+// ── Static Files & SPA Fallback ──────────────────────────────
+// On Vercel, static files and SPA fallback are handled by vercel.json.
+if (!process.env.VERCEL) {
+    app.use(express.static(path.join(__dirname, "public")));
+    app.get("*", (req, res) => {
+        if (req.path.startsWith("/api")) {
+            return res.status(404).json({ error: "API route not found" });
         }
+        res.sendFile(path.join(__dirname, "public", "index.html"), (err) => {
+            if (err) res.status(500).send("Server Error: Missing index.html");
+        });
     });
-});
+}
 
 // ── Global Error Handler ─────────────────────────────────────
 app.use((err, req, res, next) => {
