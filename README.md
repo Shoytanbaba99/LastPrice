@@ -1,6 +1,6 @@
 # LastPrice
 
-A second-hand marketplace where buyers silently bid on items. No buyer-seller chat before match. Reserve price is never revealed.
+A second-hand marketplace where buyers participate in a gamified open auction with 3 chances to bid per item. No buyer-seller chat before match. The reserve price is never revealed, but visual hot/cold feedback guides buyers toward the winning price.
 
 🌐 **Live Demo:** [https://last-price-phi.vercel.app/](https://last-price-phi.vercel.app/)
 

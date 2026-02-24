@@ -46,33 +46,31 @@ router.post("/", auth, async (req, res) => {
 
         if (now < startTime) return res.status(400).json({ error: "Arena has not started yet" });
 
-        // Calculate current round (2 min intervals)
-        // e.g. 0-2 mins = Round 1. 2-4 mins = Round 2. 4-6 mins = Round 3.
-        const elapsedMinutes = (now - startTime) / (1000 * 60);
-        const currentRound = Math.floor(elapsedMinutes / 2) + 1;
+        const { rows: countRows } = await db.query(
+            "SELECT COUNT(*) as count FROM Bids WHERE listing_id = $1 AND buyer_id = $2",
+            [listing_id, req.user.id],
+        );
+        const bidCount = parseInt(countRows[0].count);
 
-        if (currentRound > 3)
-            return res
-                .status(400)
-                .json({ error: "This arena has concluded (max 3 rounds reached)" });
+        if (bidCount >= 3)
+            return res.status(400).json({ error: "You have reached your maximum of 3 bids" });
+
+        const currentAttempt = bidCount + 1;
 
         if (listing.seller_id === req.user.id)
             return res.status(403).json({ error: "Sellers cannot bid on their own listings" });
 
-        // 2. Insert bid
         let result;
         try {
             const { rows } = await db.query(
                 "INSERT INTO Bids (listing_id, buyer_id, amount, round_number) VALUES ($1, $2, $3, $4) RETURNING id",
-                [listing_id, req.user.id, bidAmount, currentRound],
+                [listing_id, req.user.id, bidAmount, currentAttempt],
             );
             result = rows;
         } catch (err) {
             // Check for Postgres unique constraint violation
             if (err.code === "23505") {
-                return res
-                    .status(400)
-                    .json({ error: "You have already placed a bid in this round" });
+                return res.status(400).json({ error: "You have already placed this bid" });
             }
             throw err;
         }
@@ -81,7 +79,7 @@ router.post("/", auth, async (req, res) => {
         const reserve = parseFloat(listing.reserve_floor);
         let tension;
         if (bidAmount >= reserve) tension = "green";
-        else if (bidAmount >= reserve * 0.5) tension = "yellow";
+        else if (bidAmount >= reserve * 0.7) tension = "yellow";
         else tension = "red";
 
         return res.status(201).json({
@@ -123,7 +121,7 @@ router.get("/:listingId", auth, async (req, res) => {
                 const reserve = parseFloat(listings[0].reserve_floor);
                 const latest = parseFloat(rows[0].amount);
                 if (latest >= reserve) tension_latest = "green";
-                else if (latest >= reserve * 0.5) tension_latest = "yellow";
+                else if (latest >= reserve * 0.7) tension_latest = "yellow";
                 else tension_latest = "red";
             }
         }

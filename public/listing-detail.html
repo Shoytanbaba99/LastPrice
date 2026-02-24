@@ -166,7 +166,7 @@
                     </div>
 
                     <div class="glass rounded-3xl p-8 flex flex-col">
-                        <h2 class="text-lg font-bold mb-6 text-cream">Place Silent Bid</h2>
+                        <h2 class="text-lg font-bold mb-6 text-cream">Place Bid</h2>
                         <div
                             id="not-logged-in"
                             class="hidden mb-5 bg-brand-500/10 border border-brand-500/20 rounded-2xl p-5"
@@ -202,10 +202,10 @@
                                 id="bid-btn"
                                 class="w-full py-4 rounded-2xl bg-brand-500 hover:bg-brand-600 font-bold text-lg text-cream transition"
                             >
-                                🤫 Place Silent Bid
+                                🎯 Place Bid
                             </button>
                             <p class="text-center text-sepia/30 text-xs mt-3">
-                                Bids are final. Your bid is kept confidential.
+                                You have exactly 3 chances to bid. Bids are public.
                             </p>
                         </div>
                         <div id="arena-ended" class="hidden mb-5">
@@ -232,11 +232,21 @@
                         </div>
                         <div class="mt-5" id="my-bids-section">
                             <div
-                                class="text-sepia/50 text-xs font-medium mb-3 uppercase tracking-wider"
+                                class="text-sepia/50 text-xs font-medium mb-3 uppercase tracking-wider flex justify-between"
                             >
-                                My Bid History
+                                <span>My Bid History</span>
+                                <span id="chances-left"></span>
                             </div>
                             <div id="my-bids-list" class="space-y-2"></div>
+                        </div>
+
+                        <div class="mt-8" id="leaderboard-section">
+                            <div
+                                class="text-brand-400 text-sm font-bold mb-3 uppercase tracking-wider flex items-center gap-2"
+                            >
+                                <span>🏆 Live Leaderboard</span>
+                            </div>
+                            <div id="leaderboard-list" class="space-y-2"></div>
                         </div>
                     </div>
                 </div>
@@ -338,7 +348,43 @@
                     }
                 }
                 update();
-                countdownInterval = setInterval(update, 1000);
+                countdownInterval = setInterval(() => {
+                    update();
+                    // Also refresh the leaderboard periodically if active
+                    if (document.getElementById("countdown-display").textContent !== "Ended") {
+                        refreshLeaderboard();
+                    }
+                }, 1000);
+            }
+
+            async function refreshLeaderboard() {
+                try {
+                    const data = await api.get(`/api/listings/${listingId}`);
+                    // update participant count and render leaderboard
+                    document.getElementById("participant-count").textContent =
+                        data.listing.participant_count;
+                    renderLeaderboard(data.leaderboard || []);
+                } catch (e) {}
+            }
+
+            function renderLeaderboard(bids) {
+                const list = document.getElementById("leaderboard-list");
+                if (!bids || !bids.length) {
+                    list.innerHTML = '<div class="text-sepia/30 text-xs py-2">No bids yet</div>';
+                    return;
+                }
+                list.innerHTML = bids
+                    .map(
+                        (b, idx) => `
+                    <div class="flex justify-between items-center glass rounded-xl px-4 py-3 ${idx === 0 ? "border-brand-400/50 bg-brand-400/10" : ""}">
+                        <div class="flex items-center gap-3">
+                            <span class="text-lg font-black ${idx === 0 ? "text-amber-400" : "text-sepia/40"}">#${idx + 1}</span>
+                            <span class="font-semibold text-sm text-cream">${escHtml(b.username)}</span>
+                        </div>
+                        <span class="font-bold text-sm ${idx === 0 ? "text-green-400" : "text-brand-400"}">$${parseFloat(b.amount).toFixed(2)}</span>
+                    </div>`,
+                    )
+                    .join("");
             }
 
             function renderUI() {
@@ -377,6 +423,7 @@
                 }
                 document.getElementById("bid-form-wrap").classList.remove("hidden");
                 loadMyBids();
+                renderLeaderboard(listing._leaderboard || []);
             }
 
             async function placeBid() {
@@ -399,9 +446,12 @@
                         "success",
                     );
                 } catch (e) {
-                    showBidAlert(e.message || "Failed to place bid", "error");
+                    let errMessage = e.message || "Failed to place bid";
+                    if (errMessage.includes("unique"))
+                        errMessage = "You have already placed this bid amount or reached max bids.";
+                    showBidAlert(errMessage, "error");
                 } finally {
-                    btn.textContent = "🤫 Place Silent Bid";
+                    btn.textContent = "🎯 Place Bid";
                     btn.disabled = false;
                 }
             }
@@ -436,6 +486,18 @@
                         </div>`,
                         )
                         .join("");
+
+                    const chancesLeft = 3 - data.bids.length;
+                    document.getElementById("chances-left").textContent =
+                        `${chancesLeft} chance(s) left`;
+                    if (chancesLeft <= 0) {
+                        const btn = document.getElementById("bid-btn");
+                        if (btn) {
+                            btn.disabled = true;
+                            btn.textContent = "All chances used";
+                            btn.classList.add("opacity-50", "cursor-not-allowed");
+                        }
+                    }
                 } catch (e) {}
             }
 
@@ -443,6 +505,7 @@
                 try {
                     const data = await api.get(`/api/listings/${listingId}`);
                     listing = data.listing;
+                    listing._leaderboard = data.leaderboard;
                     if (loggedIn)
                         arenaStatus = await api
                             .get(`/api/arena/${listingId}/status`)

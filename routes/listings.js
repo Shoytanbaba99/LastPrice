@@ -94,7 +94,18 @@ router.get("/:id", async (req, res) => {
             [req.params.id],
         );
         if (!rows.length) return res.status(404).json({ error: "Listing not found" });
-        return res.json({ listing: rows[0] }); // reserve_floor never selected
+
+        const { rows: bids } = await db.query(
+            `SELECT u.username, b.amount, b.created_at
+             FROM Bids b
+             JOIN Users u ON b.buyer_id = u.id
+             WHERE b.listing_id = $1
+             ORDER BY b.amount DESC
+             LIMIT 10`,
+            [req.params.id],
+        );
+
+        return res.json({ listing: rows[0], leaderboard: bids }); // reserve_floor never selected
     } catch (err) {
         console.error("GET /listings/:id error:", err);
         return res.status(500).json({ error: "Server error" });
