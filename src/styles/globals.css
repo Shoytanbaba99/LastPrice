@@ -1,0 +1,249 @@
+@import "tailwindcss";
+
+/* ─────────────────────────────────────────────────────────────────
+   Design tokens — Light ("Chinese Minimal Drama")
+   ───────────────────────────────────────────────────────────────── */
+@theme {
+  --font-sans: "Inter", var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-serif: "Crimson Text", serif;
+  --font-mono: "JetBrains Mono", "Fira Code", ui-monospace, monospace;
+
+  /* Light palette */
+  --color-stone-50:    #fafaf9;
+  --color-stone-100:   #f5f5f4;
+  --color-stone-200:   #e7e5e4;
+  --color-stone-300:   #d6d3d1;
+
+  --color-neutral-50:  #fafafa;
+  --color-neutral-100: #f5f5f5;
+  --color-neutral-200: #e5e5e5;
+  --color-neutral-300: #d4d4d4;
+  --color-neutral-400: #a3a3a3;
+  --color-neutral-500: #737373;
+  --color-neutral-600: #525252;
+  --color-neutral-700: #404040;
+  --color-neutral-800: #262626;
+  --color-neutral-900: #171717;
+  --color-neutral-950: #0a0a0a;
+}
+
+/* ─────────────────────────────────────────────────────────────────
+   Base layer — Light defaults + Dark overrides
+   The `.dark` class is added to <html> by next-themes
+   ───────────────────────────────────────────────────────────────── */
+@layer base {
+  /* Light mode */
+  :root {
+    --bg-primary:       #fafaf9;      /* stone-50  */
+    --bg-surface:       #ffffff;
+    --bg-subtle:        #f5f5f4;      /* stone-100 */
+    --border-ui:        #d6d3d1;      /* stone-300 — more visible in light mode */
+    --border-faint:     #e7e5e4;      /* stone-200 */
+
+    /* ── Heading contrast: ink-black in light mode ── */
+    --text-heading:     #0a0a0a;      /* neutral-950 */
+    --text-primary:     #171717;      /* neutral-900 */
+    --text-secondary:   #525252;      /* neutral-600 */
+    --text-muted:       #737373;      /* neutral-500 */
+    --text-xmuted:      #a3a3a3;      /* neutral-400 */
+
+    /* CTA colours — light mode: black ink on white */
+    --cta-bg:           #171717;
+    --cta-fg:           #fafaf9;
+    --cta-hover-bg:     #0a0a0a;
+
+    --ring-focus:       #171717;
+  }
+
+  /* Dark Ink Minimalism */
+  .dark {
+    --bg-primary:       #0a0a0a;      /* neutral-950 */
+    --bg-surface:       #141414;
+    --bg-subtle:        #1c1c1c;
+    --border-ui:        #333333;      /* slightly lighter for visibility */
+    --border-faint:     #262626;      /* neutral-800 */
+
+    /* ── Heading contrast: crisp white in dark mode ── */
+    --text-heading:     #fafafa;      /* neutral-50 — high contrast */
+    --text-primary:     #e5e5e5;      /* neutral-200 */
+    --text-secondary:   #a3a3a3;      /* neutral-400 */
+    --text-muted:       #525252;      /* neutral-600 */
+    --text-xmuted:      #404040;      /* neutral-700 */
+
+    /* CTA colours — dark mode: white button with black text */
+    --cta-bg:           #fafafa;
+    --cta-fg:           #0a0a0a;
+    --cta-hover-bg:     #ffffff;
+
+    --ring-focus:       #e5e5e5;
+  }
+
+  body {
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+    @apply antialiased;
+    font-feature-settings: "ss01", "ss02", "cv01", "cv02";
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+
+  /* ── Typography hierarchy ── */
+  h1 {
+    color: var(--text-heading);
+    @apply tracking-tight font-medium;
+    letter-spacing: -0.03em;
+  }
+  h2 {
+    color: var(--text-heading);
+    @apply tracking-tight font-medium;
+    letter-spacing: -0.02em;
+  }
+  h3 {
+    color: var(--text-heading);
+    @apply tracking-tight font-medium;
+    letter-spacing: -0.01em;
+  }
+  h4 {
+    color: var(--text-primary);
+    @apply tracking-tight font-medium;
+  }
+
+  /* Scrollbar — whisper thin */
+  ::-webkit-scrollbar { width: 4px; height: 4px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--border-ui); border-radius: 2px; }
+}
+
+/* ─────────────────────────────────────────────────────────────────
+   Semantic utility classes (theme-aware)
+   ───────────────────────────────────────────────────────────────── */
+@layer components {
+  /* Surfaces */
+  .surface-primary  { background-color: var(--bg-primary); }
+  .surface-card     { background-color: var(--bg-surface); }
+  .surface-subtle   { background-color: var(--bg-subtle); }
+  /* Alias used in listing detail page */
+  .bg-primary       { background-color: var(--bg-primary); }
+  .bg-surface-faint { background-color: var(--bg-subtle); }
+
+  /* Borders */
+  .border-ui        { border-color: var(--border-ui); }
+  .border-faint     { border-color: var(--border-faint); }
+  .border-border-faint { border-color: var(--border-faint); }
+
+  /* Text */
+  .text-ui-heading   { color: var(--text-heading); }
+  .text-ui-primary   { color: var(--text-primary); }
+  .text-ui-secondary { color: var(--text-secondary); }
+  .text-ui-muted     { color: var(--text-muted); }
+  .text-ui-xmuted    { color: var(--text-xmuted); }
+  /* Aliases used inline in some components */
+  .text-primary      { color: var(--text-primary); }
+  .bg-ui-primary     { background-color: var(--text-primary); }
+
+  /* ── Buttons ── */
+
+  /* Secondary / ghost button */
+  .btn-minimal {
+    @apply rounded-none px-6 py-2 text-sm font-medium transition-all duration-300 disabled:opacity-40;
+    border: 1px solid var(--border-ui);
+    background-color: transparent;
+    color: var(--text-secondary);
+  }
+  .btn-minimal:hover {
+    background-color: var(--bg-subtle);
+    color: var(--text-primary);
+  }
+  .btn-minimal:active {
+    background-color: var(--border-ui);
+  }
+
+  /*
+   * Primary CTA — stark and unmistakable.
+   * Dark mode:  pure-white background, ink-black text.
+   * Light mode: ink-black background, white text.
+   * Framer Motion tap scale is applied inline on components via whileTap.
+   */
+  .btn-solid {
+    @apply rounded-none px-6 py-2 text-sm font-semibold tracking-widest uppercase
+           transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed;
+    background-color: var(--cta-bg);
+    color: var(--cta-fg);
+    border: 1px solid transparent;
+    box-shadow: 0 0 0 0 transparent;
+  }
+  .btn-solid:hover {
+    background-color: var(--cta-hover-bg);
+    box-shadow: 0 0 18px -4px color-mix(in srgb, var(--cta-bg) 50%, transparent);
+  }
+  .btn-solid:active {
+    transform: scale(0.98);
+  }
+
+  /* Alias so existing code using btn-solid works */
+  .btn-primary {
+    @apply btn-solid;
+  }
+
+  /* ── Inputs ── */
+  .input-minimal {
+    @apply w-full rounded-none bg-transparent px-0 py-3 text-sm outline-none transition-all duration-300;
+    border-bottom: 1px solid var(--border-ui);
+    color: var(--text-primary);
+  }
+  .input-minimal::placeholder { color: var(--text-xmuted); }
+  .input-minimal:focus        { border-bottom-color: var(--text-heading); }
+
+  /* Legacy compat alias */
+  .form-container {
+    @apply w-full max-w-sm space-y-8 px-8 py-12;
+  }
+
+  /* ── Cards ── */
+  .card-minimal {
+    border: 1px solid var(--border-ui);
+    background-color: var(--bg-surface);
+  }
+
+  /* ── Divider ── */
+  .divider-ui {
+    height: 1px;
+    background-color: var(--border-faint);
+  }
+
+  /* Tension bar track — previously "bg-surface-faint" was missing */
+  .tension-track {
+    height: 2px;
+    width: 100%;
+    background-color: var(--border-faint);
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* Cinematic Scanline Overlay */
+  .cinematic-overlay {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 50;
+    background: linear-gradient(
+      rgba(18, 16, 16, 0) 50%,
+      rgba(0, 0, 0, 0.05) 50%
+    ), linear-gradient(
+      90deg,
+      rgba(255, 0, 0, 0.01),
+      rgba(0, 255, 0, 0.005),
+      rgba(0, 0, 255, 0.01)
+    );
+    background-size: 100% 2px, 3px 100%;
+    opacity: 0.15;
+  }
+
+  .noise-bg {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 49;
+    opacity: 0.02;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+  }
+}

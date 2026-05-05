@@ -1,0 +1,474 @@
+"use client";
+
+import { useState, useEffect } from "react";
+import { useParams, useRouter } from "next/navigation";
+import { api } from "~/trpc/react";
+import { useSession } from "next-auth/react";
+import { motion, AnimatePresence } from "framer-motion";
+import { 
+  Timer, 
+  Zap, 
+  ChevronRight, 
+  ArrowLeft, 
+  ShieldCheck,
+  TrendingUp,
+  History
+} from "lucide-react";
+import Link from "next/link";
+import NumberTicker from "~/app/_components/NumberTicker";
+
+export default function ListingPage() {
+  const params = useParams();
+  const id = params.id as string;
+  const router = useRouter();
+  const { data: session } = useSession();
+
+  const [bidAmount, setBidAmount] = useState("");
+  const [feedback, setFeedback] = useState<{ message: string; type: "info" | "success" | "error" } | null>(null);
+
+  const utils = api.useUtils();
+
+  const { data: listing, isLoading, error } = api.bid.getListingState.useQuery(
+    { listingId: id },
+    { 
+      refetchInterval: (query) => {
+        const state = query.state.data;
+        if (state?.saleMode === "LONG_BURST" && !state?.isEnded) {
+          return 3000;
+        }
+        return false;
+      }
+    }
+  );
+
+  const shortBurstMutation = api.bid.submitShortBurst.useMutation({
+    onSuccess: (data) => {
+      setFeedback({ 
+        message: `${data.feedback}. Final chance: ${data.isFinalChance ? "YES" : "NO"}`, 
+        type: data.feedback.includes("High") ? "success" : "info" 
+      });
+      utils.bid.getListingState.invalidate({ listingId: id });
+    },
+    onError: (err) => {
+      setFeedback({ message: err.message, type: "error" });
+    }
+  });
+
+  const longBurstMutation = api.bid.submitLongBurst.useMutation({
+    onSuccess: () => {
+      setFeedback({ message: "Bid registered for this round.", type: "success" });
+      utils.bid.getListingState.invalidate({ listingId: id });
+    },
+    onError: (err) => {
+      setFeedback({ message: err.message, type: "error" });
+    }
+  });
+
+  if (isLoading) {
+    return (
+      <div
+        className="min-h-screen flex items-center justify-center"
+        style={{ backgroundColor: "var(--bg-primary)" }}
+      >
+        <motion.div 
+          animate={{ opacity: [0.3, 0.6, 0.3] }}
+          transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+          className="text-[10px] tracking-[0.3em] uppercase"
+          style={{ color: "var(--text-muted)" }}
+        >
+          Gathering Intel...
+        </motion.div>
+      </div>
+    );
+  }
+
+  if (error || !listing) {
+    return (
+      <div
+        className="min-h-screen p-8 flex flex-col items-center justify-center gap-6"
+        style={{ backgroundColor: "var(--bg-primary)" }}
+      >
+        <p
+          className="font-light"
+          style={{ color: "var(--text-muted)" }}
+        >
+          Listing has vanished or never existed.
+        </p>
+        <Link href="/" className="btn-minimal">
+          Back to Marketplace
+        </Link>
+      </div>
+    );
+  }
+
+  const isSeller = session?.user?.id === listing.sellerId;
+  const isShortBurst = listing.saleMode === "SHORT_BURST";
+
+  const handleBidSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    setFeedback(null);
+    const amount = parseFloat(bidAmount);
+    if (isNaN(amount) || amount <= 0) return;
+
+    if (listing.saleMode === "SHORT_BURST") {
+      shortBurstMutation.mutate({ listingId: id, amount });
+    } else {
+      longBurstMutation.mutate({ listingId: id, amount });
+    }
+  };
+
+  /* ─── Tension level helpers ─── */
+  const tensionPct = Math.min((listing._count.bids / 10) * 100, 100);
+  const isHighTension = listing._count.bids > 5;
+  const isCriticalTension = listing._count.bids > 7;
+
+  return (
+    <div
+      className="min-h-screen px-6 py-12 md:py-24"
+      style={{ backgroundColor: "var(--bg-primary)" }}
+    >
+      <div className="max-w-4xl mx-auto space-y-16">
+        
+        {/* Back nav */}
+        <Link 
+          href="/" 
+          className="group flex items-center gap-3 text-[10px] tracking-[0.2em] uppercase transition-colors"
+          style={{ color: "var(--text-muted)" }}
+          onMouseEnter={(e) => {
+            (e.currentTarget as HTMLAnchorElement).style.color = "var(--text-heading)";
+          }}
+          onMouseLeave={(e) => {
+            (e.currentTarget as HTMLAnchorElement).style.color = "var(--text-muted)";
+          }}
+        >
+          <ArrowLeft size={14} className="transition-transform group-hover:-translate-x-1" />
+          Marketplace
+        </Link>
+
+        <div className="grid grid-cols-1 lg:grid-cols-5 gap-12 lg:gap-16">
+          
+          {/* ── Left Column: Details ── */}
+          <div className="lg:col-span-3 space-y-10">
+            <header className="space-y-6">
+              {/* Mode + ID badges */}
+              <div className="flex items-center gap-3">
+                <span
+                  className="px-2 py-0.5 text-[8px] tracking-[0.2em] uppercase border"
+                  style={{
+                    borderColor: "var(--border-faint)",
+                    color: "var(--text-muted)",
+                  }}
+                >
+                  ID: {listing.id.slice(-8)}
+                </span>
+                {isShortBurst ? (
+                  <span
+                    className="flex items-center gap-1.5 px-2 py-0.5 text-[8px] tracking-[0.2em] uppercase"
+                    style={{
+                      backgroundColor: "var(--text-heading)",
+                      color: "var(--bg-primary)",
+                    }}
+                  >
+                    <Zap size={10} /> Short Burst
+                  </span>
+                ) : (
+                  <span className="flex items-center gap-1.5 px-2 py-0.5 text-[8px] tracking-[0.2em] uppercase bg-red-500/10 text-red-400 border border-red-500/25">
+                    <Timer size={10} /> Long Burst
+                  </span>
+                )}
+              </div>
+              
+              {/* H1 — crisp */}
+              <h1
+                className="text-4xl md:text-5xl lg:text-6xl font-light leading-[1.1] tracking-tight"
+                style={{ color: "var(--text-heading)" }}
+              >
+                {listing.title}
+              </h1>
+              
+              <p
+                className="text-base md:text-lg font-light leading-relaxed max-w-xl"
+                style={{ color: "var(--text-secondary)" }}
+              >
+                {listing.description}
+              </p>
+            </header>
+
+            {/* ── Tension Bar (Short Burst Only) ── */}
+            {isShortBurst && listing.status === "ACTIVE" && (
+              <div className="space-y-3">
+                <div className="flex justify-between items-end">
+                  {/* H3 — heading colour */}
+                  <h3
+                    className="text-[10px] tracking-[0.2em] uppercase font-medium"
+                    style={{ color: "var(--text-heading)" }}
+                  >
+                    Arena Tension
+                  </h3>
+                  <span
+                    className="text-[10px] font-mono"
+                    style={{ color: isHighTension ? "rgb(239, 68, 68)" : "var(--text-primary)" }}
+                  >
+                    {listing._count.bids > 0 ? "STABILITY: VOLATILE" : "STABILITY: CALM"}
+                  </span>
+                </div>
+
+                {/* Track — now uses border-faint bg for visibility */}
+                <div
+                  className="h-0.5 w-full relative overflow-hidden rounded-full"
+                  style={{ backgroundColor: "var(--border-ui)" }}
+                >
+                  <motion.div 
+                    initial={{ width: 0 }}
+                    animate={{ 
+                      width: `${tensionPct}%`,
+                      backgroundColor: isHighTension
+                        ? "rgb(239, 68, 68)"
+                        : "var(--text-heading)"
+                    }}
+                    transition={{ duration: 0.5 }}
+                    className="absolute h-full rounded-full"
+                  />
+                  {/* Pulse glow for critical tension */}
+                  {isCriticalTension && (
+                    <motion.div 
+                      animate={{ opacity: [0, 0.4, 0] }}
+                      transition={{ duration: 0.6, repeat: Infinity }}
+                      className="absolute inset-0 bg-red-500/30 rounded-full"
+                    />
+                  )}
+                </div>
+
+                <p
+                  className="text-[9px] tracking-[0.2em] uppercase"
+                  style={{ color: "var(--text-muted)" }}
+                >
+                  {listing._count.bids} bid{listing._count.bids !== 1 ? "s" : ""} recorded
+                </p>
+              </div>
+            )}
+
+            {/* ── Long Burst Round Timer ── */}
+            {!isShortBurst && !listing.isEnded && (
+              <div className="space-y-3">
+                <div className="flex justify-between items-end">
+                  {/* H3 */}
+                  <h3
+                    className="text-[10px] tracking-[0.2em] uppercase font-medium"
+                    style={{ color: "var(--text-heading)" }}
+                  >
+                    Round {listing.currentRound} of {listing.totalRounds}
+                  </h3>
+                  <span
+                    className="text-2xl font-light tabular-nums"
+                    style={{ color: "var(--text-heading)" }}
+                  >
+                    {Math.floor(listing.secondsRemainingInRound)}s
+                  </span>
+                </div>
+
+                {/* Progress track */}
+                <div
+                  className="h-0.5 w-full relative overflow-hidden rounded-full"
+                  style={{ backgroundColor: "var(--border-ui)" }}
+                >
+                  <motion.div 
+                    initial={{ width: "100%" }}
+                    animate={{ width: `${(listing.secondsRemainingInRound / 30) * 100}%` }}
+                    transition={{ ease: "linear", duration: 1 }}
+                    className="absolute h-full rounded-full bg-red-500"
+                  />
+                </div>
+
+                <p
+                  className="text-[9px] tracking-[0.2em] uppercase"
+                  style={{ color: "var(--text-muted)" }}
+                >
+                  Timer resets each round — submit before it drops to zero
+                </p>
+              </div>
+            )}
+          </div>
+
+          {/* ── Right Column: Interaction Panel ── */}
+          <div className="lg:col-span-2">
+            <div
+              className="p-8 md:p-10 sticky top-32 space-y-10"
+              style={{
+                backgroundColor: "var(--bg-surface)",
+                border: "1px solid var(--border-ui)",
+              }}
+            >
+              
+              {/* Current peak price */}
+              <div className="space-y-1">
+                <p
+                  className="text-[10px] tracking-[0.3em] uppercase mb-2 flex items-center gap-2"
+                  style={{ color: "var(--text-muted)" }}
+                >
+                  <TrendingUp size={12} strokeWidth={1.5} />
+                  Current Peak
+                </p>
+                <div
+                  className="text-5xl font-light flex items-baseline gap-1"
+                  style={{ color: "var(--text-heading)" }}
+                >
+                  <span
+                    className="text-2xl"
+                    style={{ color: "var(--text-muted)" }}
+                  >
+                    $
+                  </span>
+                  {listing.highestBid ? (
+                    <NumberTicker value={listing.highestBid.amount} />
+                  ) : (
+                    <NumberTicker value={listing.displayPrice} />
+                  )}
+                </div>
+                {listing.highestBid && (
+                  <p
+                    className="text-[10px] mt-2 tracking-wide uppercase"
+                    style={{ color: "var(--text-muted)" }}
+                  >
+                    Last activity from {listing.highestBid.buyer.name?.split(" ")[0]}
+                  </p>
+                )}
+              </div>
+
+              {/* Bid form */}
+              {!isSeller && listing.status === "ACTIVE" && !listing.isEnded ? (
+                <form onSubmit={handleBidSubmit} className="space-y-8">
+                  <div className="space-y-4">
+                    <label 
+                      htmlFor="bidAmount" 
+                      className="text-[10px] tracking-[0.25em] uppercase block"
+                      style={{ color: "var(--text-muted)" }}
+                    >
+                      Offer your price
+                    </label>
+                    <div className="relative">
+                      <span
+                        className="absolute left-0 bottom-3 text-xl font-light"
+                        style={{ color: "var(--text-muted)" }}
+                      >
+                        $
+                      </span>
+                      <input
+                        id="bidAmount"
+                        type="number"
+                        step="0.01"
+                        required
+                        value={bidAmount}
+                        onChange={(e) => setBidAmount(e.target.value)}
+                        className="w-full bg-transparent border-b py-3 pl-6 text-3xl font-light focus:outline-none transition-colors"
+                        style={{
+                          borderBottomColor: "var(--border-ui)",
+                          color: "var(--text-heading)",
+                        }}
+                        onFocus={(e) => {
+                          e.currentTarget.style.borderBottomColor = "var(--text-heading)";
+                        }}
+                        onBlur={(e) => {
+                          e.currentTarget.style.borderBottomColor = "var(--border-ui)";
+                        }}
+                        placeholder="0.00"
+                      />
+                    </div>
+                  </div>
+
+                  <AnimatePresence mode="wait">
+                    {feedback && (
+                      <motion.div
+                        initial={{ opacity: 0, y: 5 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -5 }}
+                        className={`text-[10px] tracking-wider p-4 border flex items-start gap-3 ${
+                          feedback.type === "error"
+                            ? "text-red-400 bg-red-500/5 border-red-500/20"
+                            : "border-border-faint"
+                        }`}
+                        style={
+                          feedback.type !== "error"
+                            ? {
+                                color: "var(--text-primary)",
+                                backgroundColor: "var(--bg-subtle)",
+                                borderColor: "var(--border-faint)",
+                              }
+                            : {}
+                        }
+                      >
+                        <ShieldCheck size={14} className="shrink-0 mt-0.5" />
+                        {feedback.message}
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+
+                  {/* Primary CTA — bold, unmistakable */}
+                  <motion.button
+                    type="submit"
+                    disabled={shortBurstMutation.isPending || longBurstMutation.isPending}
+                    whileTap={{ scale: 0.98 }}
+                    className="btn-solid w-full py-5 text-[10px] tracking-[0.4em] group"
+                  >
+                    <span className="flex items-center justify-center gap-2">
+                      Place Intent
+                      <ChevronRight
+                        size={14}
+                        className="transition-transform group-hover:translate-x-1"
+                      />
+                    </span>
+                  </motion.button>
+                </form>
+              ) : (
+                <div
+                  className="space-y-6 pt-6 border-t"
+                  style={{ borderColor: "var(--border-faint)" }}
+                >
+                  <div
+                    className="flex items-center gap-3"
+                    style={{ color: "var(--text-muted)" }}
+                  >
+                    <History size={16} strokeWidth={1.5} />
+                    <span className="text-[10px] tracking-[0.2em] uppercase">
+                      {isSeller ? "You are the orchestrator" : "Arena Access Restricted"}
+                    </span>
+                  </div>
+                  {listing.isEnded && (
+                    <p
+                      className="text-xs font-light leading-relaxed"
+                      style={{ color: "var(--text-muted)" }}
+                    >
+                      The time of negotiation has passed. This listing is now under review for finalization.
+                    </p>
+                  )}
+                </div>
+              )}
+
+              {/* Authenticity footer */}
+              <div
+                className="pt-8 border-t space-y-4"
+                style={{ borderColor: "var(--border-faint)" }}
+              >
+                <div
+                  className="flex items-center justify-between text-[9px] tracking-[0.2em] uppercase"
+                  style={{ color: "var(--text-muted)" }}
+                >
+                  <span>Authenticity Guarantee</span>
+                  <ShieldCheck size={14} strokeWidth={1} />
+                </div>
+                <p
+                  className="text-[10px] font-light leading-relaxed opacity-60"
+                  style={{ color: "var(--text-muted)" }}
+                >
+                  LastPrice ensures dual-token verification for every completed handshake.
+                </p>
+              </div>
+
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  );
+}
