@@ -61,11 +61,22 @@ async function resolveArena(listingId) {
             );
             const seller = sellerRows[0];
 
-            // Create transaction record
+            // Generate 6-digit handshake codes
+            const codeBuyer = Math.floor(100000 + Math.random() * 900000).toString();
+            const codeSeller = Math.floor(100000 + Math.random() * 900000).toString();
+
+            // Create transaction record with handshake codes
             await client.query(
-                `INSERT INTO Transactions (listing_id, buyer_id, seller_id, final_price, status)
-                 VALUES ($1, $2, $3, $4, 'pending')`,
-                [listingId, highestBid.buyer_id, listing.seller_id, highestBid.amount],
+                `INSERT INTO Transactions (listing_id, buyer_id, seller_id, final_price, status, handshake_buyer, handshake_seller)
+                 VALUES ($1, $2, $3, $4, 'pending', $5, $6)`,
+                [
+                    listingId,
+                    highestBid.buyer_id,
+                    listing.seller_id,
+                    highestBid.amount,
+                    codeBuyer,
+                    codeSeller,
+                ],
             );
 
             // Update listing status

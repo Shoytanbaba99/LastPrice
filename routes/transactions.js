@@ -19,6 +19,8 @@ router.get("/my", auth, async (req, res) => {
               l.title AS listing_title, l.photo_url,
               buyer.username AS buyer_name, buyer.email AS buyer_email,
               seller.username AS seller_name, seller.email AS seller_email,
+              t.handshake_buyer, t.handshake_seller,
+              t.buyer_confirmed, t.seller_confirmed,
               CASE WHEN t.buyer_id = $1 THEN 'buyer' ELSE 'seller' END AS my_role
        FROM Transactions t
        JOIN Listings l  ON l.id = t.listing_id
@@ -42,7 +44,9 @@ router.get("/:id", auth, async (req, res) => {
             `SELECT t.id, t.listing_id, t.final_price, t.status, t.created_at,
               l.title AS listing_title, l.photo_url, l.description,
               buyer.id AS buyer_id, buyer.username AS buyer_name, buyer.email AS buyer_email,
-              seller.id AS seller_id, seller.username AS seller_name, seller.email AS seller_email
+              seller.id AS seller_id, seller.username AS seller_name, seller.email AS seller_email,
+              t.handshake_buyer, t.handshake_seller,
+              t.buyer_confirmed, t.seller_confirmed
        FROM Transactions t
        JOIN Listings l   ON l.id  = t.listing_id
        JOIN Users buyer  ON buyer.id  = t.buyer_id
@@ -60,51 +64,79 @@ router.get("/:id", auth, async (req, res) => {
     }
 });
 
-// ── POST /api/transactions/confirm ───────────────────────────
-// Buyer confirms physical deal is done.
+// Handshake Verification: Buyer/Seller confirm deal via 6-digit codes.
 router.post("/confirm", auth, async (req, res) => {
-    const { transaction_id } = req.body;
-    if (!transaction_id) return res.status(400).json({ error: "transaction_id is required" });
+    const { transaction_id, code } = req.body;
+    if (!transaction_id || !code) {
+        return res.status(400).json({ error: "transaction_id and code are required" });
+    }
 
     const client = await db.connect();
     try {
         await client.query("BEGIN");
 
         const { rows } = await client.query(
-            "SELECT t.*, l.title FROM Transactions t JOIN Listings l ON l.id = t.listing_id WHERE t.id = $1 FOR UPDATE",
-            [transaction_id],
+            "SELECT * FROM Transactions WHERE id = $1 FOR UPDATE",
+            [transaction_id]
         );
+        
         if (!rows.length) {
             await client.query("ROLLBACK");
             return res.status(404).json({ error: "Transaction not found" });
         }
         const tx = rows[0];
 
-        if (tx.buyer_id !== req.user.id) {
-            await client.query("ROLLBACK");
-            return res.status(403).json({ error: "Only the buyer can confirm" });
-        }
-
         if (tx.status !== "pending") {
             await client.query("ROLLBACK");
             return res.status(400).json({ error: `Transaction already ${tx.status}` });
         }
 
-        // Mark transaction confirmed
-        await client.query("UPDATE Transactions SET status = 'confirmed' WHERE id = $1", [
-            transaction_id,
-        ]);
+        let isBuyer = tx.buyer_id === req.user.id;
+        let isSeller = tx.seller_id === req.user.id;
 
-        // Mark listing completed
-        await client.query("UPDATE Listings SET status = 'completed' WHERE id = $1", [
-            tx.listing_id,
-        ]);
+        if (!isBuyer && !isSeller) {
+            await client.query("ROLLBACK");
+            return res.status(403).json({ error: "Access denied" });
+        }
+
+        if (isBuyer) {
+            if (tx.handshake_seller !== code) {
+                await client.query("ROLLBACK");
+                return res.status(400).json({ error: "Invalid handshake code" });
+            }
+            await client.query("UPDATE Transactions SET buyer_confirmed = true WHERE id = $1", [transaction_id]);
+        }
+
+        if (isSeller) {
+            if (tx.handshake_buyer !== code) {
+                await client.query("ROLLBACK");
+                return res.status(400).json({ error: "Invalid handshake code" });
+            }
+            await client.query("UPDATE Transactions SET seller_confirmed = true WHERE id = $1", [transaction_id]);
+        }
+
+        // Re-check status
+        const { rows: updatedRows } = await client.query(
+            "SELECT * FROM Transactions WHERE id = $1",
+            [transaction_id]
+        );
+        const updatedTx = updatedRows[0];
+
+        if (updatedTx.buyer_confirmed && updatedTx.seller_confirmed) {
+            // Both confirmed -> Finalize!
+            await client.query("UPDATE Transactions SET status = 'confirmed' WHERE id = $1", [transaction_id]);
+            await client.query("UPDATE Listings SET status = 'completed' WHERE id = $1", [tx.listing_id]);
+            
+            await client.query("COMMIT");
+            return res.json({ message: "Deal successfully finalized!", finalized: true });
+        }
 
         await client.query("COMMIT");
-
-        return res.json({
-            message: "Deal confirmed!",
+        return res.json({ 
+            message: isBuyer ? "Buyer confirmed. Waiting for seller." : "Seller confirmed. Waiting for buyer.",
+            finalized: false 
         });
+
     } catch (err) {
         await client.query("ROLLBACK");
         console.error("POST /transactions/confirm error:", err);

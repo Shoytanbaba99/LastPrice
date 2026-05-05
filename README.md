@@ -108,3 +108,11 @@ This project was developed as part of a **Software Engineering Lab** course. It 
 - **[Mehedi032003](https://github.com/Mehedi032003)** — Original Frontend UI/UX Design & Implementation.
 - Member 3 — Documentation & System Requirements.
 - Member 4 — Quality Assurance & Testing.
+
+---
+
+## ✨ Key Features
+
+- **Silent Negotiator Bidding**: Gamified auction with a 3-bid limit and visual temperature feedback (Red/Yellow/Green).
+- **Handshake Verification**: Two-way 6-digit verification codes for secure physical handovers.
+- **Escrow Logic**: Deals remain pending until both parties confirm receipt via handshake.
