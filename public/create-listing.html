@@ -1,0 +1,343 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Create Listing – LastPrice</title>
+        <script src="https://cdn.tailwindcss.com"></script>
+        <script>
+            tailwind.config = {
+                theme: {
+                    extend: {
+                        colors: {
+                            brand: {
+                                300: "#F2D499",
+                                400: "#E6C07B",
+                                500: "#D5805E",
+                                600: "#C06A48",
+                                700: "#1C1C1C",
+                            },
+                            sepia: "#B9986F",
+                            cream: "#FFF5E6",
+                        },
+                    },
+                },
+            };
+        </script>
+        <style>
+            @import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap");
+            * {
+                font-family: "Inter", sans-serif;
+            }
+            body {
+                background: linear-gradient(135deg, #0d0d0d 0%, #1a1510 50%, #0d0d0d 100%);
+                min-height: 100vh;
+            }
+            .glass {
+                background: rgba(28, 28, 28, 0.85);
+                backdrop-filter: blur(12px);
+                border: 1px solid rgba(185, 152, 111, 0.15);
+            }
+            input,
+            textarea {
+                transition:
+                    border-color 0.2s,
+                    box-shadow 0.2s;
+            }
+            input:focus,
+            textarea:focus {
+                outline: none;
+                border-color: #e6c07b;
+                box-shadow: 0 0 0 3px rgba(230, 192, 123, 0.25);
+            }
+            .drop-zone {
+                border: 2px dashed rgba(185, 152, 111, 0.3);
+                transition: all 0.2s;
+            }
+            .drop-zone.active {
+                border-color: #e6c07b;
+                background: rgba(230, 192, 123, 0.08);
+            }
+        </style>
+    </head>
+
+    <body class="text-sepia">
+        <nav class="glass sticky top-0 z-50 px-6 py-4">
+            <div class="max-w-3xl mx-auto flex items-center justify-between">
+                <a
+                    href="/dashboard.html"
+                    class="text-sepia/60 hover:text-brand-400 text-sm transition"
+                    >← Dashboard</a
+                >
+            </div>
+        </nav>
+
+        <main class="max-w-3xl mx-auto px-4 sm:px-6 py-10">
+            <div class="mb-8">
+                <h1 class="text-3xl font-bold text-cream">Create Listing</h1>
+                <p class="text-sepia/50 mt-2 text-sm">
+                    Your reserve floor is kept completely secret. Buyers only see the display price.
+                </p>
+            </div>
+
+            <div id="alert" class="hidden mb-6 p-4 rounded-xl text-sm font-medium"></div>
+
+            <form id="listing-form" onsubmit="submitListing(event)" class="space-y-6">
+                <!-- Photo upload -->
+                <div class="glass rounded-2xl p-6">
+                    <label class="block text-sepia/80 text-sm font-medium mb-3">Item Photo</label>
+                    <div
+                        id="drop-zone"
+                        class="drop-zone rounded-xl p-8 text-center cursor-pointer"
+                        onclick="document.getElementById('photo-input').click()"
+                    >
+                        <div id="photo-preview-wrap" class="hidden mb-4">
+                            <img
+                                id="photo-preview"
+                                class="max-h-48 mx-auto rounded-xl object-contain"
+                            />
+                        </div>
+                        <div id="upload-placeholder">
+                            <div class="text-4xl mb-3">📷</div>
+                            <p class="text-sepia/50 text-sm">
+                                Click or drag to upload an image<br /><span
+                                    class="text-sepia/30 text-xs"
+                                    >JPG, PNG, WEBP · Max 5MB</span
+                                >
+                            </p>
+                        </div>
+                        <input
+                            id="photo-input"
+                            type="file"
+                            accept="image/*"
+                            class="hidden"
+                            onchange="previewPhoto(event)"
+                        />
+                    </div>
+                </div>
+
+                <!-- Item details -->
+                <div class="glass rounded-2xl p-6 space-y-5">
+                    <div>
+                        <label class="block text-sepia/80 text-sm font-medium mb-2"
+                            >Item Title *</label
+                        >
+                        <input
+                            id="title"
+                            type="text"
+                            placeholder="e.g. Vintage Sony Walkman"
+                            maxlength="255"
+                            class="w-full bg-[#141414] border border-sepia/15 rounded-xl px-4 py-3 text-cream placeholder-sepia/30"
+                            required
+                        />
+                    </div>
+                    <div>
+                        <label class="block text-sepia/80 text-sm font-medium mb-2"
+                            >Description</label
+                        >
+                        <textarea
+                            id="description"
+                            rows="4"
+                            placeholder="Describe the item condition, history, what's included…"
+                            class="w-full bg-[#141414] border border-sepia/15 rounded-xl px-4 py-3 text-cream placeholder-sepia/30 resize-none"
+                        ></textarea>
+                    </div>
+                </div>
+
+                <!-- Pricing -->
+                <div class="glass rounded-2xl p-6 space-y-5">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                        <div>
+                            <label class="block text-sepia/80 text-sm font-medium mb-2"
+                                >Display Price ($) *
+                                <span class="text-sepia/30 font-normal text-xs"
+                                    >– shown publicly</span
+                                ></label
+                            >
+                            <input
+                                id="display-price"
+                                type="number"
+                                step="0.01"
+                                min="0.01"
+                                placeholder="e.g. 100.00"
+                                class="w-full bg-[#141414] border border-sepia/15 rounded-xl px-4 py-3 text-cream placeholder-sepia/30"
+                                required
+                            />
+                        </div>
+                        <div>
+                            <label class="block text-sepia/80 text-sm font-medium mb-2"
+                                >Reserve Floor ($) *
+                                <span class="text-sepia/30 font-normal text-xs"
+                                    >– your minimum, kept secret</span
+                                ></label
+                            >
+                            <div class="relative">
+                                <input
+                                    id="reserve-floor"
+                                    type="number"
+                                    step="0.01"
+                                    min="0.01"
+                                    placeholder="e.g. 80.00"
+                                    class="w-full bg-[#141414] border border-sepia/15 rounded-xl px-4 py-3 text-cream placeholder-sepia/30"
+                                    required
+                                />
+                                <div class="absolute right-3 top-3 text-base">🔒</div>
+                            </div>
+                            <p class="text-sepia/30 text-xs mt-1.5">
+                                Never shown to buyers. Match activates if highest bid ≥ this value.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Timer -->
+                <div class="glass rounded-2xl p-6">
+                    <label class="block text-sepia/80 text-sm font-medium mb-3"
+                        >Arena Start Time *</label
+                    >
+                    <input
+                        id="arena-start"
+                        type="datetime-local"
+                        class="w-full bg-[#141414] border border-sepia/15 rounded-xl px-4 py-3 text-cream"
+                        required
+                    />
+                    <div class="flex flex-wrap gap-2 mt-3">
+                        <button
+                            type="button"
+                            onclick="setDuration(0.1)"
+                            class="px-3 py-1.5 rounded-lg glass text-xs text-sepia/70 hover:text-brand-400 transition"
+                        >
+                            +6 mins
+                        </button>
+                        <button
+                            type="button"
+                            onclick="setDuration(1)"
+                            class="px-3 py-1.5 rounded-lg glass text-xs text-sepia/70 hover:text-brand-400 transition"
+                        >
+                            +1 hour
+                        </button>
+                        <button
+                            type="button"
+                            onclick="setDuration(6)"
+                            class="px-3 py-1.5 rounded-lg glass text-xs text-sepia/70 hover:text-brand-400 transition"
+                        >
+                            +6 hours
+                        </button>
+                        <button
+                            type="button"
+                            onclick="setDuration(24)"
+                            class="px-3 py-1.5 rounded-lg glass text-xs text-sepia/70 hover:text-brand-400 transition"
+                        >
+                            +24 hours
+                        </button>
+                        <button
+                            type="button"
+                            onclick="setDuration(72)"
+                            class="px-3 py-1.5 rounded-lg glass text-xs text-sepia/70 hover:text-brand-400 transition"
+                        >
+                            +3 days
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Preview -->
+                <div class="bg-brand-500/10 border border-brand-500/20 rounded-2xl p-5 text-sm">
+                    <div class="font-semibold text-brand-400 mb-2">📋 Before you publish</div>
+                    <ul class="text-sepia/60 space-y-1 text-xs">
+                        <li>✅ Display price is visible to all buyers</li>
+                        <li>🔒 Reserve floor is NEVER shown to anyone</li>
+                        <li>
+                            ⏱ Once Started, the Arena will run for exactly 6 minutes across 3
+                            bidding rounds.
+                        </li>
+                        <li>📧 If matched, buyer & seller contact info is revealed</li>
+                    </ul>
+                </div>
+
+                <button
+                    type="submit"
+                    id="submit-btn"
+                    class="w-full py-4 rounded-2xl bg-brand-500 hover:bg-brand-600 font-bold text-lg text-cream transition"
+                >
+                    🏟️ Publish Listing
+                </button>
+            </form>
+        </main>
+
+        <script src="/js/api.js"></script>
+        <script src="/js/auth.js"></script>
+        <script>
+            if (!authHelper.requireAuth()) throw new Error("Not authenticated");
+            authHelper.refreshUser();
+
+            function previewPhoto(e) {
+                const file = e.target.files[0];
+                if (!file) return;
+                const url = URL.createObjectURL(file);
+                document.getElementById("photo-preview").src = url;
+                document.getElementById("photo-preview-wrap").classList.remove("hidden");
+                document.getElementById("upload-placeholder").classList.add("hidden");
+            }
+
+            const dz = document.getElementById("drop-zone");
+            dz.addEventListener("dragover", (e) => {
+                e.preventDefault();
+                dz.classList.add("active");
+            });
+            dz.addEventListener("dragleave", () => dz.classList.remove("active"));
+            dz.addEventListener("drop", (e) => {
+                e.preventDefault();
+                dz.classList.remove("active");
+                const file = e.dataTransfer.files[0];
+                if (file) {
+                    document.getElementById("photo-input").files = e.dataTransfer.files;
+                    previewPhoto({ target: e.dataTransfer });
+                }
+            });
+
+            function setDuration(hours) {
+                const d = new Date(Date.now() + hours * 3600000);
+                const local = new Date(d.getTime() - d.getTimezoneOffset() * 60000)
+                    .toISOString()
+                    .slice(0, 16);
+                document.getElementById("arena-start").value = local;
+            }
+
+            function showAlert(msg, type) {
+                const el = document.getElementById("alert");
+                el.textContent = msg;
+                el.className = `mb-6 p-4 rounded-xl text-sm font-medium ${type === "error" ? "bg-red-500/20 border border-red-500/40 text-red-300" : "bg-green-500/20 border border-green-500/40 text-green-300"}`;
+            }
+
+            async function submitListing(e) {
+                e.preventDefault();
+                const btn = document.getElementById("submit-btn");
+                btn.textContent = "Publishing…";
+                btn.disabled = true;
+                const fd = new FormData();
+                fd.append("title", document.getElementById("title").value);
+                fd.append("description", document.getElementById("description").value);
+                fd.append("display_price", document.getElementById("display-price").value);
+                fd.append("reserve_floor", document.getElementById("reserve-floor").value);
+                fd.append(
+                    "arena_start_time",
+                    new Date(document.getElementById("arena-start").value).toISOString(),
+                );
+                const photoFile = document.getElementById("photo-input").files[0];
+                if (photoFile) fd.append("photo", photoFile);
+                try {
+                    const data = await api.upload("/api/listings", fd);
+                    showAlert("Listing published! Redirecting…", "success");
+                    setTimeout(
+                        () => (window.location.href = `/listing-detail.html?id=${data.listing.id}`),
+                        1500,
+                    );
+                } catch (err) {
+                    showAlert(err.message || "Failed to create listing", "error");
+                    btn.textContent = "🏟️ Publish Listing";
+                    btn.disabled = false;
+                }
+            }
+        </script>
+    </body>
+</html>

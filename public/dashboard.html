@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dashboard – LastPrice</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>tailwind.config = { theme: { extend: { colors: {
+        brand: { 300: "#F2D499", 400: "#E6C07B", 500: "#D5805E", 600: "#C06A48", 700: "#1C1C1C" },
+        sepia: "#B9986F", cream: "#FFF5E6"
+    }}}}</script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+        * { font-family: 'Inter', sans-serif; }
+        body { background: linear-gradient(135deg, #0D0D0D 0%, #1A1510 50%, #0D0D0D 100%); min-height: 100vh; }
+        .glass { background: rgba(28,28,28,0.85); backdrop-filter: blur(12px); border: 1px solid rgba(185,152,111,0.15); }
+    </style>
+</head>
+<body class="text-sepia">
+    <!-- NAV -->
+    <nav class="glass sticky top-0 z-50 px-6 py-4">
+        <div class="max-w-7xl mx-auto flex items-center justify-between">
+            <a href="/" class="flex items-center gap-2 font-bold text-xl">
+                <div class="w-8 h-8 rounded-xl bg-brand-500 flex items-center justify-center font-black text-base text-cream">L</div>
+                <span class="text-brand-400">LastPrice</span>
+            </a>
+            <div class="flex items-center gap-3">
+                <a href="/listings.html" class="hidden md:block px-4 py-2 rounded-xl glass hover:bg-white/5 text-sm font-medium text-sepia/70 hover:text-brand-400 transition">Browse Listings</a>
+                <button onclick="logout()" class="px-4 py-2 rounded-xl border border-sepia/15 hover:border-red-500/50 text-sm text-sepia/60 hover:text-red-400 transition">Sign Out</button>
+            </div>
+        </div>
+    </nav>
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 py-10">
+        <!-- WELCOME CARD -->
+        <div class="glass rounded-3xl p-8 flex flex-col justify-between mb-10">
+            <div>
+                <div class="text-sepia/50 text-sm mb-1">Welcome back</div>
+                <h1 class="text-3xl font-bold text-cream" id="welcome-name">–</h1>
+                <p class="text-sepia/50 mt-2 text-sm" id="welcome-email">–</p>
+            </div>
+            <div class="flex flex-wrap gap-3 mt-8">
+                <a href="/listings.html" class="px-5 py-2.5 rounded-xl bg-brand-500 hover:bg-brand-600 font-semibold text-cream transition text-sm">🏟️ Browse Listings</a>
+                <a href="/create-listing.html" class="px-5 py-2.5 rounded-xl glass hover:bg-white/5 font-semibold text-brand-400 transition text-sm">🏷️ Create Listing</a>
+                <a href="/seller-panel.html" class="px-5 py-2.5 rounded-xl glass hover:bg-white/5 font-semibold text-brand-400 transition text-sm">📊 My Listings</a>
+            </div>
+        </div>
+
+        <!-- STATS -->
+        <div class="grid grid-cols-2 md:grid-cols-3 gap-4 mb-10">
+            <div class="glass rounded-2xl p-5 text-center">
+                <div class="text-2xl font-black text-brand-400" id="stat-bids">–</div>
+                <div class="text-sepia/50 text-xs mt-1">Active Bids</div>
+            </div>
+            <div class="glass rounded-2xl p-5 text-center">
+                <div class="text-2xl font-black text-green-400" id="stat-deals">–</div>
+                <div class="text-sepia/50 text-xs mt-1">Deals Done</div>
+            </div>
+            <div class="glass rounded-2xl p-5 text-center">
+                <div class="text-2xl font-black text-blue-400" id="stat-listings">–</div>
+                <div class="text-sepia/50 text-xs mt-1">My Listings</div>
+            </div>
+        </div>
+
+        <!-- RECENT TRANSACTIONS -->
+        <div class="glass rounded-3xl p-6 mb-8">
+            <div class="flex items-center justify-between mb-6">
+                <h2 class="text-xl font-bold text-cream">Recent Transactions</h2>
+                <a href="/transaction.html" class="text-brand-400 hover:text-brand-300 text-sm transition">View all →</a>
+            </div>
+            <div id="transactions-list">
+                <div class="text-sepia/30 text-center py-10 text-sm">Loading transactions…</div>
+            </div>
+        </div>
+    </main>
+
+    <script src="/js/api.js"></script>
+    <script src="/js/auth.js"></script>
+    <script>
+        if (!authHelper.requireAuth()) throw new Error('Not authenticated');
+
+        async function init() {
+            const user = await authHelper.refreshUser();
+            if (!user) return authHelper.clearAuth(), window.location.href = '/login.html';
+
+            document.getElementById('welcome-name').textContent = user.username;
+            document.getElementById('welcome-email').textContent = user.email;
+
+            try {
+                const txData = await api.get('/api/transactions/my');
+                const txs = txData.transactions;
+                const confirmed = txs.filter(t => t.status === 'confirmed').length;
+                document.getElementById('stat-deals').textContent = confirmed;
+                document.getElementById('stat-listings').textContent = '\u2013';
+
+                const txList = document.getElementById('transactions-list');
+                if (!txs.length) {
+                    txList.innerHTML = '<div class="text-sepia/30 text-center py-8 text-sm">No transactions yet. Find an item!</div>';
+                } else {
+                    txList.innerHTML = txs.slice(0, 5).map(t => `
+          <div class="flex items-center justify-between py-3 border-b border-sepia/10 last:border-0">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 rounded-xl ${t.photo_url ? '' : 'bg-brand-700/30'} flex items-center justify-center text-lg overflow-hidden">
+                ${t.photo_url ? `<img src="${t.photo_url}" class="w-full h-full object-cover rounded-xl">` : '\ud83c\udff7\ufe0f'}
+              </div>
+              <div>
+                <div class="font-medium text-sm text-cream">${escHtml(t.listing_title)}</div>
+                <div class="text-sepia/40 text-xs">${t.my_role} \u00b7 ${fmtStatus(t.status)}</div>
+              </div>
+            </div>
+            <div class="text-right">
+              <div class="font-semibold text-sm text-brand-400">$${parseFloat(t.final_price).toFixed(2)}</div>
+              <a href="/transaction.html?id=${t.id}" class="text-brand-400 text-xs hover:underline">View \u2192</a>
+            </div>
+          </div>`).join('');
+                }
+            } catch (e) { document.getElementById('transactions-list').innerHTML = '<div class="text-red-400 text-sm text-center py-4">Could not load transactions</div>'; }
+
+            document.getElementById('stat-bids').textContent = '\u2013';
+        }
+
+        function fmtStatus(s) { return { pending: '\u23f3 Pending', confirmed: '\u2705 Confirmed' }[s] || s; }
+        function escHtml(str) { return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+        function logout() { authHelper.clearAuth(); window.location.href = '/'; }
+
+        init();
+    </script>
+</body>
+</html>
