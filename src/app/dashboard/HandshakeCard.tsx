@@ -2,7 +2,14 @@
 
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ShieldCheck, ShieldAlert, Loader2, ArrowRight, CheckCircle2, Clock } from "lucide-react";
+import {
+  ShieldCheck,
+  ShieldAlert,
+  Loader2,
+  ArrowRight,
+  CheckCircle2,
+  Clock,
+} from "lucide-react";
 import { api } from "~/trpc/react";
 
 // ---------------------------------------------------------------------------
@@ -63,7 +70,7 @@ function TokenDisplay({ token, label }: { token: string; label: string }) {
   return (
     <div className="space-y-2">
       <p
-        className="text-[10px] tracking-[0.25em] uppercase"
+        className="text-[0.625rem] tracking-[0.25em] uppercase"
         style={{ color: "var(--text-muted)" }}
       >
         {label}
@@ -71,12 +78,12 @@ function TokenDisplay({ token, label }: { token: string; label: string }) {
       <button
         onClick={handleCopy}
         title="Click to copy"
-        className="group flex items-center gap-3 font-mono text-2xl font-light tracking-[0.3em] transition-opacity hover:opacity-60"
+        className="group flex items-center gap-3 font-mono text-[1.5rem] font-light tracking-[0.3em] transition-opacity hover:opacity-60"
         style={{ color: "var(--text-heading)" }}
       >
         {token}
         <span
-          className="text-[10px] font-sans tracking-widest uppercase opacity-0 transition-opacity group-hover:opacity-100"
+          className="font-sans text-[0.625rem] tracking-widest uppercase opacity-0 transition-opacity group-hover:opacity-100"
           style={{ color: "var(--text-muted)" }}
         >
           {copied ? "Copied" : "Copy"}
@@ -104,7 +111,7 @@ function VerificationPips({
 
   return (
     <div
-      className="flex items-center gap-4 text-xs tracking-widest uppercase"
+      className="flex items-center gap-4 text-[0.75rem] tracking-widest uppercase"
       style={{ color: "var(--text-secondary)" }}
     >
       <span className="flex items-center gap-1.5">
@@ -115,7 +122,10 @@ function VerificationPips({
         )}
         You
       </span>
-      <div className="h-px w-6" style={{ backgroundColor: "var(--border-ui)" }} />
+      <div
+        className="h-px w-6"
+        style={{ backgroundColor: "var(--border-ui)" }}
+      />
       <span className="flex items-center gap-1.5">
         {theirVerified ? (
           <CheckCircle2 size={12} className="text-emerald-500" />
@@ -192,20 +202,20 @@ export function HandshakeCard({ transaction }: TransactionCardProps) {
       >
         <div className="space-y-1">
           <p
-            className="text-[10px] tracking-[0.25em] uppercase"
+            className="text-[0.625rem] tracking-[0.25em] uppercase"
             style={{ color: "var(--text-muted)" }}
           >
             {roleLabel} · Handshake Pending
           </p>
           {/* H3 — heading colour */}
           <h3
-            className="text-lg font-light tracking-wide"
+            className="text-[1.125rem] font-light tracking-wide"
             style={{ color: "var(--text-heading)" }}
           >
             {transaction.listingTitle}
           </h3>
           <p
-            className="text-sm font-light"
+            className="text-[0.875rem] font-light"
             style={{ color: "var(--text-secondary)" }}
           >
             Final Price:{" "}
@@ -232,14 +242,18 @@ export function HandshakeCard({ transaction }: TransactionCardProps) {
             initial="hidden"
             animate="visible"
             exit="hidden"
-            className="p-8 text-center space-y-2"
+            className="space-y-2 p-8 text-center"
           >
-            <CheckCircle2 size={32} className="mx-auto text-emerald-500" strokeWidth={1} />
-            <p className="text-sm tracking-widest uppercase text-emerald-500 font-light">
+            <CheckCircle2
+              size={32}
+              className="mx-auto text-emerald-500"
+              strokeWidth={1}
+            />
+            <p className="text-[0.875rem] font-light tracking-widest text-emerald-500 uppercase">
               Transaction Complete
             </p>
             <p
-              className="text-xs tracking-wide"
+              className="text-[0.75rem] tracking-wide"
               style={{ color: "var(--text-muted)" }}
             >
               Handover Successful.
@@ -271,16 +285,17 @@ export function HandshakeCard({ transaction }: TransactionCardProps) {
 
           {/* Verification input */}
           {myVerifiedAlready ? (
-            <div className="flex items-center gap-2 text-xs tracking-widest uppercase text-emerald-500">
+            <div className="flex items-center gap-2 text-[0.75rem] tracking-widest text-emerald-500 uppercase">
               <CheckCircle2 size={12} />
-              Your verification is confirmed. Awaiting {counterpartyLabel.toLowerCase()}.
+              Your verification is confirmed. Awaiting{" "}
+              {counterpartyLabel.toLowerCase()}.
             </div>
           ) : (
             <form onSubmit={handleVerify} className="space-y-4">
               <div className="space-y-2">
                 <label
                   htmlFor={`token-input-${transaction.id}`}
-                  className="text-[10px] tracking-[0.25em] uppercase"
+                  className="text-[0.625rem] tracking-[0.25em] uppercase"
                   style={{ color: "var(--text-muted)" }}
                 >
                   Enter {counterpartyLabel}&rsquo;s Token to Verify
@@ -294,24 +309,22 @@ export function HandshakeCard({ transaction }: TransactionCardProps) {
                     type="text"
                     maxLength={6}
                     value={tokenInput}
-                    onChange={(e) => setTokenInput(e.target.value.toUpperCase())}
+                    onChange={(e) =>
+                      setTokenInput(e.target.value.toUpperCase())
+                    }
                     placeholder="XXXXXX"
-                    className="flex-1 bg-transparent py-2 font-mono text-lg tracking-[0.3em] focus:outline-none"
+                    className="flex-1 bg-transparent py-2 font-mono text-[1.125rem] tracking-[0.3em] focus:outline-none"
                     style={{
                       color: "var(--text-heading)",
                     }}
                   />
                   <button
                     type="submit"
-                    disabled={verifyMutation.isPending || tokenInput.trim().length !== 6}
-                    className="flex items-center gap-1.5 px-3 text-xs tracking-widest uppercase transition-colors disabled:opacity-30"
+                    disabled={
+                      verifyMutation.isPending || tokenInput.trim().length !== 6
+                    }
+                    className="flex items-center gap-1.5 px-3 text-[0.75rem] tracking-widest uppercase transition-colors disabled:opacity-30 hover:text-[var(--text-heading)]"
                     style={{ color: "var(--text-secondary)" }}
-                    onMouseEnter={(e) => {
-                      e.currentTarget.style.color = "var(--text-heading)";
-                    }}
-                    onMouseLeave={(e) => {
-                      e.currentTarget.style.color = "var(--text-secondary)";
-                    }}
                   >
                     {verifyMutation.isPending ? (
                       <Loader2 size={14} className="animate-spin" />
@@ -330,7 +343,7 @@ export function HandshakeCard({ transaction }: TransactionCardProps) {
                     initial={{ opacity: 0, y: -4 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0 }}
-                    className="text-xs tracking-wide text-rose-400"
+                    className="text-[0.75rem] tracking-wide text-rose-400"
                   >
                     {localError}
                   </motion.p>
@@ -341,7 +354,7 @@ export function HandshakeCard({ transaction }: TransactionCardProps) {
                     initial={{ opacity: 0, y: -4 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0 }}
-                    className="text-xs tracking-wide text-emerald-500"
+                    className="text-[0.75rem] tracking-wide text-emerald-500"
                   >
                     {localSuccess}
                   </motion.p>

@@ -44,12 +44,11 @@ export default function LoginPage() {
     <div className="flex-1 flex items-center justify-center p-6">
       <div className="form-container">
         <div className="space-y-2 text-center">
-          {/* H1 — uses global h1 rule → --text-heading, high contrast */}
-          <h1 className="text-3xl font-light tracking-widest uppercase">
+          <h1 className="text-[1.875rem] font-light tracking-widest uppercase">
             Login
           </h1>
           <p
-            className="text-sm font-light"
+            className="text-[0.875rem] font-light"
             style={{ color: "var(--text-secondary)" }}
           >
             Enter the silent space.
@@ -62,37 +61,36 @@ export default function LoginPage() {
               name="email"
               type="email"
               placeholder="Email"
-              className="input-minimal"
+              className="input-minimal text-[1rem]"
               required
             />
             <input
               name="password"
               type="password"
               placeholder="Password"
-              className="input-minimal"
+              className="input-minimal text-[1rem]"
               required
             />
           </div>
 
           {error && (
-            <p className="text-xs text-red-500 text-center font-light">
+            <p className="text-[0.75rem] text-red-500 text-center font-light">
               {error}
             </p>
           )}
 
-          {/* Primary CTA — stark, unmistakable */}
           <motion.button
             type="submit"
             disabled={loading}
             whileTap={{ scale: 0.98 }}
-            className="btn-solid w-full py-3 text-xs"
+            className="btn-solid w-full py-3 text-[0.75rem] tracking-widest uppercase"
           >
             {loading ? "Verifying..." : "Login"}
           </motion.button>
         </form>
 
         <p
-          className="text-center text-xs font-light"
+          className="text-center text-[0.75rem] font-light"
           style={{ color: "var(--text-muted)" }}
         >
           Don&apos;t have an account?{" "}

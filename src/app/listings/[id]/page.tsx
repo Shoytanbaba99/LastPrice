@@ -72,7 +72,7 @@ export default function ListingPage() {
         <motion.div 
           animate={{ opacity: [0.3, 0.6, 0.3] }}
           transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-          className="text-[10px] tracking-[0.3em] uppercase"
+          className="text-[0.625rem] tracking-[0.3em] uppercase"
           style={{ color: "var(--text-muted)" }}
         >
           Gathering Intel...
@@ -131,14 +131,8 @@ export default function ListingPage() {
         {/* Back nav */}
         <Link 
           href="/" 
-          className="group flex items-center gap-3 text-[10px] tracking-[0.2em] uppercase transition-colors"
+          className="group flex items-center gap-3 text-[0.625rem] tracking-[0.2em] uppercase transition-colors hover:text-[var(--text-heading)]"
           style={{ color: "var(--text-muted)" }}
-          onMouseEnter={(e) => {
-            (e.currentTarget as HTMLAnchorElement).style.color = "var(--text-heading)";
-          }}
-          onMouseLeave={(e) => {
-            (e.currentTarget as HTMLAnchorElement).style.color = "var(--text-muted)";
-          }}
         >
           <ArrowLeft size={14} className="transition-transform group-hover:-translate-x-1" />
           Marketplace
@@ -152,7 +146,7 @@ export default function ListingPage() {
               {/* Mode + ID badges */}
               <div className="flex items-center gap-3">
                 <span
-                  className="px-2 py-0.5 text-[8px] tracking-[0.2em] uppercase border"
+                  className="px-2 py-0.5 text-[0.5rem] tracking-[0.2em] uppercase border"
                   style={{
                     borderColor: "var(--border-faint)",
                     color: "var(--text-muted)",
@@ -162,7 +156,7 @@ export default function ListingPage() {
                 </span>
                 {isShortBurst ? (
                   <span
-                    className="flex items-center gap-1.5 px-2 py-0.5 text-[8px] tracking-[0.2em] uppercase"
+                    className="flex items-center gap-1.5 px-2 py-0.5 text-[0.5rem] tracking-[0.2em] uppercase"
                     style={{
                       backgroundColor: "var(--text-heading)",
                       color: "var(--bg-primary)",
@@ -171,7 +165,7 @@ export default function ListingPage() {
                     <Zap size={10} /> Short Burst
                   </span>
                 ) : (
-                  <span className="flex items-center gap-1.5 px-2 py-0.5 text-[8px] tracking-[0.2em] uppercase bg-red-500/10 text-red-400 border border-red-500/25">
+                  <span className="flex items-center gap-1.5 px-2 py-0.5 text-[0.5rem] tracking-[0.2em] uppercase bg-red-500/10 text-red-400 border border-red-500/25">
                     <Timer size={10} /> Long Burst
                   </span>
                 )}
@@ -179,14 +173,14 @@ export default function ListingPage() {
               
               {/* H1 — crisp */}
               <h1
-                className="text-4xl md:text-5xl lg:text-6xl font-light leading-[1.1] tracking-tight"
+                className="text-[2.5rem] md:text-[3rem] lg:text-[3.5rem] font-light leading-[1.1] tracking-tight"
                 style={{ color: "var(--text-heading)" }}
               >
                 {listing.title}
               </h1>
               
               <p
-                className="text-base md:text-lg font-light leading-relaxed max-w-xl"
+                className="text-[1rem] md:text-[1.125rem] font-light leading-relaxed max-w-xl"
                 style={{ color: "var(--text-secondary)" }}
               >
                 {listing.description}
@@ -199,13 +193,13 @@ export default function ListingPage() {
                 <div className="flex justify-between items-end">
                   {/* H3 — heading colour */}
                   <h3
-                    className="text-[10px] tracking-[0.2em] uppercase font-medium"
+                    className="text-[0.625rem] tracking-[0.2em] uppercase font-medium"
                     style={{ color: "var(--text-heading)" }}
                   >
                     Arena Tension
                   </h3>
                   <span
-                    className="text-[10px] font-mono"
+                    className="text-[0.625rem] font-mono"
                     style={{ color: isHighTension ? "rgb(239, 68, 68)" : "var(--text-primary)" }}
                   >
                     {listing._count.bids > 0 ? "STABILITY: VOLATILE" : "STABILITY: CALM"}
@@ -239,7 +233,7 @@ export default function ListingPage() {
                 </div>
 
                 <p
-                  className="text-[9px] tracking-[0.2em] uppercase"
+                  className="text-[0.5625rem] tracking-[0.2em] uppercase"
                   style={{ color: "var(--text-muted)" }}
                 >
                   {listing._count.bids} bid{listing._count.bids !== 1 ? "s" : ""} recorded
@@ -253,13 +247,13 @@ export default function ListingPage() {
                 <div className="flex justify-between items-end">
                   {/* H3 */}
                   <h3
-                    className="text-[10px] tracking-[0.2em] uppercase font-medium"
+                    className="text-[0.625rem] tracking-[0.2em] uppercase font-medium"
                     style={{ color: "var(--text-heading)" }}
                   >
                     Round {listing.currentRound} of {listing.totalRounds}
                   </h3>
                   <span
-                    className="text-2xl font-light tabular-nums"
+                    className="text-[1.5rem] font-light tabular-nums"
                     style={{ color: "var(--text-heading)" }}
                   >
                     {Math.floor(listing.secondsRemainingInRound)}s
@@ -280,7 +274,7 @@ export default function ListingPage() {
                 </div>
 
                 <p
-                  className="text-[9px] tracking-[0.2em] uppercase"
+                  className="text-[0.5625rem] tracking-[0.2em] uppercase"
                   style={{ color: "var(--text-muted)" }}
                 >
                   Timer resets each round — submit before it drops to zero
@@ -302,18 +296,18 @@ export default function ListingPage() {
               {/* Current peak price */}
               <div className="space-y-1">
                 <p
-                  className="text-[10px] tracking-[0.3em] uppercase mb-2 flex items-center gap-2"
+                  className="text-[0.625rem] tracking-[0.3em] uppercase mb-2 flex items-center gap-2"
                   style={{ color: "var(--text-muted)" }}
                 >
                   <TrendingUp size={12} strokeWidth={1.5} />
                   Current Peak
                 </p>
                 <div
-                  className="text-5xl font-light flex items-baseline gap-1"
+                  className="text-[3rem] font-light flex items-baseline gap-1"
                   style={{ color: "var(--text-heading)" }}
                 >
                   <span
-                    className="text-2xl"
+                    className="text-[1.5rem]"
                     style={{ color: "var(--text-muted)" }}
                   >
                     $
@@ -326,7 +320,7 @@ export default function ListingPage() {
                 </div>
                 {listing.highestBid && (
                   <p
-                    className="text-[10px] mt-2 tracking-wide uppercase"
+                    className="text-[0.625rem] mt-2 tracking-wide uppercase"
                     style={{ color: "var(--text-muted)" }}
                   >
                     Last activity from {listing.highestBid.buyer.name?.split(" ")[0]}
@@ -340,14 +334,14 @@ export default function ListingPage() {
                   <div className="space-y-4">
                     <label 
                       htmlFor="bidAmount" 
-                      className="text-[10px] tracking-[0.25em] uppercase block"
+                      className="text-[0.625rem] tracking-[0.25em] uppercase block"
                       style={{ color: "var(--text-muted)" }}
                     >
                       Offer your price
                     </label>
                     <div className="relative">
                       <span
-                        className="absolute left-0 bottom-3 text-xl font-light"
+                        className="absolute left-0 bottom-3 text-[1.25rem] font-light"
                         style={{ color: "var(--text-muted)" }}
                       >
                         $
@@ -359,7 +353,7 @@ export default function ListingPage() {
                         required
                         value={bidAmount}
                         onChange={(e) => setBidAmount(e.target.value)}
-                        className="w-full bg-transparent border-b py-3 pl-6 text-3xl font-light focus:outline-none transition-colors"
+                        className="w-full bg-transparent border-b py-3 pl-6 text-[1.875rem] font-light focus:outline-none transition-colors"
                         style={{
                           borderBottomColor: "var(--border-ui)",
                           color: "var(--text-heading)",
@@ -381,7 +375,7 @@ export default function ListingPage() {
                         initial={{ opacity: 0, y: 5 }}
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, y: -5 }}
-                        className={`text-[10px] tracking-wider p-4 border flex items-start gap-3 ${
+                        className={`text-[0.625rem] tracking-wider p-4 border flex items-start gap-3 ${
                           feedback.type === "error"
                             ? "text-red-400 bg-red-500/5 border-red-500/20"
                             : "border-border-faint"
@@ -407,7 +401,7 @@ export default function ListingPage() {
                     type="submit"
                     disabled={shortBurstMutation.isPending || longBurstMutation.isPending}
                     whileTap={{ scale: 0.98 }}
-                    className="btn-solid w-full py-5 text-[10px] tracking-[0.4em] group"
+                    className="btn-solid w-full py-5 text-[0.625rem] tracking-[0.4em] group"
                   >
                     <span className="flex items-center justify-center gap-2">
                       Place Intent
@@ -428,13 +422,13 @@ export default function ListingPage() {
                     style={{ color: "var(--text-muted)" }}
                   >
                     <History size={16} strokeWidth={1.5} />
-                    <span className="text-[10px] tracking-[0.2em] uppercase">
+                    <span className="text-[0.625rem] tracking-[0.2em] uppercase">
                       {isSeller ? "You are the orchestrator" : "Arena Access Restricted"}
                     </span>
                   </div>
                   {listing.isEnded && (
                     <p
-                      className="text-xs font-light leading-relaxed"
+                      className="text-[0.75rem] font-light leading-relaxed"
                       style={{ color: "var(--text-muted)" }}
                     >
                       The time of negotiation has passed. This listing is now under review for finalization.
@@ -449,14 +443,14 @@ export default function ListingPage() {
                 style={{ borderColor: "var(--border-faint)" }}
               >
                 <div
-                  className="flex items-center justify-between text-[9px] tracking-[0.2em] uppercase"
+                  className="flex items-center justify-between text-[0.5625rem] tracking-[0.2em] uppercase"
                   style={{ color: "var(--text-muted)" }}
                 >
                   <span>Authenticity Guarantee</span>
                   <ShieldCheck size={14} strokeWidth={1} />
                 </div>
                 <p
-                  className="text-[10px] font-light leading-relaxed opacity-60"
+                  className="text-[0.625rem] font-light leading-relaxed opacity-60"
                   style={{ color: "var(--text-muted)" }}
                 >
                   LastPrice ensures dual-token verification for every completed handshake.

@@ -28,7 +28,6 @@ export default async function DashboardPage() {
           >
             Authenticated Space
           </p>
-          {/* H1 — crisp heading colour from CSS var */}
           <h1
             className="text-[2.5rem] font-light tracking-tight"
             style={{ color: "var(--text-heading)" }}
@@ -56,7 +55,6 @@ export default async function DashboardPage() {
         </div>
 
         {/* ── Pending Handshakes (Transaction Verification) ── */}
-        {/* This renders FIRST — it is the most time-sensitive activity */}
         <PendingHandshakes />
 
         {/* ── Seller's Active Listings ── */}
@@ -69,27 +67,15 @@ export default async function DashboardPage() {
         >
           <Link
             href="/listings/new"
-            className="text-[0.625rem] tracking-[0.3em] uppercase transition-colors"
+            className="text-[0.625rem] tracking-[0.3em] uppercase transition-colors hover:text-[var(--text-heading)]"
             style={{ color: "var(--text-secondary)" }}
-            onMouseEnter={(e) => {
-              (e.currentTarget as HTMLAnchorElement).style.color = "var(--text-heading)";
-            }}
-            onMouseLeave={(e) => {
-              (e.currentTarget as HTMLAnchorElement).style.color = "var(--text-secondary)";
-            }}
           >
             + New Listing
           </Link>
           <Link
             href="/api/auth/signout"
-            className="text-[0.625rem] tracking-[0.3em] uppercase transition-colors"
+            className="text-[0.625rem] tracking-[0.3em] uppercase transition-colors hover:text-[var(--text-secondary)]"
             style={{ color: "var(--text-muted)" }}
-            onMouseEnter={(e) => {
-              (e.currentTarget as HTMLAnchorElement).style.color = "var(--text-secondary)";
-            }}
-            onMouseLeave={(e) => {
-              (e.currentTarget as HTMLAnchorElement).style.color = "var(--text-muted)";
-            }}
           >
             Leave Workspace
           </Link>

@@ -3,12 +3,14 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { api } from "~/trpc/react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
+import { Upload, X, Image as ImageIcon } from "lucide-react";
 
 export default function NewListingPage() {
   const router = useRouter();
   const [saleMode, setSaleMode] = useState<"SHORT_BURST" | "LONG_BURST">("SHORT_BURST");
   const [error, setError] = useState<string | null>(null);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
 
   const createListingMutation = api.listing.create.useMutation({
     onSuccess: (data) => {
@@ -27,6 +29,7 @@ export default function NewListingPage() {
     const title = formData.get("title") as string;
     const description = formData.get("description") as string;
     const imageUrl =
+      previewUrl ||
       (formData.get("imageUrl") as string) ||
       "https://images.unsplash.com/photo-1549492423-400259a2e574?auto=format&fit=crop&q=80&w=1000";
     const displayPrice = parseFloat(formData.get("displayPrice") as string);
@@ -41,7 +44,6 @@ export default function NewListingPage() {
         ? parseInt(formData.get("burstRounds") as string)
         : undefined;
     
-    // Default expiration to 7 days for MVP
     const expiresAt = new Date();
     expiresAt.setDate(expiresAt.getDate() + 7);
 
@@ -66,14 +68,13 @@ export default function NewListingPage() {
       <div className="w-full max-w-2xl space-y-12">
         <div className="space-y-4 text-center">
           <p
-            className="text-xs uppercase tracking-[0.3em] font-light"
+            className="text-[0.625rem] uppercase tracking-[0.3em] font-light"
             style={{ color: "var(--text-muted)" }}
           >
             New Origin
           </p>
-          {/* H1 — crisp heading colour */}
           <h1
-            className="text-4xl font-light tracking-tight"
+            className="text-[2.5rem] font-light tracking-tight"
             style={{ color: "var(--text-heading)" }}
           >
             Create Listing
@@ -112,43 +113,81 @@ export default function NewListingPage() {
               {/* Image Selection */}
               <div className="space-y-3">
                 <label className="text-[0.75rem] tracking-widest uppercase font-light" style={{ color: "var(--text-muted)" }}>
-                  Visual Manifestation
+                  Visual Representation
                 </label>
-                <div className="flex flex-col gap-4">
-                  <input
-                    name="imageUrl"
-                    type="url"
-                    placeholder="External Image URL (optional)"
-                    className="input-minimal text-[1rem]"
-                  />
-                  <div className="relative">
-                    <input
-                      type="file"
-                      accept="image/*"
-                      onChange={async (e) => {
-                        const file = e.target.files?.[0];
-                        if (file) {
-                          const reader = new FileReader();
-                          reader.onloadend = () => {
-                            const base64String = reader.result as string;
-                            const urlInput = document.querySelector('input[name="imageUrl"]') as HTMLInputElement;
-                            if (urlInput) urlInput.value = base64String;
-                          };
-                          reader.readAsDataURL(file);
-                        }
-                      }}
-                      className="hidden"
-                      id="file-upload"
-                    />
-                    <label
-                      htmlFor="file-upload"
-                      className="flex items-center justify-center gap-2 border-2 border-dashed py-8 cursor-pointer transition-all hover:bg-[var(--bg-subtle)]"
-                      style={{ borderColor: "var(--border-faint)", color: "var(--text-muted)" }}
+                
+                <AnimatePresence>
+                  {previewUrl && (
+                    <motion.div 
+                      initial={{ opacity: 0, scale: 0.95 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      exit={{ opacity: 0, scale: 0.95 }}
+                      className="relative aspect-video w-full overflow-hidden rounded-sm border mb-4"
+                      style={{ borderColor: "var(--border-faint)" }}
                     >
-                      <span className="text-[0.625rem] tracking-[0.2em] uppercase">Upload Local Image</span>
-                    </label>
+                      <img src={previewUrl} alt="Preview" className="h-full w-full object-cover" />
+                      <button
+                        type="button"
+                        onClick={() => setPreviewUrl(null)}
+                        className="absolute top-2 right-2 p-1 bg-black/50 rounded-full text-white hover:bg-black/70 transition-colors"
+                      >
+                        <X size={16} />
+                      </button>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+
+                {!previewUrl && (
+                  <div className="flex flex-col gap-4">
+                    <div className="relative">
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={async (e) => {
+                          const file = e.target.files?.[0];
+                          if (file) {
+                            const reader = new FileReader();
+                            reader.onloadend = () => {
+                              setPreviewUrl(reader.result as string);
+                            };
+                            reader.readAsDataURL(file);
+                          }
+                        }}
+                        className="hidden"
+                        id="file-upload"
+                      />
+                      <label
+                        htmlFor="file-upload"
+                        className="flex flex-col items-center justify-center gap-3 border-2 border-dashed py-12 cursor-pointer transition-all hover:bg-[var(--bg-subtle)] hover:border-[var(--text-muted)]"
+                        style={{ borderColor: "var(--border-faint)", color: "var(--text-muted)" }}
+                      >
+                        <Upload size={24} strokeWidth={1} />
+                        <span className="text-[0.625rem] tracking-[0.2em] uppercase">Upload Local Image</span>
+                      </label>
+                    </div>
+                    
+                    <div className="flex items-center gap-4">
+                      <div className="h-px flex-1" style={{ backgroundColor: "var(--border-faint)" }} />
+                      <span className="text-[0.5rem] tracking-[0.2em] uppercase" style={{ color: "var(--text-muted)" }}>OR</span>
+                      <div className="h-px flex-1" style={{ backgroundColor: "var(--border-faint)" }} />
+                    </div>
+
+                    <div className="relative flex items-center">
+                      <ImageIcon size={14} className="absolute left-3" style={{ color: "var(--text-muted)" }} />
+                      <input
+                        name="imageUrl"
+                        type="url"
+                        placeholder="Paste Image URL"
+                        className="input-minimal text-[1rem] pl-10"
+                        onChange={(e) => {
+                          if (e.target.value.startsWith('http')) {
+                            setPreviewUrl(e.target.value);
+                          }
+                        }}
+                      />
+                    </div>
                   </div>
-                </div>
+                )}
               </div>
             </div>
           </div>
@@ -172,14 +211,17 @@ export default function NewListingPage() {
                 >
                   Display Price
                 </label>
-                <input
-                  name="displayPrice"
-                  type="number"
-                  step="0.01"
-                  min="0"
-                  required
-                  className="input-minimal text-[1rem]"
-                />
+                <div className="relative flex items-center">
+                   <span className="absolute left-0 text-[1rem]" style={{ color: "var(--text-muted)" }}>$</span>
+                   <input
+                    name="displayPrice"
+                    type="number"
+                    step="0.01"
+                    min="0"
+                    required
+                    className="input-minimal text-[1rem] pl-4"
+                  />
+                </div>
               </div>
               <div className="space-y-2">
                 <label
@@ -188,14 +230,17 @@ export default function NewListingPage() {
                 >
                   Reserve Price (Hidden)
                 </label>
-                <input
-                  name="reservePrice"
-                  type="number"
-                  step="0.01"
-                  min="0"
-                  required
-                  className="input-minimal text-[1rem]"
-                />
+                <div className="relative flex items-center">
+                  <span className="absolute left-0 text-[1rem]" style={{ color: "var(--text-muted)" }}>$</span>
+                  <input
+                    name="reservePrice"
+                    type="number"
+                    step="0.01"
+                    min="0"
+                    required
+                    className="input-minimal text-[1rem] pl-4"
+                  />
+                </div>
               </div>
             </div>
           </div>
@@ -317,7 +362,7 @@ export default function NewListingPage() {
               type="submit"
               disabled={createListingMutation.isPending}
               whileTap={{ scale: 0.98 }}
-              className="btn-solid px-16 py-4 text-[0.75rem]"
+              className="btn-solid px-16 py-4 text-[0.75rem] tracking-[0.3em] uppercase"
             >
               {createListingMutation.isPending ? "Manifesting..." : "Publish to Market"}
             </motion.button>

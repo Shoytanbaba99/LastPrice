@@ -24,7 +24,8 @@ const containerVariants = {
 // ---------------------------------------------------------------------------
 
 export function PendingHandshakes() {
-  const { data: transactions, isLoading } = api.transaction.getMyTransactions.useQuery();
+  const { data: transactions, isLoading } =
+    api.transaction.getMyTransactions.useQuery();
 
   if (isLoading) {
     return (
@@ -33,7 +34,7 @@ export function PendingHandshakes() {
         style={{ borderColor: "var(--border-faint)" }}
       >
         <div
-          className="flex items-center gap-2 text-[10px] tracking-[0.3em] uppercase"
+          className="flex items-center gap-2 text-[0.625rem] tracking-[0.3em] uppercase"
           style={{ color: "var(--text-muted)" }}
         >
           <Handshake size={12} strokeWidth={1.5} />
@@ -48,7 +49,9 @@ export function PendingHandshakes() {
   }
 
   // Split into pending (PENDING_HANDOVER) and completed (COMPLETED)
-  const pending = transactions.filter((tx) => tx.listingStatus === "PENDING_HANDOVER");
+  const pending = transactions.filter(
+    (tx) => tx.listingStatus === "PENDING_HANDOVER",
+  );
   const completed = transactions.filter(
     (tx) => tx.buyerVerified && tx.sellerVerified,
   );
@@ -64,9 +67,13 @@ export function PendingHandshakes() {
     >
       {/* Section header */}
       <div className="flex items-center gap-3">
-        <Handshake size={14} strokeWidth={1.5} style={{ color: "var(--text-muted)" }} />
+        <Handshake
+          size={14}
+          strokeWidth={1.5}
+          style={{ color: "var(--text-muted)" }}
+        />
         <p
-          className="text-[10px] tracking-[0.3em] uppercase"
+          className="text-[0.625rem] tracking-[0.3em] uppercase"
           style={{ color: "var(--text-secondary)" }}
         >
           Pending Handshakes
@@ -89,14 +96,20 @@ export function PendingHandshakes() {
         {completed.length > 0 && (
           <>
             <div className="flex items-center gap-3 pt-6">
-              <div className="h-px flex-1" style={{ backgroundColor: "var(--border-faint)" }} />
+              <div
+                className="h-px flex-1"
+                style={{ backgroundColor: "var(--border-faint)" }}
+              />
               <p
-                className="text-[10px] tracking-[0.25em] uppercase"
+                className="text-[0.625rem] tracking-[0.25em] uppercase"
                 style={{ color: "var(--text-muted)" }}
               >
                 Completed
               </p>
-              <div className="h-px flex-1" style={{ backgroundColor: "var(--border-faint)" }} />
+              <div
+                className="h-px flex-1"
+                style={{ backgroundColor: "var(--border-faint)" }}
+              />
             </div>
             {completed.map((tx) => (
               <div key={tx.id} className="opacity-50">

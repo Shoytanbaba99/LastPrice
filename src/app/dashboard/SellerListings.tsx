@@ -49,7 +49,7 @@ function StatusBadge({ status }: { status: string }) {
 export function SellerListings() {
   const { data: listings, isLoading, refetch } = api.listing.getMyListings.useQuery();
   const [actionFeedback, setActionFeedback] = useState<Record<string, string>>({});
-  const [hideCompleted, setHideCompleted] = useState(false);
+  const [hideEnded, setHideEnded] = useState(false);
 
   const manualAcceptMutation = api.bid.manualAccept.useMutation({
     onSuccess: (_, variables) => {
@@ -84,7 +84,7 @@ export function SellerListings() {
   }
 
   const filteredListings = listings?.filter((listing) => {
-    if (hideCompleted && (listing.status === "COMPLETED" || listing.status === "EXPIRED")) {
+    if (hideEnded && (listing.status === "COMPLETED" || listing.status === "EXPIRED")) {
       return false;
     }
     return true;
@@ -99,7 +99,7 @@ export function SellerListings() {
         <div className="space-y-4 text-center">
           <PackageOpen size={24} strokeWidth={1} style={{ color: "var(--text-xmuted)" }} className="mx-auto" />
           <p
-            className="text-sm font-light italic"
+            className="text-[0.875rem] font-light italic"
             style={{ color: "var(--text-muted)" }}
           >
             No listings yet.
@@ -137,11 +137,11 @@ export function SellerListings() {
         </div>
 
         <button
-          onClick={() => setHideCompleted(!hideCompleted)}
+          onClick={() => setHideEnded(!hideEnded)}
           className="text-[0.625rem] tracking-widest uppercase transition-colors"
-          style={{ color: hideCompleted ? "var(--text-heading)" : "var(--text-muted)" }}
+          style={{ color: hideEnded ? "var(--text-heading)" : "var(--text-muted)" }}
         >
-          {hideCompleted ? "[ Show All ]" : "[ Hide Ended ]"}
+          {hideEnded ? "[ Show All ]" : "[ Hide Ended ]"}
         </button>
       </div>
 
@@ -191,14 +191,8 @@ export function SellerListings() {
                 <Link
                   href={`/listings/${listing.id}`}
                   title="View listing"
-                  className="mt-0.5 transition-colors"
+                  className="mt-0.5 transition-colors hover:text-[var(--text-heading)]"
                   style={{ color: "var(--text-muted)" }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.color = "var(--text-heading)";
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.color = "var(--text-muted)";
-                  }}
                 >
                   <ArrowUpRight size={16} />
                 </Link>
@@ -248,16 +242,8 @@ export function SellerListings() {
                               })
                             }
                             disabled={manualAcceptMutation.isPending}
-                            className="text-[0.625rem] tracking-[0.25em] uppercase transition-colors disabled:opacity-30 border-b border-transparent pb-0.5"
+                            className="text-[0.625rem] tracking-[0.25em] uppercase transition-colors disabled:opacity-30 border-b border-transparent pb-0.5 hover:text-[var(--text-heading)] hover:border-[var(--text-heading)]"
                             style={{ color: "var(--text-secondary)" }}
-                            onMouseEnter={(e) => {
-                              e.currentTarget.style.color = "var(--text-heading)";
-                              e.currentTarget.style.borderColor = "var(--text-heading)";
-                            }}
-                            onMouseLeave={(e) => {
-                              e.currentTarget.style.color = "var(--text-secondary)";
-                              e.currentTarget.style.borderColor = "transparent";
-                            }}
                           >
                             Accept
                           </button>

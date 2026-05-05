@@ -86,7 +86,7 @@ export function Navbar() {
           aria-label="LastPrice home"
         >
           <Gavel size={16} strokeWidth={1.5} className="text-ui-secondary" />
-          <span className="text-lg font-medium tracking-tighter text-ui-primary">
+          <span className="text-[1.125rem] font-medium tracking-tighter text-ui-primary">
             Last<span className="font-light text-ui-secondary">Price</span>
           </span>
         </Link>
@@ -96,7 +96,7 @@ export function Navbar() {
           {/* Marketplace link — always visible */}
           <Link
             href="/"
-            className="text-xs font-light tracking-widest uppercase text-ui-secondary transition-colors hover:text-ui-primary"
+            className="text-[0.75rem] font-light tracking-widest uppercase text-ui-secondary transition-colors hover:text-ui-primary"
           >
             Market
           </Link>
@@ -108,19 +108,19 @@ export function Navbar() {
                 <>
                   <Link
                     href="/listings/new"
-                    className="text-xs font-light tracking-widest uppercase text-ui-secondary transition-colors hover:text-ui-primary"
+                    className="text-[0.75rem] font-light tracking-widest uppercase text-ui-secondary transition-colors hover:text-ui-primary"
                   >
                     Sell
                   </Link>
                   <Link
                     href="/dashboard"
-                    className="text-xs font-light tracking-widest uppercase text-ui-secondary transition-colors hover:text-ui-primary"
+                    className="text-[0.75rem] font-light tracking-widest uppercase text-ui-secondary transition-colors hover:text-ui-primary"
                   >
                     Dashboard
                   </Link>
                   <button
                     onClick={() => void signOut({ callbackUrl: "/" })}
-                    className="text-xs font-light tracking-widest uppercase text-ui-muted transition-colors hover:text-ui-secondary"
+                    className="text-[0.75rem] font-light tracking-widest uppercase text-ui-muted transition-colors hover:text-ui-secondary"
                   >
                     Exit
                   </button>
@@ -129,13 +129,13 @@ export function Navbar() {
                 <>
                   <Link
                     href="/login"
-                    className="text-xs font-light tracking-widest uppercase text-ui-secondary transition-colors hover:text-ui-primary"
+                    className="text-[0.75rem] font-light tracking-widest uppercase text-ui-secondary transition-colors hover:text-ui-primary"
                   >
                     Enter
                   </Link>
                   <Link
                     href="/register"
-                    className="text-xs font-light tracking-widest uppercase text-ui-secondary transition-colors hover:text-ui-primary"
+                    className="text-[0.75rem] font-light tracking-widest uppercase text-ui-secondary transition-colors hover:text-ui-primary"
                   >
                     Join
                   </Link>

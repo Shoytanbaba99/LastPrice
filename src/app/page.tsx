@@ -2,8 +2,9 @@
 
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { Zap, Timer, Tag, Users, ArrowRight, Inbox } from "lucide-react";
+import { Zap, Timer, Tag, Users, ArrowRight, Inbox, Eye, EyeOff } from "lucide-react";
 import { api } from "~/trpc/react";
+import { useState } from "react";
 
 // ---------------------------------------------------------------------------
 // Framer Motion variants
@@ -45,6 +46,7 @@ interface Listing {
   imageUrl: string;
   displayPrice: number;
   saleMode: string;
+  status: string;
   createdAt: Date;
   seller: { id: string; name: string | null };
   _count: { bids: number };
@@ -68,7 +70,7 @@ function ListingPlaceholder() {
 
 function ListingCard({ listing }: { listing: Listing }) {
   const isShortBurst = listing.saleMode === "SHORT_BURST";
-  const hasImage = listing.imageUrl?.startsWith("http");
+  const hasImage = listing.imageUrl?.startsWith("http") || listing.imageUrl?.startsWith("data:image");
 
   return (
     <motion.article
@@ -113,7 +115,7 @@ function ListingCard({ listing }: { listing: Listing }) {
             )}
           </span>
 
-          {!isShortBurst && (
+          {listing.status === "ACTIVE" && !isShortBurst && (
             <motion.span
               animate={{ opacity: [0.4, 1, 0.4] }}
               transition={{ duration: 2.5, repeat: Infinity, ease: "easeInOut" }}
@@ -123,13 +125,20 @@ function ListingCard({ listing }: { listing: Listing }) {
               Live
             </motion.span>
           )}
+
+          {listing.status !== "ACTIVE" && (
+            <span
+              className="px-2 py-0.5 text-[0.5rem] tracking-[0.15em] uppercase bg-neutral-500/10 text-neutral-400 border border-neutral-500/25 backdrop-blur-sm"
+            >
+              {listing.status}
+            </span>
+          )}
         </div>
       </div>
 
       {/* Body */}
       <div className="flex flex-1 flex-col gap-4 p-5">
         <div className="space-y-1">
-          {/* H2 uses text-ui-heading — crisp contrast */}
           <h2
             className="text-[1rem] font-medium leading-snug tracking-wide transition-opacity group-hover:opacity-70"
             style={{ color: "var(--text-heading)" }}
@@ -186,7 +195,7 @@ function ListingCard({ listing }: { listing: Listing }) {
               color: "var(--text-heading)",
             }}
           >
-            Enter Arena
+            {listing.status === "ACTIVE" ? "Enter Arena" : "View Results"}
             <ArrowRight
               size={12}
               strokeWidth={2}
@@ -224,6 +233,14 @@ function CardSkeleton() {
 
 export default function MarketplacePage() {
   const { data: listings, isLoading } = api.listing.getAllActive.useQuery();
+  const [hideEnded, setHideEnded] = useState(false);
+
+  const filteredListings = listings?.filter((listing) => {
+    if (hideEnded && listing.status !== "ACTIVE") {
+      return false;
+    }
+    return true;
+  });
 
   return (
     <main className="flex-1 surface-primary">
@@ -241,7 +258,6 @@ export default function MarketplacePage() {
           >
             Live Market
           </p>
-          {/* H1 — crisp, high contrast via CSS var --text-heading */}
           <h1
             className="text-[3rem] font-light tracking-tight md:text-[3.75rem]"
             style={{ color: "var(--text-heading)" }}
@@ -257,9 +273,25 @@ export default function MarketplacePage() {
         </div>
       </motion.section>
 
-      {/* ── Divider ── */}
+      {/* ── Filter Bar ── */}
       <div className="mx-auto max-w-7xl px-6 md:px-12">
-        <div className="divider-ui" />
+        <div className="flex items-center justify-between py-6 border-y" style={{ borderColor: "var(--border-faint)" }}>
+          <p className="text-[0.625rem] tracking-[0.3em] uppercase" style={{ color: "var(--text-muted)" }}>
+            {filteredListings?.length ?? 0} manifest{filteredListings?.length !== 1 ? "s" : ""} available
+          </p>
+          
+          <button
+            onClick={() => setHideEnded(!hideEnded)}
+            className="flex items-center gap-2 text-[0.625rem] tracking-[0.2em] uppercase transition-colors hover:text-[var(--text-heading)]"
+            style={{ color: hideEnded ? "var(--text-heading)" : "var(--text-muted)" }}
+          >
+            {hideEnded ? (
+              <><Eye size={12} /> Showing Active Only</>
+            ) : (
+              <><EyeOff size={12} /> Including Ended</>
+            )}
+          </button>
+        </div>
       </div>
 
       {/* ── Listings Grid ── */}
@@ -270,7 +302,7 @@ export default function MarketplacePage() {
               <CardSkeleton key={i} />
             ))}
           </div>
-        ) : !listings || listings.length === 0 ? (
+        ) : !filteredListings || filteredListings.length === 0 ? (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -283,7 +315,7 @@ export default function MarketplacePage() {
                 className="text-[0.875rem] font-light italic"
                 style={{ color: "var(--text-muted)" }}
               >
-                No active listings at this moment.
+                {hideEnded ? "No active listings found." : "No listings manifest yet."}
               </p>
               <p
                 className="text-[0.625rem] tracking-[0.3em] uppercase"
@@ -292,18 +324,15 @@ export default function MarketplacePage() {
                 The silence is temporary.
               </p>
             </div>
-            <motion.div whileTap={{ scale: 0.97 }}>
-              <Link
-                href="/listings/new"
-                className="mt-2 border-b pb-0.5 text-[0.625rem] tracking-[0.3em] uppercase font-semibold transition-opacity hover:opacity-60"
-                style={{
-                  borderColor: "var(--text-heading)",
-                  color: "var(--text-heading)",
-                }}
+            {hideEnded && (
+              <button 
+                onClick={() => setHideEnded(false)}
+                className="text-[0.625rem] tracking-[0.3em] uppercase border-b pb-0.5"
+                style={{ borderColor: "var(--text-heading)", color: "var(--text-heading)" }}
               >
-                Open the First Listing
-              </Link>
-            </motion.div>
+                Show All
+              </button>
+            )}
           </motion.div>
         ) : (
           <motion.div
@@ -312,7 +341,7 @@ export default function MarketplacePage() {
             animate="visible"
             className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3"
           >
-            {listings.map((listing) => (
+            {filteredListings.map((listing) => (
               <ListingCard key={listing.id} listing={listing} />
             ))}
           </motion.div>
