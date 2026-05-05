@@ -519,7 +519,7 @@ export default function ListingPage() {
                                     whileTap={{ scale: 0.95 }}
                                     onClick={() => manualAcceptMutation.mutate({ listingId: id, bidId: bid.id })}
                                     disabled={manualAcceptMutation.isPending}
-                                    className="px-6 py-2 text-[0.625rem] tracking-[0.3em] uppercase bg-white text-black font-medium transition-all shadow-[0_0_15px_rgba(255,255,255,0.1)] hover:shadow-[0_0_25px_rgba(255,255,255,0.2)] disabled:opacity-50"
+                                    className="px-4 py-1.5 text-[0.625rem] tracking-[0.2em] uppercase bg-white text-black font-medium transition-all shadow-[0_0_15px_rgba(255,255,255,0.1)] hover:shadow-[0_0_25px_rgba(255,255,255,0.2)] disabled:opacity-50"
                                   >
                                     Accept Manifest
                                   </motion.button>
