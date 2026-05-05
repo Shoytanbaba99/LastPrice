@@ -36,7 +36,7 @@ function StatusBadge({ status }: { status: string }) {
   };
   const colour = colourMap[status] ?? "text-neutral-400";
   return (
-    <span className={`text-[10px] tracking-widest uppercase ${colour}`}>
+    <span className={`text-[0.625rem] tracking-widest uppercase ${colour}`}>
       {status.replace("_", " ")}
     </span>
   );
@@ -49,6 +49,7 @@ function StatusBadge({ status }: { status: string }) {
 export function SellerListings() {
   const { data: listings, isLoading, refetch } = api.listing.getMyListings.useQuery();
   const [actionFeedback, setActionFeedback] = useState<Record<string, string>>({});
+  const [hideCompleted, setHideCompleted] = useState(false);
 
   const manualAcceptMutation = api.bid.manualAccept.useMutation({
     onSuccess: (_, variables) => {
@@ -73,7 +74,7 @@ export function SellerListings() {
         style={{ borderColor: "var(--border-faint)" }}
       >
         <p
-          className="text-[10px] tracking-[0.3em] uppercase"
+          className="text-[0.625rem] tracking-[0.3em] uppercase"
           style={{ color: "var(--text-muted)" }}
         >
           Loading listings...
@@ -81,6 +82,13 @@ export function SellerListings() {
       </div>
     );
   }
+
+  const filteredListings = listings?.filter((listing) => {
+    if (hideCompleted && (listing.status === "COMPLETED" || listing.status === "EXPIRED")) {
+      return false;
+    }
+    return true;
+  });
 
   if (!listings || listings.length === 0) {
     return (
@@ -98,7 +106,7 @@ export function SellerListings() {
           </p>
           <Link
             href="/listings/new"
-            className="inline-block border-b pb-0.5 text-[10px] tracking-[0.3em] uppercase transition-opacity hover:opacity-50"
+            className="inline-block border-b pb-0.5 text-[0.625rem] tracking-[0.3em] uppercase transition-opacity hover:opacity-50"
             style={{
               borderColor: "var(--text-heading)",
               color: "var(--text-heading)",
@@ -116,15 +124,25 @@ export function SellerListings() {
       className="mt-16 w-full space-y-8 border-t pt-12"
       style={{ borderColor: "var(--border-faint)" }}
     >
-      {/* Section header */}
-      <div className="flex items-center gap-3">
-        <PackageCheck size={14} strokeWidth={1.5} style={{ color: "var(--text-muted)" }} />
-        <p
-          className="text-[10px] tracking-[0.3em] uppercase"
-          style={{ color: "var(--text-secondary)" }}
+      {/* Section header with filter */}
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <PackageCheck size={14} strokeWidth={1.5} style={{ color: "var(--text-muted)" }} />
+          <p
+            className="text-[0.625rem] tracking-[0.3em] uppercase"
+            style={{ color: "var(--text-secondary)" }}
+          >
+            Your Listings
+          </p>
+        </div>
+
+        <button
+          onClick={() => setHideCompleted(!hideCompleted)}
+          className="text-[0.625rem] tracking-widest uppercase transition-colors"
+          style={{ color: hideCompleted ? "var(--text-heading)" : "var(--text-muted)" }}
         >
-          Your Listings
-        </p>
+          {hideCompleted ? "[ Show All ]" : "[ Hide Ended ]"}
+        </button>
       </div>
 
       <motion.div
@@ -133,7 +151,7 @@ export function SellerListings() {
         animate="visible"
         className="space-y-5"
       >
-        {listings.map((listing) => {
+        {filteredListings?.map((listing) => {
           const feedback = actionFeedback[listing.id];
           const isActive = listing.status === "ACTIVE";
 
@@ -150,7 +168,7 @@ export function SellerListings() {
                     <StatusBadge status={listing.status} />
                     <span style={{ color: "var(--border-ui)" }}>·</span>
                     <span
-                      className="text-[10px] tracking-widest uppercase"
+                      className="text-[0.625rem] tracking-widest uppercase"
                       style={{ color: "var(--text-muted)" }}
                     >
                       {listing.saleMode.replace("_", " ")}
@@ -158,13 +176,13 @@ export function SellerListings() {
                   </div>
                   {/* H3 — heading colour */}
                   <h3
-                    className="text-base font-light tracking-wide"
+                    className="text-[1rem] font-light tracking-wide"
                     style={{ color: "var(--text-heading)" }}
                   >
                     {listing.title}
                   </h3>
                   <p
-                    className="text-xs"
+                    className="text-[0.75rem]"
                     style={{ color: "var(--text-muted)" }}
                   >
                     Reserve: ${listing.reservePrice.toFixed(2)}
@@ -193,7 +211,7 @@ export function SellerListings() {
                   style={{ borderColor: "var(--border-faint)" }}
                 >
                   <p
-                    className="text-[10px] tracking-[0.25em] uppercase"
+                    className="text-[0.625rem] tracking-[0.25em] uppercase"
                     style={{ color: "var(--text-muted)" }}
                   >
                     Recent Bids
@@ -207,13 +225,13 @@ export function SellerListings() {
                       >
                         <div>
                           <p
-                            className="text-lg font-light"
+                            className="text-[1.125rem] font-light"
                             style={{ color: "var(--text-heading)" }}
                           >
                             ${bid.amount.toFixed(2)}
                           </p>
                           <p
-                            className="text-[11px]"
+                            className="text-[0.6875rem]"
                             style={{ color: "var(--text-muted)" }}
                           >
                             {bid.buyer.name ?? bid.buyer.email}
@@ -230,7 +248,7 @@ export function SellerListings() {
                               })
                             }
                             disabled={manualAcceptMutation.isPending}
-                            className="text-[10px] tracking-[0.25em] uppercase transition-colors disabled:opacity-30 border-b border-transparent pb-0.5"
+                            className="text-[0.625rem] tracking-[0.25em] uppercase transition-colors disabled:opacity-30 border-b border-transparent pb-0.5"
                             style={{ color: "var(--text-secondary)" }}
                             onMouseEnter={(e) => {
                               e.currentTarget.style.color = "var(--text-heading)";
@@ -254,7 +272,7 @@ export function SellerListings() {
                   style={{ borderColor: "var(--border-faint)" }}
                 >
                   <p
-                    className="text-xs italic"
+                    className="text-[0.75rem] italic"
                     style={{ color: "var(--text-muted)" }}
                   >
                     No bids received yet.
@@ -269,7 +287,7 @@ export function SellerListings() {
                   style={{ borderColor: "var(--border-faint)" }}
                 >
                   <p
-                    className="text-[11px] tracking-wide"
+                    className="text-[0.6875rem] tracking-wide"
                     style={{ color: "var(--text-secondary)" }}
                   >
                     {feedback}

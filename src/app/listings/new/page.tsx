@@ -85,13 +85,13 @@ export default function NewListingPage() {
           {/* ── Core Info ── */}
           <div className="space-y-6">
             <h2
-              className="text-sm tracking-widest uppercase border-b pb-2"
+              className="text-[0.875rem] tracking-widest uppercase border-b pb-2"
               style={{
                 color: "var(--text-secondary)",
                 borderColor: "var(--border-faint)",
               }}
             >
-              The Object
+              Listing Details
             </h2>
             <div className="space-y-4">
               <input
@@ -99,28 +99,64 @@ export default function NewListingPage() {
                 type="text"
                 placeholder="Title"
                 required
-                className="input-minimal text-lg py-4"
+                className="input-minimal text-[1.125rem] py-4"
               />
               <textarea
                 name="description"
                 placeholder="Description"
                 required
                 rows={3}
-                className="input-minimal resize-none"
+                className="input-minimal resize-none text-[1rem]"
               />
-              <input
-                name="imageUrl"
-                type="url"
-                placeholder="Image URL (optional)"
-                className="input-minimal"
-              />
+              
+              {/* Image Selection */}
+              <div className="space-y-3">
+                <label className="text-[0.75rem] tracking-widest uppercase font-light" style={{ color: "var(--text-muted)" }}>
+                  Visual Manifestation
+                </label>
+                <div className="flex flex-col gap-4">
+                  <input
+                    name="imageUrl"
+                    type="url"
+                    placeholder="External Image URL (optional)"
+                    className="input-minimal text-[1rem]"
+                  />
+                  <div className="relative">
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={async (e) => {
+                        const file = e.target.files?.[0];
+                        if (file) {
+                          const reader = new FileReader();
+                          reader.onloadend = () => {
+                            const base64String = reader.result as string;
+                            const urlInput = document.querySelector('input[name="imageUrl"]') as HTMLInputElement;
+                            if (urlInput) urlInput.value = base64String;
+                          };
+                          reader.readAsDataURL(file);
+                        }
+                      }}
+                      className="hidden"
+                      id="file-upload"
+                    />
+                    <label
+                      htmlFor="file-upload"
+                      className="flex items-center justify-center gap-2 border-2 border-dashed py-8 cursor-pointer transition-all hover:bg-[var(--bg-subtle)]"
+                      style={{ borderColor: "var(--border-faint)", color: "var(--text-muted)" }}
+                    >
+                      <span className="text-[0.625rem] tracking-[0.2em] uppercase">Upload Local Image</span>
+                    </label>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
 
           {/* ── Pricing ── */}
           <div className="space-y-6">
             <h2
-              className="text-sm tracking-widest uppercase border-b pb-2"
+              className="text-[0.875rem] tracking-widest uppercase border-b pb-2"
               style={{
                 color: "var(--text-secondary)",
                 borderColor: "var(--border-faint)",
@@ -131,7 +167,7 @@ export default function NewListingPage() {
             <div className="grid grid-cols-2 gap-6">
               <div className="space-y-2">
                 <label
-                  className="text-xs font-light"
+                  className="text-[0.75rem] font-light"
                   style={{ color: "var(--text-secondary)" }}
                 >
                   Display Price
@@ -142,12 +178,12 @@ export default function NewListingPage() {
                   step="0.01"
                   min="0"
                   required
-                  className="input-minimal"
+                  className="input-minimal text-[1rem]"
                 />
               </div>
               <div className="space-y-2">
                 <label
-                  className="text-xs font-light"
+                  className="text-[0.75rem] font-light"
                   style={{ color: "var(--text-secondary)" }}
                 >
                   Reserve Price (Hidden)
@@ -158,7 +194,7 @@ export default function NewListingPage() {
                   step="0.01"
                   min="0"
                   required
-                  className="input-minimal"
+                  className="input-minimal text-[1rem]"
                 />
               </div>
             </div>
@@ -167,7 +203,7 @@ export default function NewListingPage() {
           {/* ── Exchange Mode ── */}
           <div className="space-y-6">
             <h2
-              className="text-sm tracking-widest uppercase border-b pb-2"
+              className="text-[0.875rem] tracking-widest uppercase border-b pb-2"
               style={{
                 color: "var(--text-secondary)",
                 borderColor: "var(--border-faint)",
@@ -181,7 +217,7 @@ export default function NewListingPage() {
               <button
                 type="button"
                 onClick={() => setSaleMode("SHORT_BURST")}
-                className="flex-1 py-4 text-xs tracking-widest uppercase transition-all duration-300 border"
+                className="flex-1 py-4 text-[0.75rem] tracking-widest uppercase transition-all duration-300 border"
                 style={
                   saleMode === "SHORT_BURST"
                     ? {
@@ -201,7 +237,7 @@ export default function NewListingPage() {
               <button
                 type="button"
                 onClick={() => setSaleMode("LONG_BURST")}
-                className="flex-1 py-4 text-xs tracking-widest uppercase transition-all duration-300 border"
+                className="flex-1 py-4 text-[0.75rem] tracking-widest uppercase transition-all duration-300 border"
                 style={
                   saleMode === "LONG_BURST"
                     ? {
@@ -223,7 +259,7 @@ export default function NewListingPage() {
             {saleMode === "SHORT_BURST" && (
               <div className="space-y-2 animate-in fade-in slide-in-from-top-2 duration-500">
                 <label
-                  className="text-xs font-light"
+                  className="text-[0.75rem] font-light"
                   style={{ color: "var(--text-secondary)" }}
                 >
                   Number of Chances per Bidder
@@ -234,10 +270,10 @@ export default function NewListingPage() {
                   min="1"
                   defaultValue="3"
                   required
-                  className="input-minimal"
+                  className="input-minimal text-[1rem]"
                 />
                 <p
-                  className="text-[10px] italic"
+                  className="text-[0.625rem] italic"
                   style={{ color: "var(--text-muted)" }}
                 >
                   Buyers get limited attempts to meet the reserve.
@@ -248,7 +284,7 @@ export default function NewListingPage() {
             {saleMode === "LONG_BURST" && (
               <div className="space-y-2 animate-in fade-in slide-in-from-top-2 duration-500">
                 <label
-                  className="text-xs font-light"
+                  className="text-[0.75rem] font-light"
                   style={{ color: "var(--text-secondary)" }}
                 >
                   Number of Rounds
@@ -259,10 +295,10 @@ export default function NewListingPage() {
                   min="1"
                   defaultValue="5"
                   required
-                  className="input-minimal"
+                  className="input-minimal text-[1rem]"
                 />
                 <p
-                  className="text-[10px] italic"
+                  className="text-[0.625rem] italic"
                   style={{ color: "var(--text-muted)" }}
                 >
                   The arena stays open for configured intervals.
@@ -272,7 +308,7 @@ export default function NewListingPage() {
           </div>
 
           {error && (
-            <p className="text-xs text-red-500 text-center font-light">{error}</p>
+            <p className="text-[0.75rem] text-red-500 text-center font-light">{error}</p>
           )}
 
           {/* Primary CTA */}
@@ -281,7 +317,7 @@ export default function NewListingPage() {
               type="submit"
               disabled={createListingMutation.isPending}
               whileTap={{ scale: 0.98 }}
-              className="btn-solid px-16 py-4 text-xs"
+              className="btn-solid px-16 py-4 text-[0.75rem]"
             >
               {createListingMutation.isPending ? "Manifesting..." : "Publish to Market"}
             </motion.button>
