@@ -2,7 +2,7 @@
 
 A second-hand marketplace where buyers participate in a gamified open auction with 3 chances to bid per item. No buyer-seller chat before match. The reserve price is never revealed, but visual hot/cold feedback guides buyers toward the winning price.
 
-🌐 **Live Demo:** [https://last-price-phi.vercel.app/](https://last-price-phi.vercel.app/)
+🌐 **Live Demo (Legacy MERN):** [https://last-price-legacy.vercel.app/](https://last-price-legacy.vercel.app/)
 
 ---
 
