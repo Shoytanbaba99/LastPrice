@@ -61,12 +61,43 @@
                 <div id="action-section" class="glass rounded-2xl p-6 mb-6 hidden">
                     <h2 class="font-bold mb-4 text-cream">Next Steps</h2>
                     <div id="alert-tx" class="hidden mb-4 p-3 rounded-xl text-sm font-medium"></div>
-                    <div id="buyer-actions" class="hidden space-y-3">
-                        <div class="bg-green-500/10 border border-green-500/30 rounded-xl p-4 text-sm text-green-200 mb-4">🤝 You've been matched! Contact the seller to arrange the exchange. Once done, confirm below.</div>
-                        <button id="confirm-btn" onclick="confirmDeal()" class="w-full py-4 rounded-2xl bg-green-600 hover:bg-green-500 font-bold text-lg text-cream transition">✅ Confirm Deal Complete</button>
+                    
+                    <!-- Buyer View -->
+                    <div id="buyer-actions" class="hidden space-y-4">
+                        <div class="bg-blue-500/10 border border-blue-500/30 rounded-xl p-4 text-sm text-blue-200">
+                            <span class="font-bold">Your Verification Code:</span> 
+                            <span id="buyer-code-display" class="bg-blue-500/20 px-2 py-1 rounded text-cream font-mono text-lg tracking-widest ml-2">------</span>
+                            <p class="text-xs text-blue-200/60 mt-1">Give this code to the seller when you receive the product.</p>
+                        </div>
+                        
+                        <div id="buyer-form" class="space-y-3">
+                            <label class="text-xs text-sepia/50 block">Enter Seller's Verification Code</label>
+                            <input type="text" id="buyer-verify-code" maxlength="6" placeholder="000000" class="w-full bg-[#0D0D0D] border border-sepia/20 rounded-xl px-4 py-3 text-cream font-mono text-center text-xl tracking-widest focus:outline-none focus:border-brand-400">
+                            <button id="buyer-confirm-btn" onclick="confirmDeal('buyer')" class="w-full py-4 rounded-2xl bg-brand-500 hover:bg-brand-400 font-bold text-lg text-cream transition">🤝 Verify & Confirm Receipt</button>
+                        </div>
+
+                        <div id="buyer-waiting" class="hidden bg-green-500/10 border border-green-500/30 rounded-xl p-4 text-sm text-green-200">
+                            ✅ You have confirmed. Waiting for the seller to enter your code.
+                        </div>
                     </div>
-                    <div id="seller-actions" class="hidden space-y-3">
-                        <div class="bg-amber-500/10 border border-amber-500/30 rounded-xl p-4 text-sm text-amber-200 mb-4">⏳ Waiting for the buyer to confirm the deal.</div>
+
+                    <!-- Seller View -->
+                    <div id="seller-actions" class="hidden space-y-4">
+                        <div class="bg-amber-500/10 border border-amber-500/30 rounded-xl p-4 text-sm text-amber-200">
+                            <span class="font-bold">Your Verification Code:</span> 
+                            <span id="seller-code-display" class="bg-amber-500/20 px-2 py-1 rounded text-cream font-mono text-lg tracking-widest ml-2">------</span>
+                            <p class="text-xs text-amber-200/60 mt-1">Give this code to the buyer when you deliver the product.</p>
+                        </div>
+
+                        <div id="seller-form" class="space-y-3">
+                            <label class="text-xs text-sepia/50 block">Enter Buyer's Verification Code</label>
+                            <input type="text" id="seller-verify-code" maxlength="6" placeholder="000000" class="w-full bg-[#0D0D0D] border border-sepia/20 rounded-xl px-4 py-3 text-cream font-mono text-center text-xl tracking-widest focus:outline-none focus:border-brand-400">
+                            <button id="seller-confirm-btn" onclick="confirmDeal('seller')" class="w-full py-4 rounded-2xl bg-brand-500 hover:bg-brand-400 font-bold text-lg text-cream transition">📦 Verify & Confirm Delivery</button>
+                        </div>
+
+                        <div id="seller-waiting" class="hidden bg-green-500/10 border border-green-500/30 rounded-xl p-4 text-sm text-green-200">
+                            ✅ You have confirmed. Waiting for the buyer to enter your code.
+                        </div>
                     </div>
                 </div>
                 <div id="resolved-section" class="hidden glass rounded-2xl p-8 text-center">
@@ -92,10 +123,27 @@
                 setTimeout(() => (el.className = "hidden mb-4 p-3 rounded-xl text-sm font-medium"), 5000);
             }
 
-            async function confirmDeal() {
-                const btn = document.getElementById("confirm-btn"); btn.textContent = "Confirming…"; btn.disabled = true;
-                try { await api.post("/api/transactions/confirm", { transaction_id: parseInt(txId) }); showTxAlert("Deal confirmed! 🎉", "success"); setTimeout(() => init(), 1500); }
-                catch (e) { showTxAlert(e.message || "Failed to confirm", "error"); btn.textContent = "✅ Confirm Deal Complete"; btn.disabled = false; }
+            async function confirmDeal(role) {
+                const input = document.getElementById(`${role}-verify-code`);
+                const code = input.value.trim();
+                if (code.length !== 6) return showTxAlert("Please enter the 6-digit handshake code", "error");
+
+                const btn = document.getElementById(`${role}-confirm-btn`); 
+                const originalText = btn.textContent;
+                btn.textContent = "Verifying…"; btn.disabled = true;
+                
+                try { 
+                    await api.post("/api/transactions/confirm", { 
+                        transaction_id: parseInt(txId),
+                        code: code
+                    }); 
+                    showTxAlert("Verification successful!", "success"); 
+                    setTimeout(() => init(), 1500); 
+                }
+                catch (e) { 
+                    showTxAlert(e.message || "Invalid code or failed to confirm", "error"); 
+                    btn.textContent = originalText; btn.disabled = false; 
+                }
             }
 
             async function loadList() {
@@ -139,13 +187,27 @@
                     const isBuyer = myUser && tx.buyer_id === myUser.id, isSeller = myUser && tx.seller_id === myUser.id;
                     if (tx.status === "pending") {
                         document.getElementById("action-section").classList.remove("hidden");
-                        if (isBuyer) document.getElementById("buyer-actions").classList.remove("hidden");
-                        if (isSeller) document.getElementById("seller-actions").classList.remove("hidden");
+                        if (isBuyer) {
+                            document.getElementById("buyer-actions").classList.remove("hidden");
+                            document.getElementById("buyer-code-display").textContent = tx.handshake_buyer;
+                            if (tx.buyer_confirmed) {
+                                document.getElementById("buyer-form").classList.add("hidden");
+                                document.getElementById("buyer-waiting").classList.remove("hidden");
+                            }
+                        }
+                        if (isSeller) {
+                            document.getElementById("seller-actions").classList.remove("hidden");
+                            document.getElementById("seller-code-display").textContent = tx.handshake_seller;
+                            if (tx.seller_confirmed) {
+                                document.getElementById("seller-form").classList.add("hidden");
+                                document.getElementById("seller-waiting").classList.remove("hidden");
+                            }
+                        }
                     } else {
                         document.getElementById("resolved-section").classList.remove("hidden");
                         document.getElementById("resolved-icon").textContent = "🎉";
                         document.getElementById("resolved-title").textContent = "Transaction Complete";
-                        document.getElementById("resolved-desc").textContent = "The deal was confirmed.";
+                        document.getElementById("resolved-desc").textContent = "The deal was confirmed via secure handshake.";
                     }
                 } catch (e) { document.getElementById("loading-state").textContent = "Transaction not found or access denied."; }
             }
