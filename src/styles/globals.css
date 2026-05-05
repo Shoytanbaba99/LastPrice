@@ -179,10 +179,6 @@
     transform: scale(0.98);
   }
 
-  /* Alias so existing code using btn-solid works */
-  .btn-primary {
-    @apply btn-solid;
-  }
 
   /* ── Inputs ── */
   .input-minimal {
