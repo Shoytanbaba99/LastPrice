@@ -19,7 +19,7 @@ export const listingRouter = createTRPCRouter({
     .mutation(async ({ ctx, input }) => {
       const listing = await ctx.db.listing.create({
         data: {
-          sellerId: ctx.session.user.id,
+          sellerId: ctx.session?.user?.id,
           title: input.title,
           description: input.description,
           imageUrl: input.imageUrl,
@@ -58,7 +58,7 @@ export const listingRouter = createTRPCRouter({
 
   getMyListings: protectedProcedure.query(async ({ ctx }) => {
     const listings = await ctx.db.listing.findMany({
-      where: { sellerId: ctx.session.user.id },
+      where: { sellerId: ctx.session?.user?.id },
       orderBy: { createdAt: "desc" },
       include: {
         bids: {

@@ -135,7 +135,6 @@ export function SellerListings() {
       >
         {listings.map((listing) => {
           const feedback = actionFeedback[listing.id];
-          const topBid = listing.bids[0];
           const isActive = listing.status === "ACTIVE";
 
           return (
@@ -177,10 +176,10 @@ export function SellerListings() {
                   className="mt-0.5 transition-colors"
                   style={{ color: "var(--text-muted)" }}
                   onMouseEnter={(e) => {
-                    (e.currentTarget as HTMLAnchorElement).style.color = "var(--text-heading)";
+                    e.currentTarget.style.color = "var(--text-heading)";
                   }}
                   onMouseLeave={(e) => {
-                    (e.currentTarget as HTMLAnchorElement).style.color = "var(--text-muted)";
+                    e.currentTarget.style.color = "var(--text-muted)";
                   }}
                 >
                   <ArrowUpRight size={16} />
@@ -234,14 +233,12 @@ export function SellerListings() {
                             className="text-[10px] tracking-[0.25em] uppercase transition-colors disabled:opacity-30 border-b border-transparent pb-0.5"
                             style={{ color: "var(--text-secondary)" }}
                             onMouseEnter={(e) => {
-                              const el = e.currentTarget as HTMLButtonElement;
-                              el.style.color = "var(--text-heading)";
-                              el.style.borderColor = "var(--text-heading)";
+                              e.currentTarget.style.color = "var(--text-heading)";
+                              e.currentTarget.style.borderColor = "var(--text-heading)";
                             }}
                             onMouseLeave={(e) => {
-                              const el = e.currentTarget as HTMLButtonElement;
-                              el.style.color = "var(--text-secondary)";
-                              el.style.borderColor = "transparent";
+                              e.currentTarget.style.color = "var(--text-secondary)";
+                              e.currentTarget.style.borderColor = "transparent";
                             }}
                           >
                             Accept

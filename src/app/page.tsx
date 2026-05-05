@@ -68,7 +68,7 @@ function ListingPlaceholder() {
 
 function ListingCard({ listing }: { listing: Listing }) {
   const isShortBurst = listing.saleMode === "SHORT_BURST";
-  const hasImage = listing.imageUrl && listing.imageUrl.startsWith("http");
+  const hasImage = listing.imageUrl?.startsWith("http");
 
   return (
     <motion.article
@@ -80,7 +80,6 @@ function ListingCard({ listing }: { listing: Listing }) {
       {/* Image */}
       <div className="relative aspect-[5/3] overflow-hidden">
         {hasImage ? (
-          // eslint-disable-next-line @next/next/no-img-element
           <motion.img
             src={listing.imageUrl}
             alt={listing.title}
@@ -88,7 +87,7 @@ function ListingCard({ listing }: { listing: Listing }) {
             whileHover={{ scale: 1.05 }}
             transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
             onError={(e) => {
-              (e.target as HTMLImageElement).style.display = "none";
+              e.currentTarget.style.display = "none";
             }}
           />
         ) : (

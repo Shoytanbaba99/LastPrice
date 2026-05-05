@@ -307,10 +307,10 @@ export function HandshakeCard({ transaction }: TransactionCardProps) {
                     className="flex items-center gap-1.5 px-3 text-xs tracking-widest uppercase transition-colors disabled:opacity-30"
                     style={{ color: "var(--text-secondary)" }}
                     onMouseEnter={(e) => {
-                      (e.currentTarget as HTMLButtonElement).style.color = "var(--text-heading)";
+                      e.currentTarget.style.color = "var(--text-heading)";
                     }}
                     onMouseLeave={(e) => {
-                      (e.currentTarget as HTMLButtonElement).style.color = "var(--text-secondary)";
+                      e.currentTarget.style.color = "var(--text-secondary)";
                     }}
                   >
                     {verifyMutation.isPending ? (

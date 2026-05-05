@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { useParams, useRouter } from "next/navigation";
+import { useState } from "react";
+import { useParams } from "next/navigation";
 import { api } from "~/trpc/react";
 import { useSession } from "next-auth/react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -20,7 +20,6 @@ import NumberTicker from "~/app/_components/NumberTicker";
 export default function ListingPage() {
   const params = useParams();
   const id = params.id as string;
-  const router = useRouter();
   const { data: session } = useSession();
 
   const [bidAmount, setBidAmount] = useState("");
@@ -47,7 +46,7 @@ export default function ListingPage() {
         message: `${data.feedback}. Final chance: ${data.isFinalChance ? "YES" : "NO"}`, 
         type: data.feedback.includes("High") ? "success" : "info" 
       });
-      utils.bid.getListingState.invalidate({ listingId: id });
+      void utils.bid.getListingState.invalidate({ listingId: id });
     },
     onError: (err) => {
       setFeedback({ message: err.message, type: "error" });
@@ -57,7 +56,7 @@ export default function ListingPage() {
   const longBurstMutation = api.bid.submitLongBurst.useMutation({
     onSuccess: () => {
       setFeedback({ message: "Bid registered for this round.", type: "success" });
-      utils.bid.getListingState.invalidate({ listingId: id });
+      void utils.bid.getListingState.invalidate({ listingId: id });
     },
     onError: (err) => {
       setFeedback({ message: err.message, type: "error" });

@@ -40,7 +40,7 @@ export const transactionRouter = createTRPCRouter({
         throw new TRPCError({ code: "NOT_FOUND", message: "Listing not found." });
       }
 
-      if (listing.sellerId !== ctx.session.user.id) {
+      if (listing.sellerId !== ctx.session?.user?.id) {
         throw new TRPCError({
           code: "FORBIDDEN",
           message: "Only the listing seller can finalize a transaction.",
@@ -98,7 +98,7 @@ export const transactionRouter = createTRPCRouter({
    * Returns full listing and counterparty details for the dashboard.
    */
   getMyTransactions: protectedProcedure.query(async ({ ctx }) => {
-    const userId = ctx.session.user.id;
+    const userId = ctx.session?.user?.id;
 
     const transactions = await ctx.db.transaction.findMany({
       where: {
@@ -159,7 +159,7 @@ export const transactionRouter = createTRPCRouter({
       })
     )
     .mutation(async ({ ctx, input }) => {
-      const userId = ctx.session.user.id;
+      const userId = ctx.session?.user?.id;
 
       const transaction = await ctx.db.transaction.findUnique({
         where: { id: input.transactionId },

@@ -23,10 +23,10 @@ export const bidRouter = createTRPCRouter({
     .mutation(async ({ ctx, input }) => {
       const listing = await ctx.db.listing.findUnique({
         where: { id: input.listingId },
-        include: { bids: { where: { buyerId: ctx.session.user.id } } },
+        include: { bids: { where: { buyerId: ctx.session?.user?.id } } },
       });
 
-      if (!listing || listing.saleMode !== "SHORT_BURST") {
+      if (listing?.saleMode !== "SHORT_BURST") {
         throw new TRPCError({ code: "BAD_REQUEST", message: "Invalid listing." });
       }
 
@@ -41,7 +41,7 @@ export const bidRouter = createTRPCRouter({
 
       const bid = await ctx.db.bid.create({
         data: {
-          buyerId: ctx.session.user.id,
+          buyerId: ctx.session?.user?.id,
           listingId: input.listingId,
           amount: input.amount,
         },
@@ -76,7 +76,7 @@ export const bidRouter = createTRPCRouter({
         where: { id: input.listingId },
       });
 
-      if (!listing || listing.saleMode !== "LONG_BURST") {
+      if (listing?.saleMode !== "LONG_BURST") {
         throw new TRPCError({ code: "BAD_REQUEST", message: "Invalid listing." });
       }
 
@@ -86,7 +86,7 @@ export const bidRouter = createTRPCRouter({
 
       const bid = await ctx.db.bid.create({
         data: {
-          buyerId: ctx.session.user.id,
+          buyerId: ctx.session?.user?.id,
           listingId: input.listingId,
           amount: input.amount,
         },
@@ -148,7 +148,8 @@ export const bidRouter = createTRPCRouter({
         },
       });
 
-      if (!listing || listing.sellerId !== ctx.session.user.id) {
+            if (listing?.sellerId !== ctx.session?.user?.id) {
+
         throw new TRPCError({ code: "FORBIDDEN" });
       }
 
@@ -196,7 +197,7 @@ export const bidRouter = createTRPCRouter({
         where: { id: input.listingId },
       });
 
-      if (!listing || listing.sellerId !== ctx.session.user.id) {
+      if (listing?.sellerId !== ctx.session?.user?.id) {
         throw new TRPCError({ code: "FORBIDDEN" });
       }
 
@@ -212,7 +213,7 @@ export const bidRouter = createTRPCRouter({
         where: { id: input.bidId },
       });
 
-      if (!acceptedBid || acceptedBid.listingId !== input.listingId) {
+      if (acceptedBid?.listingId !== input.listingId) {
         throw new TRPCError({ code: "NOT_FOUND", message: "Bid not found on this listing." });
       }
 
