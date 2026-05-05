@@ -108,19 +108,19 @@ export function Navbar() {
                 <>
                   <Link
                     href="/listings/new"
-                    className="text-[0.75rem] font-light tracking-widest uppercase text-ui-secondary transition-colors hover:text-ui-primary"
+                    className="text-[0.875rem] font-light tracking-widest uppercase text-ui-secondary transition-colors hover:text-ui-primary"
                   >
                     Sell
                   </Link>
                   <Link
                     href="/dashboard"
-                    className="text-[0.75rem] font-light tracking-widest uppercase text-ui-secondary transition-colors hover:text-ui-primary"
+                    className="text-[0.875rem] font-light tracking-widest uppercase text-ui-secondary transition-colors hover:text-ui-primary"
                   >
                     Dashboard
                   </Link>
                   <button
                     onClick={() => void signOut({ callbackUrl: "/" })}
-                    className="text-[0.75rem] font-light tracking-widest uppercase text-ui-muted transition-colors hover:text-ui-secondary"
+                    className="text-[0.875rem] font-light tracking-widest uppercase text-ui-muted transition-colors hover:text-ui-secondary"
                   >
                     Exit
                   </button>
@@ -129,13 +129,13 @@ export function Navbar() {
                 <>
                   <Link
                     href="/login"
-                    className="text-[0.75rem] font-light tracking-widest uppercase text-ui-secondary transition-colors hover:text-ui-primary"
+                    className="text-[0.875rem] font-light tracking-widest uppercase text-ui-secondary transition-colors hover:text-ui-primary"
                   >
                     Enter
                   </Link>
                   <Link
                     href="/register"
-                    className="text-[0.75rem] font-light tracking-widest uppercase text-ui-secondary transition-colors hover:text-ui-primary"
+                    className="text-[0.875rem] font-light tracking-widest uppercase text-ui-secondary transition-colors hover:text-ui-primary"
                   >
                     Join
                   </Link>

@@ -33,13 +33,13 @@ export function PendingHandshakes() {
         className="mt-16 w-full border-t pt-12"
         style={{ borderColor: "var(--border-faint)" }}
       >
-        <div
-          className="flex items-center gap-2 text-[0.625rem] tracking-[0.3em] uppercase"
-          style={{ color: "var(--text-muted)" }}
-        >
-          <Handshake size={12} strokeWidth={1.5} />
-          Loading handshakes...
-        </div>
+          <div
+            className="flex items-center gap-2 text-[0.75rem] tracking-[0.3em] uppercase"
+            style={{ color: "var(--text-muted)" }}
+          >
+            <Handshake size={14} strokeWidth={1.5} />
+            Loading handshakes...
+          </div>
       </div>
     );
   }
@@ -73,7 +73,7 @@ export function PendingHandshakes() {
           style={{ color: "var(--text-muted)" }}
         />
         <p
-          className="text-[0.625rem] tracking-[0.3em] uppercase"
+          className="text-[0.75rem] tracking-[0.3em] uppercase"
           style={{ color: "var(--text-secondary)" }}
         >
           Pending Handshakes
@@ -101,7 +101,7 @@ export function PendingHandshakes() {
                 style={{ backgroundColor: "var(--border-faint)" }}
               />
               <p
-                className="text-[0.625rem] tracking-[0.25em] uppercase"
+                className="text-[0.75rem] tracking-[0.25em] uppercase"
                 style={{ color: "var(--text-muted)" }}
               >
                 Completed

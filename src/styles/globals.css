@@ -34,7 +34,8 @@
 @layer base {
   /* Use a slightly larger base font size and responsive scaling */
   :root {
-    font-size: 16px; /* Base size */
+    /* Fluid typography base */
+    font-size: clamp(18px, 1.4vw, 24px);
     
     --bg-primary:       #fafaf9;      /* stone-50  */
     --bg-surface:       #ffffff;
@@ -57,10 +58,10 @@
     --ring-focus:       #171717;
   }
 
-  /* Responsive font sizing using clamp or slightly larger rems */
-  @media (min-width: 768px) {
+  /* Keep base font size stable on mobile, let it grow on desktop */
+  @media (max-width: 640px) {
     :root {
-      font-size: 18px; 
+      font-size: 16px;
     }
   }
 

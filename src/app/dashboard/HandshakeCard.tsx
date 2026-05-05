@@ -70,7 +70,7 @@ function TokenDisplay({ token, label }: { token: string; label: string }) {
   return (
     <div className="space-y-2">
       <p
-        className="text-[0.625rem] tracking-[0.25em] uppercase"
+        className="text-[0.75rem] tracking-[0.25em] uppercase"
         style={{ color: "var(--text-muted)" }}
       >
         {label}
@@ -83,7 +83,7 @@ function TokenDisplay({ token, label }: { token: string; label: string }) {
       >
         {token}
         <span
-          className="font-sans text-[0.625rem] tracking-widest uppercase opacity-0 transition-opacity group-hover:opacity-100"
+          className="font-sans text-[0.75rem] tracking-widest uppercase opacity-0 transition-opacity group-hover:opacity-100"
           style={{ color: "var(--text-muted)" }}
         >
           {copied ? "Copied" : "Copy"}
@@ -202,7 +202,7 @@ export function HandshakeCard({ transaction }: TransactionCardProps) {
       >
         <div className="space-y-1">
           <p
-            className="text-[0.625rem] tracking-[0.25em] uppercase"
+            className="text-[0.75rem] tracking-[0.25em] uppercase"
             style={{ color: "var(--text-muted)" }}
           >
             {roleLabel} · Handshake Pending
@@ -295,7 +295,7 @@ export function HandshakeCard({ transaction }: TransactionCardProps) {
               <div className="space-y-2">
                 <label
                   htmlFor={`token-input-${transaction.id}`}
-                  className="text-[0.625rem] tracking-[0.25em] uppercase"
+                  className="text-[0.75rem] tracking-[0.25em] uppercase"
                   style={{ color: "var(--text-muted)" }}
                 >
                   Enter {counterpartyLabel}&rsquo;s Token to Verify

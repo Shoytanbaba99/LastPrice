@@ -23,7 +23,7 @@ export default async function DashboardPage() {
         {/* ── Greeting Header ── */}
         <header className="space-y-3">
           <p
-            className="text-[0.625rem] tracking-[0.3em] uppercase"
+            className="text-[0.75rem] tracking-[0.3em] uppercase"
             style={{ color: "var(--text-muted)" }}
           >
             Authenticated Space
@@ -46,7 +46,7 @@ export default async function DashboardPage() {
         <div className="mt-10 flex items-center gap-4">
           <div className="h-px flex-1" style={{ backgroundColor: "var(--border-faint)" }} />
           <p
-            className="text-[0.625rem] tracking-[0.25em] uppercase italic"
+            className="text-[0.75rem] tracking-[0.25em] uppercase italic"
             style={{ color: "var(--text-muted)" }}
           >
             &ldquo;The final price is a silent agreement.&rdquo;
@@ -60,9 +60,9 @@ export default async function DashboardPage() {
         {/* ── Seller's Active Listings ── */}
         <SellerListings />
 
-        {/* ── Account Actions ── */}
+        {/* ── Footer ── */}
         <div
-          className="mt-20 flex items-center justify-between border-t pt-8"
+          className="mt-20 flex items-center justify-start border-t pt-8"
           style={{ borderColor: "var(--border-faint)" }}
         >
           <Link
@@ -71,13 +71,6 @@ export default async function DashboardPage() {
             style={{ color: "var(--text-secondary)" }}
           >
             + New Listing
-          </Link>
-          <Link
-            href="/api/auth/signout"
-            className="text-[0.625rem] tracking-[0.3em] uppercase transition-colors hover:text-[var(--text-secondary)]"
-            style={{ color: "var(--text-muted)" }}
-          >
-            Leave Workspace
           </Link>
         </div>
 

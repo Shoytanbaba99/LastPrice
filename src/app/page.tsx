@@ -157,7 +157,7 @@ function ListingCard({ listing }: { listing: Listing }) {
         <div className="mt-auto flex items-end justify-between">
           <div>
             <p
-              className="text-[0.5625rem] tracking-[0.2em] uppercase mb-0.5"
+              className="text-[0.75rem] tracking-[0.2em] uppercase mb-0.5"
               style={{ color: "var(--text-muted)" }}
             >
               Opening
@@ -171,7 +171,7 @@ function ListingCard({ listing }: { listing: Listing }) {
           </div>
 
           <div
-            className="flex flex-col items-end gap-1 text-[0.625rem]"
+            className="flex flex-col items-end gap-1 text-[0.75rem]"
             style={{ color: "var(--text-muted)" }}
           >
             <span className="flex items-center gap-1">
@@ -253,7 +253,7 @@ export default function MarketplacePage() {
       >
         <div className="max-w-xl space-y-5">
           <p
-            className="text-[0.625rem] tracking-[0.4em] uppercase"
+            className="text-[0.75rem] tracking-[0.4em] uppercase"
             style={{ color: "var(--text-muted)" }}
           >
             Live Market
@@ -262,7 +262,7 @@ export default function MarketplacePage() {
             className="text-[3rem] font-light tracking-tight md:text-[3.75rem]"
             style={{ color: "var(--text-heading)" }}
           >
-            The Arena.
+            Marketplace.
           </h1>
           <p
             className="text-[0.875rem] font-light leading-relaxed"
@@ -276,13 +276,13 @@ export default function MarketplacePage() {
       {/* ── Filter Bar ── */}
       <div className="mx-auto max-w-7xl px-6 md:px-12">
         <div className="flex items-center justify-between py-6 border-y" style={{ borderColor: "var(--border-faint)" }}>
-          <p className="text-[0.625rem] tracking-[0.3em] uppercase" style={{ color: "var(--text-muted)" }}>
+          <p className="text-[0.75rem] tracking-[0.3em] uppercase" style={{ color: "var(--text-muted)" }}>
             {filteredListings?.length ?? 0} manifest{filteredListings?.length !== 1 ? "s" : ""} available
           </p>
           
           <button
             onClick={() => setHideEnded(!hideEnded)}
-            className="flex items-center gap-2 text-[0.625rem] tracking-[0.2em] uppercase transition-colors hover:text-[var(--text-heading)]"
+            className="flex items-center gap-2 text-[0.75rem] tracking-[0.2em] uppercase transition-colors hover:text-[var(--text-heading)]"
             style={{ color: hideEnded ? "var(--text-heading)" : "var(--text-muted)" }}
           >
             {hideEnded ? (

@@ -12,14 +12,18 @@ function generateToken(): string {
   return result;
 }
 
+/** Generates a gamified anonymous name. */
+function generateNegotiatorName(userId: string): string {
+  const prefixes = ["Phantom", "Shadow", "Ghost", "Architect", "Voyager", "Sentinel", "Oracle"];
+  const hash = userId.split("").reduce((acc, char) => acc + char.charCodeAt(0), 0);
+  const prefix = prefixes[hash % prefixes.length];
+  const suffix = hash % 99;
+  return `${prefix}-${suffix}`;
+}
+
 export const bidRouter = createTRPCRouter({
   submitShortBurst: protectedProcedure
-    .input(
-      z.object({
-        listingId: z.string(),
-        amount: z.number().min(0),
-      })
-    )
+    .input(z.object({ listingId: z.string(), amount: z.number().min(0) }))
     .mutation(async ({ ctx, input }) => {
       const listing = await ctx.db.listing.findUnique({
         where: { id: input.listingId },
@@ -51,26 +55,26 @@ export const bidRouter = createTRPCRouter({
       const isMatched = input.amount >= listing.reservePrice;
 
       let feedback = "Too low";
+      let level: "LOW" | "CLOSE" | "MATCHED" = "LOW";
+
       if (isMatched) {
         feedback = "Matched";
+        level = "MATCHED";
       } else if (input.amount >= listing.reservePrice * 0.7) {
         feedback = "Close";
+        level = "CLOSE";
       }
 
       return {
         bid,
         feedback,
+        level,
         isFinalChance,
       };
     }),
 
   submitLongBurst: protectedProcedure
-    .input(
-      z.object({
-        listingId: z.string(),
-        amount: z.number().min(0),
-      })
-    )
+    .input(z.object({ listingId: z.string(), amount: z.number().min(0) }))
     .mutation(async ({ ctx, input }) => {
       const listing = await ctx.db.listing.findUnique({
         where: { id: input.listingId },
@@ -102,8 +106,7 @@ export const bidRouter = createTRPCRouter({
         where: { id: input.listingId },
         include: {
           bids: {
-            orderBy: { amount: "desc" },
-            take: 1,
+            orderBy: { createdAt: "desc" },
             include: { buyer: { select: { id: true, name: true } } },
           },
           _count: {
@@ -122,14 +125,27 @@ export const bidRouter = createTRPCRouter({
       const elapsedSeconds = (now.getTime() - listing.createdAt.getTime()) / 1000;
       const currentRound = Math.floor(elapsedSeconds / ROUND_DURATION_SEC) + 1;
 
-      const isEnded = currentRound > rounds || listing.status !== "ACTIVE";
-      const highestBid = listing.bids[0];
+      const highestBidRaw = listing.bids.reduce((prev, current) => (prev.amount > current.amount) ? prev : current, listing.bids[0]);
+      
+      const anonymizeBid = (bid: any) => ({
+        ...bid,
+        buyer: {
+          ...bid.buyer,
+          name: generateNegotiatorName(bid.buyerId),
+        }
+      });
+
+      const highestBid = highestBidRaw ? anonymizeBid(highestBidRaw) : null;
+      const allBids = listing.bids.map(anonymizeBid);
+
+      const isEnded = listing.status !== "ACTIVE" || currentRound > rounds;
 
       return {
         ...listing,
         currentRound: Math.min(currentRound, rounds),
         isEnded,
         highestBid,
+        allBids, 
         totalRounds: rounds,
         secondsRemainingInRound: ROUND_DURATION_SEC - (elapsedSeconds % ROUND_DURATION_SEC),
       };

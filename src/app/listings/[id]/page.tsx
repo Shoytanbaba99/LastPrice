@@ -23,7 +23,11 @@ export default function ListingPage() {
   const { data: session } = useSession();
 
   const [bidAmount, setBidAmount] = useState("");
-  const [feedback, setFeedback] = useState<{ message: string; type: "info" | "success" | "error" } | null>(null);
+  const [feedback, setFeedback] = useState<{ 
+    message: string; 
+    type: "info" | "success" | "error";
+    level?: "LOW" | "CLOSE" | "MATCHED";
+  } | null>(null);
 
   const utils = api.useUtils();
 
@@ -32,7 +36,7 @@ export default function ListingPage() {
     { 
       refetchInterval: (query) => {
         const state = query.state.data;
-        if (state?.saleMode === "LONG_BURST" && !state?.isEnded) {
+        if ((state?.saleMode === "LONG_BURST" || state?.saleMode === "SHORT_BURST") && !state?.isEnded) {
           return 3000;
         }
         return false;
@@ -44,8 +48,19 @@ export default function ListingPage() {
     onSuccess: (data) => {
       setFeedback({ 
         message: `${data.feedback}. Final chance: ${data.isFinalChance ? "YES" : "NO"}`, 
-        type: data.feedback.includes("High") ? "success" : "info" 
+        type: data.level === "MATCHED" ? "success" : data.level === "CLOSE" ? "info" : "error",
+        level: data.level
       });
+      void utils.bid.getListingState.invalidate({ listingId: id });
+    },
+    onError: (err) => {
+      setFeedback({ message: err.message, type: "error" });
+    }
+  });
+
+  const manualAcceptMutation = api.bid.manualAccept.useMutation({
+    onSuccess: () => {
+      setFeedback({ message: "Handshake initialized. Finalizing...", type: "success" });
       void utils.bid.getListingState.invalidate({ listingId: id });
     },
     onError: (err) => {
@@ -123,10 +138,25 @@ export default function ListingPage() {
 
   return (
     <div
-      className="min-h-screen px-6 py-12 md:py-24"
+      className="min-h-screen px-6 py-12 md:py-24 relative overflow-hidden"
       style={{ backgroundColor: "var(--bg-primary)" }}
     >
-      <div className="max-w-4xl mx-auto space-y-16">
+      {/* Global Tension Pulse */}
+      {(isHighTension || feedback?.level === "CLOSE" || feedback?.level === "MATCHED") && (
+        <motion.div 
+          animate={{ 
+            opacity: feedback?.level === "MATCHED" ? [0.2, 0.5, 0.2] : isCriticalTension ? [0.1, 0.3, 0.1] : [0.05, 0.15, 0.05],
+            backgroundColor: feedback?.level === "MATCHED" ? "rgba(16, 185, 129, 0.1)" : feedback?.level === "CLOSE" ? "rgba(245, 158, 11, 0.1)" : "rgba(239, 68, 68, 0.1)"
+          }}
+          transition={{ duration: 1.5, repeat: Infinity }}
+          className="pointer-events-none absolute inset-0 z-0"
+          style={{ 
+            boxShadow: feedback?.level === "MATCHED" ? "inset 0 0 100px rgba(16, 185, 129, 0.2)" : "inset 0 0 100px rgba(239, 68, 68, 0.2)",
+          }}
+        />
+      )}
+
+      <div className="max-w-4xl mx-auto space-y-16 relative z-10">
         
         {/* Back nav */}
         <Link 
@@ -196,7 +226,7 @@ export default function ListingPage() {
                     className="text-[0.625rem] tracking-[0.2em] uppercase font-medium"
                     style={{ color: "var(--text-heading)" }}
                   >
-                    Arena Tension
+                    Auction Tension
                   </h3>
                   <span
                     className="text-[0.625rem] font-mono"
@@ -233,11 +263,31 @@ export default function ListingPage() {
                 </div>
 
                 <p
-                  className="text-[0.5625rem] tracking-[0.2em] uppercase"
+                  className="text-[0.75rem] tracking-[0.2em] uppercase"
                   style={{ color: "var(--text-muted)" }}
                 >
                   {listing._count.bids} bid{listing._count.bids !== 1 ? "s" : ""} recorded
                 </p>
+
+                {!isSeller && isShortBurst && (
+                  <div className="pt-4 flex items-center gap-4">
+                    <p className="text-[0.625rem] tracking-[0.2em] uppercase text-muted-foreground">
+                      Your Chances:
+                    </p>
+                    <div className="flex gap-1.5">
+                      {Array.from({ length: listing.burstChances ?? 3 }).map((_, i) => (
+                        <div 
+                          key={i} 
+                          className={`h-1.5 w-6 border ${
+                            i < (listing.bids.filter((b: any) => b.buyerId === session?.user?.id).length)
+                              ? "bg-white border-white" 
+                              : "border-border-faint"
+                          }`}
+                        />
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
             )}
 
@@ -274,7 +324,7 @@ export default function ListingPage() {
                 </div>
 
                 <p
-                  className="text-[0.5625rem] tracking-[0.2em] uppercase"
+                  className="text-[0.75rem] tracking-[0.2em] uppercase"
                   style={{ color: "var(--text-muted)" }}
                 >
                   Timer resets each round — submit before it drops to zero
@@ -296,7 +346,7 @@ export default function ListingPage() {
               {/* Current peak price */}
               <div className="space-y-1">
                 <p
-                  className="text-[0.625rem] tracking-[0.3em] uppercase mb-2 flex items-center gap-2"
+                  className="text-[0.875rem] tracking-[0.3em] uppercase mb-4 flex items-center gap-2"
                   style={{ color: "var(--text-muted)" }}
                 >
                   <TrendingUp size={12} strokeWidth={1.5} />
@@ -320,7 +370,7 @@ export default function ListingPage() {
                 </div>
                 {listing.highestBid && (
                   <p
-                    className="text-[0.625rem] mt-2 tracking-wide uppercase"
+                    className="text-[0.75rem] mt-2 tracking-wide uppercase"
                     style={{ color: "var(--text-muted)" }}
                   >
                     Last activity from {listing.highestBid.buyer.name?.split(" ")[0]}
@@ -334,7 +384,7 @@ export default function ListingPage() {
                   <div className="space-y-4">
                     <label 
                       htmlFor="bidAmount" 
-                      className="text-[0.625rem] tracking-[0.25em] uppercase block"
+                      className="text-[0.875rem] tracking-[0.25em] uppercase block"
                       style={{ color: "var(--text-muted)" }}
                     >
                       Offer your price
@@ -375,13 +425,17 @@ export default function ListingPage() {
                         initial={{ opacity: 0, y: 5 }}
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, y: -5 }}
-                        className={`text-[0.625rem] tracking-wider p-4 border flex items-start gap-3 ${
+                        className={`text-[0.75rem] tracking-wider p-4 border flex items-start gap-3 ${
                           feedback.type === "error"
                             ? "text-red-400 bg-red-500/5 border-red-500/20"
+                            : feedback.level === "CLOSE"
+                            ? "text-yellow-400 bg-yellow-500/5 border-yellow-500/20"
+                            : feedback.level === "MATCHED"
+                            ? "text-emerald-400 bg-emerald-500/5 border-emerald-500/20"
                             : "border-border-faint"
                         }`}
                         style={
-                          feedback.type !== "error"
+                          feedback.type !== "error" && !feedback.level
                             ? {
                                 color: "var(--text-primary)",
                                 backgroundColor: "var(--bg-subtle)",
@@ -391,7 +445,16 @@ export default function ListingPage() {
                         }
                       >
                         <ShieldCheck size={14} className="shrink-0 mt-0.5" />
-                        {feedback.message}
+                        <div className="flex-1 space-y-2">
+                          <p>{feedback.message}</p>
+                          {feedback.level && (
+                            <div className="flex gap-1 h-1 w-24">
+                              <div className={`flex-1 ${feedback.level === "LOW" || feedback.level === "CLOSE" || feedback.level === "MATCHED" ? (feedback.level === "LOW" ? "bg-red-500" : feedback.level === "CLOSE" ? "bg-yellow-500" : "bg-emerald-500") : "bg-white/10"}`} />
+                              <div className={`flex-1 ${feedback.level === "CLOSE" || feedback.level === "MATCHED" ? (feedback.level === "CLOSE" ? "bg-yellow-500" : "bg-emerald-500") : "bg-white/10"}`} />
+                              <div className={`flex-1 ${feedback.level === "MATCHED" ? "bg-emerald-500" : "bg-white/10"}`} />
+                            </div>
+                          )}
+                        </div>
                       </motion.div>
                     )}
                   </AnimatePresence>
@@ -404,7 +467,7 @@ export default function ListingPage() {
                     className="btn-solid w-full py-5 text-[0.625rem] tracking-[0.4em] group"
                   >
                     <span className="flex items-center justify-center gap-2">
-                      Place Intent
+                      Submit Price
                       <ChevronRight
                         size={14}
                         className="transition-transform group-hover:translate-x-1"
@@ -422,11 +485,53 @@ export default function ListingPage() {
                     style={{ color: "var(--text-muted)" }}
                   >
                     <History size={16} strokeWidth={1.5} />
-                    <span className="text-[0.625rem] tracking-[0.2em] uppercase">
-                      {isSeller ? "You are the orchestrator" : "Arena Access Restricted"}
+                    <span className="text-[0.75rem] tracking-[0.2em] uppercase">
+                      {isSeller ? "Orchestrator Controls" : "Arena Access Restricted"}
                     </span>
                   </div>
-                  {listing.isEnded && (
+
+                  {isSeller && listing.allBids && listing.allBids.length > 0 && (
+                    <div className="space-y-4 pt-4">
+                      <p className="text-[0.625rem] tracking-[0.2em] uppercase text-muted-foreground">Recent Bids</p>
+                      <div className="space-y-3">
+                        {listing.allBids.map((bid: any) => {
+                          const isMatched = bid.amount >= listing.reservePrice;
+                          const isClose = !isMatched && bid.amount >= listing.reservePrice * 0.7;
+                          const levelColor = isMatched ? "text-emerald-400" : isClose ? "text-yellow-400" : "text-red-400";
+                          const borderColor = isMatched ? "border-emerald-500/30" : isClose ? "border-yellow-500/30" : "border-red-500/30";
+
+                          return (
+                            <div 
+                              key={bid.id} 
+                              className={`flex items-center justify-between p-3 border bg-black/20 ${borderColor}`}
+                            >
+                              <div className="space-y-1">
+                                <div className="flex items-center gap-2">
+                                  <p className={`text-[0.75rem] font-medium ${levelColor}`}>${bid.amount}</p>
+                                </div>
+                                <p className="text-[0.625rem] text-muted-foreground uppercase tracking-widest">
+                                  {bid.buyer.name}
+                                </p>
+                              </div>
+                                {listing.status === "ACTIVE" && (
+                                  <motion.button
+                                    whileHover={{ scale: 1.05, backgroundColor: "#000" }}
+                                    whileTap={{ scale: 0.95 }}
+                                    onClick={() => manualAcceptMutation.mutate({ listingId: id, bidId: bid.id })}
+                                    disabled={manualAcceptMutation.isPending}
+                                    className="px-6 py-2 text-[0.625rem] tracking-[0.3em] uppercase bg-white text-black font-medium transition-all shadow-[0_0_15px_rgba(255,255,255,0.1)] hover:shadow-[0_0_25px_rgba(255,255,255,0.2)] disabled:opacity-50"
+                                  >
+                                    Accept Manifest
+                                  </motion.button>
+                                )}
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  )}
+
+                  {listing.isEnded && listing.status === "ACTIVE" && (
                     <p
                       className="text-[0.75rem] font-light leading-relaxed"
                       style={{ color: "var(--text-muted)" }}

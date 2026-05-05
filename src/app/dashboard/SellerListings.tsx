@@ -36,7 +36,7 @@ function StatusBadge({ status }: { status: string }) {
   };
   const colour = colourMap[status] ?? "text-neutral-400";
   return (
-    <span className={`text-[0.625rem] tracking-widest uppercase ${colour}`}>
+    <span className={`text-[0.75rem] tracking-widest uppercase ${colour}`}>
       {status.replace("_", " ")}
     </span>
   );
@@ -129,7 +129,7 @@ export function SellerListings() {
         <div className="flex items-center gap-3">
           <PackageCheck size={14} strokeWidth={1.5} style={{ color: "var(--text-muted)" }} />
           <p
-            className="text-[0.625rem] tracking-[0.3em] uppercase"
+            className="text-[0.75rem] tracking-[0.3em] uppercase"
             style={{ color: "var(--text-secondary)" }}
           >
             Your Listings
@@ -138,7 +138,7 @@ export function SellerListings() {
 
         <button
           onClick={() => setHideEnded(!hideEnded)}
-          className="text-[0.625rem] tracking-widest uppercase transition-colors"
+          className="text-[0.75rem] tracking-widest uppercase transition-colors"
           style={{ color: hideEnded ? "var(--text-heading)" : "var(--text-muted)" }}
         >
           {hideEnded ? "[ Show All ]" : "[ Hide Ended ]"}
@@ -168,7 +168,7 @@ export function SellerListings() {
                     <StatusBadge status={listing.status} />
                     <span style={{ color: "var(--border-ui)" }}>·</span>
                     <span
-                      className="text-[0.625rem] tracking-widest uppercase"
+                      className="text-[0.75rem] tracking-widest uppercase"
                       style={{ color: "var(--text-muted)" }}
                     >
                       {listing.saleMode.replace("_", " ")}
@@ -198,6 +198,26 @@ export function SellerListings() {
                 </Link>
               </div>
 
+              {/* Proximity Tension Bar (Gamification) */}
+              {isActive && (
+                <div className="px-5 pb-4">
+                  <div className="flex items-center justify-between mb-1.5">
+                    <span className="text-[0.625rem] tracking-widest uppercase text-ui-secondary">Deal Pressure</span>
+                    <span className="text-[0.625rem] tracking-widest uppercase text-ui-muted">
+                      {Math.round(Math.min((listing.bids[0]?.amount ?? 0) / listing.reservePrice * 100, 100))}%
+                    </span>
+                  </div>
+                  <div className="h-[2px] w-full bg-ui-faint overflow-hidden">
+                    <motion.div 
+                      initial={{ width: 0 }}
+                      animate={{ width: `${Math.min((listing.bids[0]?.amount ?? 0) / listing.reservePrice * 100, 100)}%` }}
+                      className="h-full bg-ui-secondary"
+                      transition={{ duration: 1, ease: "circOut" }}
+                    />
+                  </div>
+                </div>
+              )}
+
               {/* Bids list */}
               {listing.bids.length > 0 ? (
                 <div
@@ -205,7 +225,7 @@ export function SellerListings() {
                   style={{ borderColor: "var(--border-faint)" }}
                 >
                   <p
-                    className="text-[0.625rem] tracking-[0.25em] uppercase"
+                    className="text-[0.75rem] tracking-[0.25em] uppercase"
                     style={{ color: "var(--text-muted)" }}
                   >
                     Recent Bids
@@ -220,9 +240,18 @@ export function SellerListings() {
                         <div>
                           <p
                             className="text-[1.125rem] font-light"
-                            style={{ color: "var(--text-heading)" }}
+                            style={{ 
+                              color: bid.amount >= listing.reservePrice 
+                                ? "var(--text-heading)" 
+                                : bid.amount >= listing.reservePrice * 0.8 
+                                  ? "#f59e0b" // Amber
+                                  : "var(--text-secondary)" 
+                            }}
                           >
                             ${bid.amount.toFixed(2)}
+                            {bid.amount >= listing.reservePrice && (
+                              <span className="ml-2 text-[0.625rem] text-emerald-500 uppercase tracking-widest">Reserve Met</span>
+                            )}
                           </p>
                           <p
                             className="text-[0.6875rem]"

@@ -68,10 +68,10 @@ export default function NewListingPage() {
       <div className="w-full max-w-2xl space-y-12">
         <div className="space-y-4 text-center">
           <p
-            className="text-[0.625rem] uppercase tracking-[0.3em] font-light"
+            className="text-[0.75rem] uppercase tracking-[0.3em] font-light"
             style={{ color: "var(--text-muted)" }}
           >
-            New Origin
+            Draft
           </p>
           <h1
             className="text-[2.5rem] font-light tracking-tight"
@@ -92,7 +92,7 @@ export default function NewListingPage() {
                 borderColor: "var(--border-faint)",
               }}
             >
-              Listing Details
+              The Manifest
             </h2>
             <div className="space-y-4">
               <input
@@ -162,13 +162,13 @@ export default function NewListingPage() {
                         style={{ borderColor: "var(--border-faint)", color: "var(--text-muted)" }}
                       >
                         <Upload size={24} strokeWidth={1} />
-                        <span className="text-[0.625rem] tracking-[0.2em] uppercase">Upload Local Image</span>
+                        <span className="text-[0.75rem] tracking-[0.2em] uppercase">Upload Local Image</span>
                       </label>
                     </div>
                     
                     <div className="flex items-center gap-4">
                       <div className="h-px flex-1" style={{ backgroundColor: "var(--border-faint)" }} />
-                      <span className="text-[0.5rem] tracking-[0.2em] uppercase" style={{ color: "var(--text-muted)" }}>OR</span>
+                      <span className="text-[0.625rem] tracking-[0.2em] uppercase" style={{ color: "var(--text-muted)" }}>OR</span>
                       <div className="h-px flex-1" style={{ backgroundColor: "var(--border-faint)" }} />
                     </div>
 
@@ -201,7 +201,7 @@ export default function NewListingPage() {
                 borderColor: "var(--border-faint)",
               }}
             >
-              The Valuation
+              Pricing
             </h2>
             <div className="grid grid-cols-2 gap-6">
               <div className="space-y-2">
@@ -254,7 +254,7 @@ export default function NewListingPage() {
                 borderColor: "var(--border-faint)",
               }}
             >
-              The Exchange Mode
+              Engagement Mode
             </h2>
 
             {/* Mode toggles */}
@@ -318,7 +318,7 @@ export default function NewListingPage() {
                   className="input-minimal text-[1rem]"
                 />
                 <p
-                  className="text-[0.625rem] italic"
+                  className="text-[0.75rem] italic"
                   style={{ color: "var(--text-muted)" }}
                 >
                   Buyers get limited attempts to meet the reserve.
@@ -343,7 +343,7 @@ export default function NewListingPage() {
                   className="input-minimal text-[1rem]"
                 />
                 <p
-                  className="text-[0.625rem] italic"
+                  className="text-[0.75rem] italic"
                   style={{ color: "var(--text-muted)" }}
                 >
                   The arena stays open for configured intervals.

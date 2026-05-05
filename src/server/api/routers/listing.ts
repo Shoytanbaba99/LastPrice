@@ -63,7 +63,7 @@ export const listingRouter = createTRPCRouter({
       include: {
         bids: {
           orderBy: { amount: "desc" },
-          take: 5,
+          take: 20,
           include: { buyer: { select: { name: true, email: true } } }
         }
       }
