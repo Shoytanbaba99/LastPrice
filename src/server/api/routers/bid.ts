@@ -34,8 +34,17 @@ export const bidRouter = createTRPCRouter({
         throw new TRPCError({ code: "BAD_REQUEST", message: "Invalid listing." });
       }
 
+      const now = new Date();
       if (listing.status !== "ACTIVE") {
         throw new TRPCError({ code: "BAD_REQUEST", message: "Listing is no longer active." });
+      }
+
+      if (now < listing.scheduledStartAt) {
+        throw new TRPCError({ code: "BAD_REQUEST", message: "Listing has not started yet." });
+      }
+
+      if (now > listing.expiresAt) {
+        throw new TRPCError({ code: "BAD_REQUEST", message: "Listing has expired." });
       }
 
       const chances = listing.burstChances ?? 3;
@@ -84,8 +93,45 @@ export const bidRouter = createTRPCRouter({
         throw new TRPCError({ code: "BAD_REQUEST", message: "Invalid listing." });
       }
 
+      const now = new Date();
       if (listing.status !== "ACTIVE") {
         throw new TRPCError({ code: "BAD_REQUEST", message: "Listing is no longer active." });
+      }
+
+      if (now < listing.scheduledStartAt) {
+        throw new TRPCError({ code: "BAD_REQUEST", message: "Listing has not started yet." });
+      }
+
+      if (now > listing.expiresAt) {
+        throw new TRPCError({ code: "BAD_REQUEST", message: "Listing has expired." });
+      }
+
+      // Round enforcement logic
+      const ROUND_DURATION_SEC = 30;
+      const rounds = listing.burstRounds ?? 5;
+      const startRef = listing.scheduledStartAt;
+      const elapsedSeconds = Math.max(0, (now.getTime() - startRef.getTime()) / 1000);
+      const currentRound = Math.floor(elapsedSeconds / ROUND_DURATION_SEC) + 1;
+
+      if (currentRound > rounds) {
+        throw new TRPCError({ code: "BAD_REQUEST", message: "Negotiation rounds have concluded." });
+      }
+
+      // Check if user already bid in THIS round
+      const roundStartTime = new Date(startRef.getTime() + (currentRound - 1) * ROUND_DURATION_SEC * 1000);
+      const existingBidInRound = await ctx.db.bid.findFirst({
+        where: {
+          listingId: input.listingId,
+          buyerId: ctx.session?.user?.id,
+          createdAt: { gte: roundStartTime },
+        },
+      });
+
+      if (existingBidInRound) {
+        throw new TRPCError({ 
+          code: "FORBIDDEN", 
+          message: "You have already submitted a manifest for this round. Wait for the next pulse." 
+        });
       }
 
       const bid = await ctx.db.bid.create({
@@ -122,7 +168,13 @@ export const bidRouter = createTRPCRouter({
       const ROUND_DURATION_SEC = 30;
       const rounds = listing.burstRounds ?? 5;
       const now = new Date();
-      const elapsedSeconds = (now.getTime() - listing.createdAt.getTime()) / 1000;
+      
+      const isNotStarted = now < listing.scheduledStartAt;
+      const isExpired = now > listing.expiresAt;
+
+      // Elapsed seconds since the START time, not creation time
+      const startRef = listing.scheduledStartAt;
+      const elapsedSeconds = Math.max(0, (now.getTime() - startRef.getTime()) / 1000);
       const currentRound = Math.floor(elapsedSeconds / ROUND_DURATION_SEC) + 1;
 
       const highestBidRaw = listing.bids.reduce((prev, current) => (prev.amount > current.amount) ? prev : current, listing.bids[0]);
@@ -138,7 +190,17 @@ export const bidRouter = createTRPCRouter({
       const highestBid = highestBidRaw ? anonymizeBid(highestBidRaw) : null;
       const allBids = listing.bids.map(anonymizeBid);
 
-      const isEnded = listing.status !== "ACTIVE" || currentRound > rounds;
+      const isEnded = listing.status !== "ACTIVE" || currentRound > rounds || isExpired;
+
+      // Check if current user has bid in this round
+      let hasBidInCurrentRound = false;
+      if (ctx.session?.user?.id) {
+        const roundStartTime = new Date(startRef.getTime() + (Math.min(currentRound, rounds) - 1) * ROUND_DURATION_SEC * 1000);
+        hasBidInCurrentRound = listing.bids.some(b => 
+          b.buyerId === ctx.session?.user?.id && 
+          new Date(b.createdAt) >= roundStartTime
+        );
+      }
 
       return {
         ...listing,
@@ -148,6 +210,10 @@ export const bidRouter = createTRPCRouter({
         allBids, 
         totalRounds: rounds,
         secondsRemainingInRound: ROUND_DURATION_SEC - (elapsedSeconds % ROUND_DURATION_SEC),
+        serverTime: now,
+        isNotStarted,
+        secondsUntilStart: isNotStarted ? Math.ceil((listing.scheduledStartAt.getTime() - now.getTime()) / 1000) : 0,
+        hasBidInCurrentRound,
       };
     }),
 

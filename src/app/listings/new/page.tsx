@@ -39,13 +39,10 @@ export default function NewListingPage() {
       saleMode === "SHORT_BURST"
         ? parseInt(formData.get("burstChances") as string)
         : undefined;
-    const burstRounds =
-      saleMode === "LONG_BURST"
-        ? parseInt(formData.get("burstRounds") as string)
-        : undefined;
+    const burstRounds = parseInt(formData.get("burstRounds") as string);
     
-    const expiresAt = new Date();
-    expiresAt.setDate(expiresAt.getDate() + 7);
+    const scheduledStartAt = new Date(formData.get("scheduledStartAt") as string);
+    const expiresAt = new Date(formData.get("expiresAt") as string);
 
     createListingMutation.mutate({
       title,
@@ -56,6 +53,7 @@ export default function NewListingPage() {
       saleMode,
       burstChances,
       burstRounds,
+      scheduledStartAt,
       expiresAt,
     });
   };
@@ -302,54 +300,149 @@ export default function NewListingPage() {
             </div>
 
             {saleMode === "SHORT_BURST" && (
-              <div className="space-y-2 animate-in fade-in slide-in-from-top-2 duration-500">
-                <label
-                  className="text-[0.75rem] font-light"
-                  style={{ color: "var(--text-secondary)" }}
-                >
-                  Number of Chances per Bidder
-                </label>
-                <input
-                  name="burstChances"
-                  type="number"
-                  min="1"
-                  defaultValue="3"
-                  required
-                  className="input-minimal text-[1rem]"
-                />
-                <p
-                  className="text-[0.75rem] italic"
-                  style={{ color: "var(--text-muted)" }}
-                >
-                  Buyers get limited attempts to meet the reserve.
+              <div className="space-y-6 animate-in fade-in slide-in-from-top-2 duration-500">
+                <div className="space-y-2">
+                  <label className="text-[0.75rem] font-light" style={{ color: "var(--text-secondary)" }}>
+                    Attempts per Bidder
+                  </label>
+                  <input
+                    name="burstChances"
+                    type="number"
+                    min="1"
+                    defaultValue="3"
+                    required
+                    className="input-minimal text-[1rem]"
+                  />
+                </div>
+                <p className="text-[0.7rem] italic" style={{ color: "var(--text-muted)" }}>
+                  Short Burst is a high-speed match. Buyers have limited attempts to hit your secret reserve.
                 </p>
               </div>
             )}
 
             {saleMode === "LONG_BURST" && (
-              <div className="space-y-2 animate-in fade-in slide-in-from-top-2 duration-500">
-                <label
-                  className="text-[0.75rem] font-light"
-                  style={{ color: "var(--text-secondary)" }}
-                >
-                  Number of Rounds
-                </label>
-                <input
-                  name="burstRounds"
-                  type="number"
-                  min="1"
-                  defaultValue="5"
-                  required
-                  className="input-minimal text-[1rem]"
-                />
-                <p
-                  className="text-[0.75rem] italic"
-                  style={{ color: "var(--text-muted)" }}
-                >
-                  The arena stays open for configured intervals.
+              <div className="space-y-6 animate-in fade-in slide-in-from-top-2 duration-500">
+                <div className="space-y-2">
+                  <label className="text-[0.75rem] font-light" style={{ color: "var(--text-secondary)" }}>
+                    Number of Rounds (30s each)
+                  </label>
+                  <input
+                    name="burstRounds"
+                    type="number"
+                    min="1"
+                    defaultValue="120"
+                    required
+                    className="input-minimal text-[1rem]"
+                    onChange={(e) => {
+                      // Optionally update expiresAt based on rounds
+                      const rounds = parseInt(e.target.value);
+                      if (!isNaN(rounds)) {
+                        const start = (document.getElementsByName("scheduledStartAt")[0] as HTMLInputElement).value;
+                        const startDate = start ? new Date(start) : new Date();
+                        const endDate = new Date(startDate.getTime() + (rounds * 30 * 1000));
+                        const expiresInput = document.getElementsByName("expiresAt")[0] as HTMLInputElement;
+                        if (expiresInput) {
+                          expiresInput.value = endDate.toISOString().slice(0, 16);
+                        }
+                      }
+                    }}
+                  />
+                </div>
+                <div className="space-y-3">
+                  <label className="text-[0.75rem] font-light" style={{ color: "var(--text-secondary)" }}>
+                    Quick Duration Helper
+                  </label>
+                  <div className="flex flex-wrap gap-2">
+                    {[
+                      { label: "1h", value: 120 },
+                      { label: "6h", value: 720 },
+                      { label: "12h", value: 1440 },
+                      { label: "24h", value: 2880 },
+                    ].map((d) => (
+                      <button
+                        key={d.label}
+                        type="button"
+                        onClick={() => {
+                          const roundsInput = document.getElementsByName("burstRounds")[0] as HTMLInputElement;
+                          if (roundsInput) {
+                            roundsInput.value = d.value.toString();
+                            // Trigger the change to update expiry
+                            const event = new Event('change', { bubbles: true });
+                            roundsInput.dispatchEvent(event);
+                            
+                            // Manual update just in case
+                            const start = (document.getElementsByName("scheduledStartAt")[0] as HTMLInputElement).value;
+                            const startDate = start ? new Date(start) : new Date();
+                            const endDate = new Date(startDate.getTime() + (d.value * 30 * 1000));
+                            const expiresInput = document.getElementsByName("expiresAt")[0] as HTMLInputElement;
+                            if (expiresInput) {
+                              expiresInput.value = endDate.toISOString().slice(0, 16);
+                            }
+                          }
+                        }}
+                        className="px-3 py-1 text-[0.65rem] border rounded-full transition-colors hover:bg-[var(--cta-bg)] hover:text-[var(--cta-fg)]"
+                        style={{ borderColor: "var(--border-faint)", color: "var(--text-muted)" }}
+                      >
+                        {d.label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+                <p className="text-[0.7rem] italic" style={{ color: "var(--text-muted)" }}>
+                  Negotiation rounds occur every 30 seconds. Bidders can submit one manifest per pulse.
                 </p>
               </div>
             )}
+
+            {/* ── Scheduling ── */}
+            <div className="space-y-6 pt-6 border-t" style={{ borderColor: "var(--border-faint)" }}>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-2">
+                  <label className="text-[0.75rem] tracking-widest uppercase font-light" style={{ color: "var(--text-muted)" }}>
+                    Arena Opens (Start)
+                  </label>
+                  <input
+                    name="scheduledStartAt"
+                    type="datetime-local"
+                    required
+                    defaultValue={new Date().toISOString().slice(0, 16)}
+                    className="input-minimal text-[0.875rem]"
+                    onChange={(e) => {
+                      const start = new Date(e.target.value);
+                      const roundsInput = document.getElementsByName("burstRounds")[0] as HTMLInputElement;
+                      const rounds = roundsInput ? parseInt(roundsInput.value) : 0;
+                      const expiresInput = document.getElementsByName("expiresAt")[0] as HTMLInputElement;
+                      
+                      if (expiresInput && !isNaN(rounds) && rounds > 0) {
+                        const endDate = new Date(start.getTime() + (rounds * 30 * 1000));
+                        expiresInput.value = endDate.toISOString().slice(0, 16);
+                      } else if (expiresInput) {
+                        const currentExpires = new Date(expiresInput.value);
+                        if (currentExpires <= start) {
+                          const nextDay = new Date(start.getTime() + 24 * 60 * 60 * 1000);
+                          expiresInput.value = nextDay.toISOString().slice(0, 16);
+                        }
+                      }
+                    }}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-[0.75rem] tracking-widest uppercase font-light" style={{ color: "var(--text-muted)" }}>
+                    Arena Closes (Deadline)
+                  </label>
+                  <input
+                    name="expiresAt"
+                    type="datetime-local"
+                    required
+                    defaultValue={new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString().slice(0, 16)}
+                    className="input-minimal text-[0.875rem]"
+                  />
+                </div>
+              </div>
+              <p className="text-[0.7rem] italic" style={{ color: "var(--text-muted)" }}>
+                The "Arena Closes" is your hard deadline. No bids can be placed after this moment.
+              </p>
+            </div>
           </div>
 
           {error && (

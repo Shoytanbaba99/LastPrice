@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useParams } from "next/navigation";
 import { api } from "~/trpc/react";
 import { useSession } from "next-auth/react";
@@ -29,6 +29,9 @@ export default function ListingPage() {
     level?: "LOW" | "CLOSE" | "MATCHED";
   } | null>(null);
 
+  const [localSecondsRemaining, setLocalSecondsRemaining] = useState<number | null>(null);
+  const [localSecondsUntilStart, setLocalSecondsUntilStart] = useState<number | null>(null);
+
   const utils = api.useUtils();
 
   const { data: listing, isLoading, error } = api.bid.getListingState.useQuery(
@@ -43,6 +46,39 @@ export default function ListingPage() {
       }
     }
   );
+
+  const [timeOffset, setTimeOffset] = useState(0);
+  const [syncedDate, setSyncedDate] = useState(new Date());
+
+  // Local heartbeat for smooth countdown
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setSyncedDate(new Date(Date.now() + timeOffset));
+    }, 100);
+    return () => clearInterval(interval);
+  }, [timeOffset]);
+
+  // Synchronize local timers with server data
+  useEffect(() => {
+    if (listing) {
+      const offset = new Date(listing.serverTime).getTime() - Date.now();
+      setTimeOffset(offset);
+    }
+  }, [listing]);
+
+  // Derived countdown values
+  const currentSyncedDate = syncedDate;
+  const startRef = listing ? new Date(listing.scheduledStartAt) : new Date();
+  const expiresRef = listing ? new Date(listing.expiresAt) : new Date();
+  
+  const secondsRemainingInRound = listing ? (
+    30 - ((Math.max(0, (currentSyncedDate.getTime() - startRef.getTime()) / 1000)) % 30)
+  ) : 0;
+  
+  const secondsUntilStart = listing ? (
+    Math.max(0, (startRef.getTime() - currentSyncedDate.getTime()) / 1000)
+  ) : 0;
+
 
   const shortBurstMutation = api.bid.submitShortBurst.useMutation({
     onSuccess: (data) => {
@@ -131,6 +167,7 @@ export default function ListingPage() {
     }
   };
 
+
   /* ─── Tension level helpers ─── */
   const tensionPct = Math.min((listing._count.bids / 10) * 100, 100);
   const isHighTension = listing._count.bids > 5;
@@ -157,6 +194,25 @@ export default function ListingPage() {
       )}
 
       <div className="max-w-4xl mx-auto space-y-16 relative z-10">
+        
+        {/* Not Started Overlay */}
+        {listing.isNotStarted && (
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="absolute inset-0 z-[100] flex flex-col items-center justify-center text-center p-8 rounded-sm backdrop-blur-md border border-white/5 bg-black/40"
+          >
+            <div className="space-y-6 max-w-sm">
+              <p className="text-[0.75rem] tracking-[0.4em] uppercase text-muted-foreground">Before the Storm</p>
+              <h2 className="text-[2.5rem] font-light tracking-tight">Arena Opens In</h2>
+              <div className="text-[4rem] font-light tabular-nums">
+                {Math.floor(secondsUntilStart / 3600)}h {Math.floor((secondsUntilStart % 3600) / 60)}m {Math.floor(secondsUntilStart % 60)}s
+              </div>
+              <p className="text-[0.875rem] font-light text-muted-foreground italic">Prepare your manifest. The silent negotiation begins soon.</p>
+              <Link href="/" className="btn-minimal inline-block mt-8">Back to Marketplace</Link>
+            </div>
+          </motion.div>
+        )}
         
         {/* Back nav */}
         <Link 
@@ -300,13 +356,16 @@ export default function ListingPage() {
                     className="text-[0.625rem] tracking-[0.2em] uppercase font-medium"
                     style={{ color: "var(--text-heading)" }}
                   >
-                    Round {listing.currentRound} of {listing.totalRounds}
+                    {listing.totalRounds 
+                      ? `Round ${listing.currentRound} of ${listing.totalRounds}`
+                      : `Negotiation Round ${listing.currentRound}`
+                    }
                   </h3>
                   <span
                     className="text-[1.5rem] font-light tabular-nums"
                     style={{ color: "var(--text-heading)" }}
                   >
-                    {Math.floor(listing.secondsRemainingInRound)}s
+                    {Math.floor(secondsRemainingInRound)}s
                   </span>
                 </div>
 
@@ -317,7 +376,7 @@ export default function ListingPage() {
                 >
                   <motion.div 
                     initial={{ width: "100%" }}
-                    animate={{ width: `${(listing.secondsRemainingInRound / 30) * 100}%` }}
+                    animate={{ width: `${(secondsRemainingInRound / 30) * 100}%` }}
                     transition={{ ease: "linear", duration: 1 }}
                     className="absolute h-full rounded-full bg-red-500"
                   />
@@ -462,18 +521,30 @@ export default function ListingPage() {
                   {/* Primary CTA — bold, unmistakable */}
                   <motion.button
                     type="submit"
-                    disabled={shortBurstMutation.isPending || longBurstMutation.isPending}
+                    disabled={
+                      shortBurstMutation.isPending || 
+                      longBurstMutation.isPending || 
+                      (listing.saleMode === "LONG_BURST" && listing.hasBidInCurrentRound)
+                    }
                     whileTap={{ scale: 0.98 }}
-                    className="btn-solid w-full py-5 text-[0.625rem] tracking-[0.4em] group"
+                    className="btn-solid w-full py-5 text-[0.625rem] tracking-[0.4em] group disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     <span className="flex items-center justify-center gap-2">
-                      Submit Price
+                      {listing.saleMode === "LONG_BURST" && listing.hasBidInCurrentRound 
+                        ? "Round Manifest Locked" 
+                        : "Submit Price"
+                      }
                       <ChevronRight
                         size={14}
                         className="transition-transform group-hover:translate-x-1"
                       />
                     </span>
                   </motion.button>
+                  {listing.saleMode === "LONG_BURST" && listing.hasBidInCurrentRound && (
+                    <p className="text-[0.625rem] text-center tracking-[0.2em] uppercase text-muted-foreground animate-pulse">
+                      Waiting for next pulse...
+                    </p>
+                  )}
                 </form>
               ) : (
                 <div
@@ -490,7 +561,52 @@ export default function ListingPage() {
                     </span>
                   </div>
 
-                  {isSeller && listing.allBids && listing.allBids.length > 0 && (
+                  {/* Bids visibility: Seller sees all, Public sees all if Long Burst */}
+                  {isSeller && (listing.status === "ACTIVE") && (
+                        <div className="pt-8 border-t" style={{ borderColor: "var(--border-faint)" }}>
+                          <p className="text-[0.625rem] tracking-[0.3em] uppercase mb-6 text-center" style={{ color: "var(--text-muted)" }}>
+                            Select Manifest to Finalize
+                          </p>
+                          <div className="space-y-3">
+                            {listing.allBids.map((bid: any) => (
+                              <div 
+                                key={bid.id}
+                                className="flex items-center justify-between p-4 border rounded-sm transition-all"
+                                style={{ borderColor: "var(--border-faint)" }}
+                              >
+                                <div className="space-y-1">
+                                  <p className="text-[0.75rem] font-medium tracking-tight">
+                                    {bid.buyer.name}
+                                  </p>
+                                  <p className="text-[0.625rem] tracking-wider uppercase" style={{ color: "var(--text-muted)" }}>
+                                    ${bid.amount.toLocaleString()}
+                                  </p>
+                                </div>
+                                <button
+                                  onClick={() => {
+                                    if (window.confirm(`Accept this manifest for $${bid.amount}?`)) {
+                                      manualAcceptMutation.mutate({
+                                        listingId: listing.id,
+                                        bidId: bid.id,
+                                      });
+                                    }
+                                  }}
+                                  className="px-3 py-1.5 text-[0.6rem] tracking-[0.2em] uppercase border transition-all hover:bg-white hover:text-black"
+                                  style={{ borderColor: "var(--text-secondary)", color: "var(--text-secondary)" }}
+                                >
+                                  Accept
+                                </button>
+                              </div>
+                            ))}
+                            {listing.allBids.length === 0 && (
+                              <p className="text-[0.75rem] italic text-center py-4" style={{ color: "var(--text-muted)" }}>
+                                No manifests submitted yet.
+                              </p>
+                            )}
+                          </div>
+                        </div>
+                      )}
+                  {(isSeller || listing.saleMode === "LONG_BURST") && listing.allBids && listing.allBids.length > 0 && (
                     <div className="space-y-4 pt-4">
                       <p className="text-[0.625rem] tracking-[0.2em] uppercase text-muted-foreground">Recent Bids</p>
                       <div className="space-y-3">
@@ -513,16 +629,22 @@ export default function ListingPage() {
                                   {bid.buyer.name}
                                 </p>
                               </div>
-                                {listing.status === "ACTIVE" && (
-                                  <motion.button
-                                    whileHover={{ scale: 1.05, backgroundColor: "#000" }}
-                                    whileTap={{ scale: 0.95 }}
-                                    onClick={() => manualAcceptMutation.mutate({ listingId: id, bidId: bid.id })}
-                                    disabled={manualAcceptMutation.isPending}
-                                    className="px-4 py-1.5 text-[0.625rem] tracking-[0.2em] uppercase bg-white text-black font-medium transition-all shadow-[0_0_15px_rgba(255,255,255,0.1)] hover:shadow-[0_0_25px_rgba(255,255,255,0.2)] disabled:opacity-50"
-                                  >
-                                    Accept Manifest
-                                  </motion.button>
+                                {isSeller && listing.status === "ACTIVE" && (
+                                    <motion.button
+                                        whileTap={{ scale: 0.95 }}
+                                        onClick={() => {
+                                          if (window.confirm(`Accept this manifest for $${bid.amount}?`)) {
+                                            manualAcceptMutation.mutate({
+                                              listingId: listing.id,
+                                              bidId: bid.id,
+                                            });
+                                          }
+                                        }}
+                                        className="px-4 py-2 text-[0.6rem] tracking-[0.2em] uppercase border transition-all hover:bg-white hover:text-black"
+                                        style={{ borderColor: "var(--border-faint)", color: "var(--text-secondary)" }}
+                                    >
+                                        Accept
+                                    </motion.button>
                                 )}
                             </div>
                           );

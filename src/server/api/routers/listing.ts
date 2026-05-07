@@ -13,6 +13,7 @@ export const listingRouter = createTRPCRouter({
         saleMode: z.enum(["SHORT_BURST", "LONG_BURST"]),
         burstChances: z.number().optional(),
         burstRounds: z.number().optional(),
+        scheduledStartAt: z.date().optional().default(new Date()),
         expiresAt: z.date(),
       })
     )
@@ -29,6 +30,7 @@ export const listingRouter = createTRPCRouter({
           burstChances: input.burstChances,
           burstRounds: input.burstRounds,
           status: "ACTIVE",
+          scheduledStartAt: input.scheduledStartAt,
           expiresAt: input.expiresAt,
         },
       });
@@ -71,15 +73,36 @@ export const listingRouter = createTRPCRouter({
     return listings;
   }),
 
-  getAllActive: publicProcedure.query(async ({ ctx }) => {
-    const listings = await ctx.db.listing.findMany({
-      where: { status: "ACTIVE" },
-      orderBy: { createdAt: "desc" },
-      include: {
-        seller: { select: { id: true, name: true } },
-        _count: { select: { bids: true } },
-      },
-    });
-    return listings;
+  getAllActive: publicProcedure
+    .input(z.object({ includeEnded: z.boolean().optional().default(false) }))
+    .query(async ({ ctx, input }) => {
+      const now = new Date();
+      const where: any = {};
+
+      if (!input.includeEnded) {
+        where.status = "ACTIVE";
+        where.scheduledStartAt = { lte: now };
+        where.expiresAt = { gte: now };
+      } else {
+        // When including ended, show finished ACTIVE ones or PENDING_HANDOVER
+        where.OR = [
+          { status: "ACTIVE" },
+          { status: "PENDING_HANDOVER" }
+        ];
+      }
+
+      const listings = await ctx.db.listing.findMany({
+        where,
+        orderBy: { createdAt: "desc" },
+        include: {
+          seller: { select: { id: true, name: true } },
+          _count: { select: { bids: true } },
+        },
+      });
+      return listings;
+    }),
+
+  getServerTime: publicProcedure.query(async () => {
+    return { serverTime: new Date() };
   }),
 });
