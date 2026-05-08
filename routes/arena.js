@@ -35,7 +35,8 @@ router.get("/:listingId/status", auth, async (req, res) => {
 
         const now = new Date();
         const startTime = new Date(listing.arena_start_time);
-        const endTime = new Date(startTime.getTime() + 6 * 60 * 1000); // 3 rounds of 2 mins
+        const durationMins = parseInt(process.env.AUCTION_DURATION_MINS || "1440");
+        const endTime = new Date(startTime.getTime() + durationMins * 60 * 1000); 
 
         let timeLeftMs = 0;
         let isWaiting = false;
@@ -76,7 +77,8 @@ router.post("/resolve/:listingId", auth, async (req, res) => {
         const listing = listings[0];
 
         // Allow seller OR after timer to trigger
-        const endTime = new Date(new Date(listing.arena_start_time).getTime() + 6 * 60 * 1000);
+        const durationMins = parseInt(process.env.AUCTION_DURATION_MINS || "1440");
+        const endTime = new Date(new Date(listing.arena_start_time).getTime() + durationMins * 60 * 1000);
         const isExpired = new Date() >= endTime;
         const isSeller = listing.seller_id === req.user.id;
 

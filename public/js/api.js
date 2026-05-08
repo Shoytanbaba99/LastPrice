@@ -33,6 +33,26 @@ const api = {
     patch: (url, body) => request('PATCH', url, body),
     del: (url) => request('DELETE', url),
     upload: (url, formData) => request('POST', url, formData, true),
+    
+    // Time synchronization
+    timeOffset: 0,
+    auctionDurationMins: 6,
+    async syncTime() {
+        try {
+            const start = Date.now();
+            const data = await this.get('/api/time');
+            const end = Date.now();
+            const latency = (end - start) / 2;
+            this.timeOffset = data.serverTime - (end - latency);
+            this.auctionDurationMins = data.auctionDurationMins || 6;
+            console.log(`[TimeSync] Offset: ${this.timeOffset}ms, Latency: ${latency}ms, Duration: ${this.auctionDurationMins}m`);
+        } catch (e) {
+            console.error('Time sync failed:', e);
+        }
+    },
+    getSyncedDate() {
+        return new Date(Date.now() + this.timeOffset);
+    }
 };
 
 window.api = api;

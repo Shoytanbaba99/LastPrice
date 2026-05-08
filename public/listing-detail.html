@@ -222,12 +222,11 @@
                         <div id="is-seller" class="hidden mb-5">
                             <div class="bg-[#141414] rounded-2xl p-6 text-center">
                                 <div class="text-4xl mb-3">🏷️</div>
-                                <div class="font-semibold text-sepia/80">This is your listing</div>
-                                <a
-                                    href="/seller-panel.html"
-                                    class="inline-block mt-3 px-5 py-2.5 rounded-xl bg-brand-500 hover:bg-brand-600 text-sm font-semibold text-cream transition"
-                                    >View Seller Panel</a
-                                >
+                                <div class="font-semibold text-sepia/80 mb-3">This is your listing</div>
+                                <div id="seller-actions-wrap" class="flex flex-col gap-2">
+                                    <a href="/seller-panel.html" class="w-full py-3 rounded-xl bg-brand-500 hover:bg-brand-600 text-sm font-semibold text-cream transition text-center">View Seller Panel</a>
+                                    <button id="resolve-btn" onclick="resolveArena()" class="hidden w-full py-3 rounded-xl border border-brand-400 text-brand-400 hover:bg-brand-400/10 text-sm font-semibold transition">Resolve Auction</button>
+                                </div>
                             </div>
                         </div>
                         <div class="mt-5" id="my-bids-section">
@@ -298,9 +297,9 @@
             function startCountdown() {
                 if (countdownInterval) clearInterval(countdownInterval);
                 function update() {
-                    const now = new Date(),
+                    const now = api.getSyncedDate(),
                         startTime = new Date(listing.arena_start_time),
-                        endTime = new Date(startTime.getTime() + 6 * 60 * 1000); // 6 mins
+                        endTime = new Date(startTime.getTime() + api.auctionDurationMins * 60 * 1000); 
 
                     const el = document.getElementById("countdown-display"),
                         lbl = document.getElementById("countdown-label"),
@@ -406,9 +405,13 @@
                         `<img src="${listing.photo_url}" class="w-full h-full object-cover" alt="${escHtml(listing.title)}">`;
                 startCountdown();
                 const startTime = new Date(listing.arena_start_time);
-                const endTime = new Date(startTime.getTime() + 6 * 60 * 1000);
-                const isEnded = new Date() >= endTime || listing.status !== "live";
+                const endTime = new Date(startTime.getTime() + api.auctionDurationMins * 60 * 1000);
+                const isEnded = api.getSyncedDate() >= endTime || listing.status !== "live";
                 const isSeller = loggedIn && user && listing.seller_id === user.id;
+
+                if (isSeller && isEnded && listing.status === 'live') {
+                    document.getElementById("resolve-btn").classList.remove("hidden");
+                }
                 if (!loggedIn) {
                     document.getElementById("not-logged-in").classList.remove("hidden");
                     return;
@@ -503,6 +506,7 @@
 
             async function init() {
                 try {
+                    await api.syncTime();
                     const data = await api.get(`/api/listings/${listingId}`);
                     listing = data.listing;
                     listing._leaderboard = data.leaderboard;
@@ -516,6 +520,19 @@
                         "Failed to load listing: " + e.message;
                 }
             }
+            async function resolveArena() {
+                const btn = document.getElementById("resolve-btn");
+                btn.textContent = "Resolving..."; btn.disabled = true;
+                try {
+                    const res = await api.post(`/api/arena/resolve/${listingId}`);
+                    showBidAlert("Auction resolved! Results: " + (res.result?.outcome || "Success"), "success");
+                    setTimeout(() => window.location.reload(), 2000);
+                } catch (e) {
+                    showBidAlert(e.message || "Failed to resolve auction", "error");
+                    btn.textContent = "Resolve Auction"; btn.disabled = false;
+                }
+            }
+
             init();
         </script>
     </body>

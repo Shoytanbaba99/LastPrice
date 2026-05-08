@@ -54,6 +54,14 @@ app.get("/api/health", (req, res) => {
     res.json({ status: "ok", timestamp: new Date().toISOString() });
 });
 
+// ── GET /api/time ─────────────────────────────────────────────
+app.get("/api/time", (req, res) => {
+    res.json({ 
+        serverTime: Date.now(),
+        auctionDurationMins: parseInt(process.env.AUCTION_DURATION_MINS || "1440") // Default to 24h for "Long Burst"
+    });
+});
+
 // ── Static Files & SPA Fallback ──────────────────────────────
 // On Vercel, static files and SPA fallback are handled by vercel.json.
 if (!process.env.VERCEL) {

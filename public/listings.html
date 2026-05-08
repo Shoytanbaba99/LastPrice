@@ -120,9 +120,9 @@
             if (loggedIn) authHelper.refreshUser();
 
             function fmtCountdown(startTimeRaw) {
-                const now = new Date();
+                const now = api.getSyncedDate();
                 const startTime = new Date(startTimeRaw);
-                const endTime = new Date(startTime.getTime() + 6 * 60 * 1000); // 6 mins
+                const endTime = new Date(startTime.getTime() + api.auctionDurationMins * 60 * 1000);
 
                 if (now >= endTime) return { text: "Ended", cls: "countdown-red" };
 
@@ -187,6 +187,7 @@
 
             async function loadListings() {
                 try {
+                    if (api.timeOffset === 0) await api.syncTime();
                     const data = await api.get("/api/listings");
                     renderListings(data.listings);
                 } catch (e) {
