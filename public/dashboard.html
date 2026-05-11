@@ -91,7 +91,13 @@
                 const txs = txData.transactions;
                 const confirmed = txs.filter(t => t.status === 'confirmed').length;
                 document.getElementById('stat-deals').textContent = confirmed;
-                document.getElementById('stat-listings').textContent = '\u2013';
+
+                const listingsData = await api.get('/api/listings/my');
+                const activeListings = listingsData.listings.filter(l => l.status === 'live').length;
+                document.getElementById('stat-listings').textContent = activeListings;
+
+                const bidsCountData = await api.get('/api/bids/my/count');
+                document.getElementById('stat-bids').textContent = bidsCountData.count;
 
                 const txList = document.getElementById('transactions-list');
                 if (!txs.length) {
@@ -116,7 +122,6 @@
                 }
             } catch (e) { document.getElementById('transactions-list').innerHTML = '<div class="text-red-400 text-sm text-center py-4">Could not load transactions</div>'; }
 
-            document.getElementById('stat-bids').textContent = '\u2013';
         }
 
         function fmtStatus(s) { return { pending: '\u23f3 Pending', confirmed: '\u2705 Confirmed' }[s] || s; }

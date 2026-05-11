@@ -68,7 +68,8 @@ router.get("/my", auth, async (req, res) => {
               (SELECT u2.username FROM Bids b2
                JOIN Users u2 ON u2.id = b2.buyer_id
                WHERE b2.listing_id = l.id
-               ORDER BY b2.amount DESC LIMIT 1) AS top_bidder_name
+               ORDER BY b2.amount DESC LIMIT 1) AS top_bidder_name,
+              (SELECT t.id FROM Transactions t WHERE t.listing_id = l.id LIMIT 1) AS transaction_id
        FROM Listings l
        WHERE l.seller_id = $1
        ORDER BY l.created_at DESC`,

@@ -247,7 +247,7 @@
                         <li>✅ Display price is visible to all buyers</li>
                         <li>🔒 Reserve floor is NEVER shown to anyone</li>
                         <li>
-                            ⏱ Once Started, the Arena will run for exactly 6 minutes across 3
+                            ⏱ Once Started, the Arena will run for exactly <span id="duration-text">6</span> minutes across 3
                             bidding rounds.
                         </li>
                         <li>📧 If matched, buyer & seller contact info is revealed</li>
@@ -269,6 +269,11 @@
         <script>
             if (!authHelper.requireAuth()) throw new Error("Not authenticated");
             authHelper.refreshUser();
+
+            // Sync time and update duration text
+            api.syncTime().then(() => {
+                document.getElementById('duration-text').textContent = api.auctionDurationMins;
+            });
 
             function previewPhoto(e) {
                 const file = e.target.files[0];

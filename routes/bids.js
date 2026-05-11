@@ -141,4 +141,23 @@ router.get("/:listingId", auth, async (req, res) => {
     }
 });
 
+// ── GET /api/bids/my/count ──────────────────────────────────────────
+// Returns a count of unique listings the user has active bids on (where listing is still live)
+router.get("/my/count", auth, async (req, res) => {
+    try {
+        const { rows } = await db.query(
+            `SELECT COUNT(DISTINCT b.listing_id) 
+             FROM Bids b
+             JOIN Listings l ON l.id = b.listing_id
+             WHERE b.buyer_id = $1 AND l.status = 'live'`,
+            [req.user.id],
+        );
+        return res.json({ count: parseInt(rows[0].count) });
+    } catch (err) {
+        console.error("GET /api/bids/my/count error:", err);
+        return res.status(500).json({ error: "Server error" });
+    }
+});
+
 module.exports = router;
+

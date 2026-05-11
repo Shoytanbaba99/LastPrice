@@ -46,6 +46,11 @@ const api = {
             this.timeOffset = data.serverTime - (end - latency);
             this.auctionDurationMins = data.auctionDurationMins || 6;
             console.log(`[TimeSync] Offset: ${this.timeOffset}ms, Latency: ${latency}ms, Duration: ${this.auctionDurationMins}m`);
+            
+            // Auto re-sync every 5 mins
+            if (!this._syncInterval) {
+                this._syncInterval = setInterval(() => this.syncTime(), 5 * 60 * 1000);
+            }
         } catch (e) {
             console.error('Time sync failed:', e);
         }
