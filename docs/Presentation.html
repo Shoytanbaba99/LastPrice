@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" style="margin:0;padding:0;width:100%;height:100%;overflow:hidden;">
+<html lang="en">
     <head>
         <meta charset="utf-8" />
         <title>LastPrice: Frictionless Silent Auction & Escrow Marketplace</title>
@@ -41,24 +41,11 @@
                 --tension-green: #5effc4;
             }
 
-            html, body {
-                margin: 0;
-                padding: 0;
-                width: 100%;
-                height: 100%;
-                overflow: hidden;
-            }
-
             .reveal {
                 font-family: "Outfit", sans-serif;
                 background: radial-gradient(circle at center, #261f1a 0%, #0c0908 100%);
                 color: var(--brand-light);
-                font-size: 32px;
-                position: fixed !important;
-                top: 0 !important;
-                left: 0 !important;
-                width: 100% !important;
-                height: 100% !important;
+                font-size: 28px; /* Slightly reduced base font size from 32px */
             }
 
             .reveal h1,
@@ -80,11 +67,11 @@
             }
 
             .reveal h2 {
-                font-size: 2em;
-                margin-bottom: 30px;
+                font-size: 1.7em; /* Compacted from 2em */
+                margin-bottom: 20px; /* Reduced from 30px */
                 border-bottom: 2px solid var(--brand-gold);
                 display: inline-block;
-                padding-bottom: 15px;
+                padding-bottom: 8px; /* Reduced from 15px */
             }
 
             .text-gold {
@@ -102,12 +89,12 @@
                 backdrop-filter: blur(12px);
                 -webkit-backdrop-filter: blur(12px);
                 border: 1px solid var(--glass-border);
-                border-radius: 16px;
-                padding: 16px 28px;
+                border-radius: 14px; /* Reduced from 16px */
+                padding: 12px 20px; /* Reduced from 16px 28px */
                 box-shadow:
-                    0 20px 50px rgba(0, 0, 0, 0.6),
+                    0 15px 35px rgba(0, 0, 0, 0.6),
                     inset 0 1px 0 rgba(255, 255, 255, 0.05);
-                margin: 8px auto;
+                margin: 6px auto; /* Reduced from 8px auto */
                 text-align: center;
             }
 
@@ -149,7 +136,7 @@
                 flex-direction: row;
                 justify-content: center;
                 align-items: stretch;
-                gap: 24px;
+                gap: 20px; /* Slightly compacted gap */
                 flex-wrap: wrap;
                 width: 100%;
             }
@@ -164,15 +151,15 @@
                 display: inline-flex;
                 align-items: center;
                 justify-content: center;
-                width: 70px;
-                height: 70px;
+                width: 54px; /* Reduced from 70px */
+                height: 54px; /* Reduced from 70px */
                 border-radius: 50%;
                 background: rgba(197, 168, 128, 0.15);
                 border: 2px solid var(--brand-gold);
                 color: var(--brand-gold);
-                margin-bottom: 14px;
-                font-size: 1.8em;
-                box-shadow: 0 0 20px var(--brand-gold-glow);
+                margin-bottom: 8px; /* Reduced from 14px */
+                font-size: 1.3em; /* Reduced from 1.8em */
+                box-shadow: 0 0 12px var(--brand-gold-glow);
             }
 
             /* Viewport-aware walkthrough images — fill available height, never overflow */
@@ -194,9 +181,9 @@
             .sim-container {
                 display: flex;
                 flex-direction: row;
-                gap: 30px;
+                gap: 20px; /* Reduced from 30px */
                 width: 100%;
-                max-width: 1100px;
+                max-width: 1000px; /* Reduced from 1100px */
                 margin: 0 auto;
                 text-align: left;
             }
@@ -205,9 +192,9 @@
                 flex: 1.5;
                 background: rgba(18, 14, 12, 0.95);
                 border: 2px solid var(--brand-gold);
-                border-radius: 14px;
-                padding: 30px;
-                box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
+                border-radius: 12px; /* Reduced from 14px */
+                padding: 16px 20px; /* Reduced from 30px */
+                box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
             }
 
             .sim-listing-header {
@@ -215,27 +202,27 @@
                 align-items: center;
                 justify-content: space-between;
                 border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-                padding-bottom: 15px;
-                margin-bottom: 20px;
+                padding-bottom: 10px; /* Reduced from 15px */
+                margin-bottom: 12px; /* Reduced from 20px */
             }
 
             .sim-chances-badge {
                 background: #1a1512;
                 border: 2px solid var(--brand-gold);
                 color: var(--brand-gold);
-                padding: 8px 18px;
-                border-radius: 25px;
+                padding: 4px 12px; /* Reduced from 8px 18px */
+                border-radius: 20px;
                 font-weight: 700;
-                font-size: 0.9em;
+                font-size: 0.8em; /* Reduced from 0.9em */
             }
 
             .sim-tension-gauge {
                 width: 100%;
-                height: 18px;
+                height: 12px; /* Reduced from 18px */
                 background: #2b231e;
-                border-radius: 10px;
+                border-radius: 6px;
                 overflow: hidden;
-                margin: 20px 0 10px 0;
+                margin: 12px 0 8px 0; /* Reduced from 20px 0 10px 0 */
                 position: relative;
             }
 
@@ -250,8 +237,8 @@
 
             .sim-input-row {
                 display: flex;
-                gap: 15px;
-                margin-top: 25px;
+                gap: 12px;
+                margin-top: 15px; /* Reduced from 25px */
             }
 
             .sim-input {
@@ -259,9 +246,9 @@
                 background: #0f0b0a;
                 border: 2px solid var(--glass-border);
                 color: #ffffff;
-                border-radius: 10px;
-                padding: 15px 20px;
-                font-size: 1.2em;
+                border-radius: 8px; /* Reduced from 10px */
+                padding: 10px 15px; /* Reduced from 15px 20px */
+                font-size: 1.05em; /* Reduced from 1.2em */
                 font-family: inherit;
             }
 
@@ -275,10 +262,10 @@
                 background: linear-gradient(135deg, #c5a880 0%, #a68b65 100%);
                 border: none;
                 color: #120e0c;
-                padding: 15px 30px;
-                border-radius: 10px;
+                padding: 10px 20px; /* Reduced from 15px 30px */
+                border-radius: 8px; /* Reduced from 10px */
                 font-weight: 800;
-                font-size: 1.1em;
+                font-size: 0.95em; /* Reduced from 1.1em */
                 cursor: pointer;
                 transition:
                     transform 0.2s,
@@ -294,60 +281,23 @@
                 flex: 1;
                 background: rgba(18, 14, 12, 0.5);
                 border: 2px dashed var(--brand-gold);
-                border-radius: 14px;
-                padding: 25px;
+                border-radius: 12px; /* Reduced from 14px */
+                padding: 16px; /* Reduced from 25px */
                 display: flex;
                 flex-direction: column;
             }
 
             /* Slides: fill the full reveal viewport, no overflow */
-            .reveal .slides {
-                width: 100% !important;
-                max-width: 100% !important;
-                height: 100% !important;
-                left: 0 !important;
-                top: 0 !important;
-                margin: 0 !important;
-            }
-            
             .reveal .slides section {
                 height: 100% !important;
                 max-height: 100% !important;
                 overflow: hidden !important;
-                padding: 30px 50px 20px 50px !important;
+                padding: 12px 24px !important; /* Slightly reduced top/bottom padding */
                 box-sizing: border-box !important;
                 display: flex !important;
                 flex-direction: column !important;
                 align-items: center !important;
-                justify-content: flex-start !important;
-            }
-
-            .slide-header {
-                width: 100%;
-                flex: 0 0 auto;
-                text-align: center;
-                margin-bottom: 20px;
-            }
-
-            .slide-header h2 {
-                margin: 0 0 5px 0 !important;
-                padding-bottom: 5px !important;
-                font-size: 1.8em !important;
-            }
-
-            .slide-body {
-                width: 100%;
-                flex: 1 1 0;
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                justify-content: center;
-                min-height: 0; /* critical for overflow prevention */
-            }
-
-            .slide-cover {
                 justify-content: center !important;
-                padding: 20px !important;
             }
 
             .sim-history-list {
@@ -356,15 +306,15 @@
                 margin: 0;
                 display: flex;
                 flex-direction: column;
-                gap: 12px;
+                gap: 8px; /* Reduced from 12px */
             }
 
             .sim-history-item {
                 background: rgba(255, 255, 255, 0.05);
                 border-left: 6px solid var(--text-muted);
-                padding: 12px 18px;
+                padding: 8px 14px; /* Reduced from 12px 18px */
                 border-radius: 0 8px 8px 0;
-                font-size: 1.1em;
+                font-size: 0.95em; /* Reduced from 1.1em */
                 display: flex;
                 justify-content: space-between;
                 align-items: center;
@@ -372,79 +322,148 @@
 
             .sim-feedback-card {
                 border: 2px solid var(--glass-border);
-                border-radius: 10px;
-                padding: 18px;
-                margin-top: 25px;
-                font-size: 1.1em;
+                border-radius: 8px;
+                padding: 12px; /* Reduced from 18px */
+                margin-top: 15px; /* Reduced from 25px */
+                font-size: 0.95em; /* Reduced from 1.1em */
                 background: rgba(255, 255, 255, 0.03);
                 text-align: center;
                 font-weight: 600;
             }
 
             .text-xl {
-                font-size: 1.3em;
+                font-size: 1.15em; /* Reduced from 1.3em */
             }
             .text-lg {
-                font-size: 1.1em;
+                font-size: 0.95em; /* Reduced from 1.1em */
             }
             .text-md {
-                font-size: 0.9em;
+                font-size: 0.8em; /* Reduced from 0.9em */
+            }
+
+            /* Ensure slides take up more width */
+            .reveal .slides {
+                width: 92% !important;
+                max-width: 1400px !important;
+            }
+
+            /* System Architecture Visual Flow Styles */
+            .arch-container {
+                display: flex;
+                flex-direction: row;
+                justify-content: space-between;
+                align-items: stretch;
+                width: 100%;
+                max-width: 1250px;
+                margin: 0 auto;
+                position: relative;
+                gap: 12px;
+            }
+            .arch-tier {
+                flex: 1;
+                background: rgba(18, 14, 12, 0.7);
+                border: 2px solid var(--glass-border);
+                border-radius: 12px;
+                padding: 12px 14px 18px 14px;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                text-align: center;
+                position: relative;
+                transition: transform 0.3s ease, border-color 0.3s ease;
+            }
+            .arch-tier:hover {
+                transform: translateY(-4px);
+                border-color: var(--brand-gold);
+                box-shadow: 0 10px 25px rgba(197, 168, 128, 0.2);
+            }
+            .arch-tier h4 {
+                margin: 8px 0 6px 0 !important;
+                font-size: 1.1em;
+            }
+            .arch-tier ul {
+                text-align: left;
+                width: 100%;
+                margin: 8px 0 0 0;
+                padding-left: 14px;
+                font-size: 0.72em;
+                line-height: 1.4;
+                color: var(--text-muted);
+            }
+            .arch-tier li {
+                margin-bottom: 6px;
+            }
+            .arch-arrow {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                color: var(--brand-gold);
+                font-size: 1.5em;
+                opacity: 0.7;
+                width: 24px;
+                animation: pulse-arrow 2s infinite ease-in-out;
+            }
+            @keyframes pulse-arrow {
+                0%, 100% { transform: translateX(0); opacity: 0.5; }
+                50% { transform: translateX(4px); opacity: 1; }
+            }
+            
+            /* Flow indicators */
+            .flow-badge {
+                margin-top: auto;
+                font-size: 0.65em;
+                background: var(--brand-charcoal);
+                border: 1px solid var(--brand-gold);
+                color: var(--brand-gold);
+                padding: 4px 10px;
+                border-radius: 10px;
+                font-weight: 700;
+                text-transform: uppercase;
+                letter-spacing: 0.5px;
+                display: inline-block;
             }
         </style>
-        <script>
-            window.MathJax = {
-                tex: {
-                    inlineMath: [['$', '$'], ['\\(', '\\)']],
-                    displayMath: [['$$', '$$'], ['\\[', '\\]']]
-                },
-                options: {
-                    skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre']
-                }
-            };
-        </script>
-        <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
-        <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     </head>
     <body>
         <div class="reveal">
             <div class="slides">
                 <!-- COVER SLIDE -->
-                <section class="flex-center slide-cover" style="padding: 20px !important;">
+                <section class="flex-center">
                     <img
                         src="./Images/UITS.png"
                         alt="UITS Logo"
                         style="
-                            width: 100px;
+                            width: 140px;
                             border: none;
                             background: transparent;
-                            filter: drop-shadow(0 0 15px rgba(197, 168, 128, 0.3));
-                            margin-bottom: 12px;
+                            filter: drop-shadow(0 0 20px rgba(197, 168, 128, 0.3));
+                            margin-bottom: 20px;
                         "
                     />
-                    <h1 style="font-size: 2.8em; margin-bottom: 5px">
+                    <h1 style="font-size: 3.5em; margin-bottom: 10px">
                         Last<span class="text-gold">Price</span>
                     </h1>
                     <p
                         class="text-gold"
                         style="
-                            font-size: 0.95em;
-                            letter-spacing: 2px;
+                            font-size: 1.2em;
+                            letter-spacing: 3px;
                             font-weight: 600;
-                            margin-bottom: 20px;
+                            margin-bottom: 40px;
                         "
                     >
                         FRICTIONLESS SILENT AUCTION & ESCROW
                     </p>
 
-                    <div class="flex-row" style="width: 100%; gap: 24px; margin-top: 10px">
+                    <div class="flex-row" style="width: 100%; gap: 40px; margin-top: 20px">
                         <div
                             class="glass-card flex-card"
-                            style="text-align: left; font-size: 0.72em; padding: 12px 20px;"
+                            style="text-align: left; font-size: 0.85em"
                         >
-                            <h4 class="text-gold" style="margin-bottom: 8px; font-size: 1.1em;">
+                            <h4 class="text-gold" style="margin-bottom: 15px">
                                 <i class="fa fa-users"></i> PRESENTED BY
                             </h4>
-                            <div style="line-height: 1.4; color: var(--brand-light)">
+                            <div style="line-height: 1.6; color: var(--brand-light)">
                                 <strong>Mehedi Hassan Bhuiyan</strong> (0432320005101080)<br />
                                 <strong>Md. Masud Rahman</strong> (0432320005101064)<br />
                                 <strong>Hasib Al Mahmud Siddique</strong> (0432320005101095)<br />
@@ -454,16 +473,16 @@
 
                         <div
                             class="glass-card flex-card"
-                            style="text-align: right; font-size: 0.72em; padding: 12px 20px;"
+                            style="text-align: right; font-size: 0.85em"
                         >
-                            <h4 class="text-gold" style="margin-bottom: 8px; font-size: 1.1em;">
+                            <h4 class="text-gold" style="margin-bottom: 15px">
                                 <i class="fa fa-graduation-cap"></i> SUPERVISED BY
                             </h4>
-                            <div style="line-height: 1.4; color: var(--brand-light)">
-                                <strong>Dhrubo Barua</strong> &amp; <strong>Md. Faysal</strong><br />
+                            <div style="line-height: 1.6; color: var(--brand-light)">
+                                <strong>Dhrubo Barua</strong> & <strong>Md. Faysal</strong><br />
                                 Faculty Members, Dept. of CSE<br />
-                                University of Information Technology &amp; Sciences<br />
-                                <em>Software Engineering &amp; System Analysis Lab</em>
+                                University of Information Technology & Sciences<br />
+                                <em>Software Engineering & System Analysis Lab</em>
                             </div>
                         </div>
                     </div>
@@ -472,66 +491,54 @@
                 <!-- THE PROBLEM -->
                 <section class="flex-center">
                     <h2>The Problem</h2>
-                    <p class="text-muted text-xl" style="margin-bottom: 28px">
-                        Why platforms like Bikroy, Facebook Marketplace &amp; eBay fall short
+                    <p class="text-muted text-xl" style="margin-bottom: 40px">
+                        Why traditional marketplaces fall short
                     </p>
+
                     <div class="flex-row" style="width: 100%">
                         <div class="glass-card flex-card">
-                            <div class="icon-badge" style="color: var(--tension-red); border-color: var(--tension-red)">
+                            <div
+                                class="icon-badge"
+                                style="color: var(--tension-red); border-color: var(--tension-red)"
+                            >
                                 <i class="fa fa-comments-dollar"></i>
                             </div>
                             <h4 class="text-gold text-lg">Haggling Fatigue</h4>
-                            <p class="text-md">Buyers &amp; sellers waste time on endless manual negotiations. Sellers rarely get true market value; buyers face constant friction.</p>
+                            <p class="text-md">
+                                Endless text conversations and low-ball offers lead to frustration
+                                and high transaction dropout rates.
+                            </p>
                         </div>
+
                         <div class="glass-card flex-card">
-                            <div class="icon-badge" style="color: var(--tension-yellow); border-color: var(--tension-yellow)">
+                            <div
+                                class="icon-badge"
+                                style="
+                                    color: var(--tension-yellow);
+                                    border-color: var(--tension-yellow);
+                                "
+                            >
                                 <i class="fa fa-mask"></i>
                             </div>
                             <h4 class="text-gold text-lg">Reserve Sniffing</h4>
-                            <p class="text-md">Dishonest buyers submit tiny incremental bids — $1, $2, $3 — purely to reverse-engineer the seller's secret minimum without ever intending a fair offer.</p>
+                            <p class="text-md">
+                                Bad actors use incremental penny bids just to expose the seller's
+                                secret minimum price.
+                            </p>
                         </div>
+
                         <div class="glass-card flex-card">
-                            <div class="icon-badge" style="color: var(--tension-red); border-color: var(--tension-red)">
+                            <div
+                                class="icon-badge"
+                                style="color: var(--tension-red); border-color: var(--tension-red)"
+                            >
                                 <i class="fa fa-shield-halved"></i>
                             </div>
                             <h4 class="text-gold text-lg">Handover Fraud</h4>
-                            <p class="text-md">Offline cash-on-delivery relies on verbal agreements only. Sellers face payment disputes; buyers are vulnerable to false non-delivery claims.</p>
-                        </div>
-                        <div class="glass-card flex-card">
-                            <div class="icon-badge" style="color: var(--text-muted); border-color: var(--text-muted)">
-                                <i class="fa fa-clock-rotate-left"></i>
-                            </div>
-                            <h4 class="text-gold text-lg">Clock Drift</h4>
-                            <p class="text-md">Real-time bidding suffers from client-server time mismatches, causing disputes over bids placed in the final seconds of an auction.</p>
-                        </div>
-                    </div>
-                </section>
-
-                <!-- OUR SOLUTION -->
-                <section class="flex-center">
-                    <h2>Our Solution</h2>
-                    <p class="text-muted text-xl" style="margin-bottom: 28px">Three interlocking mechanisms that eliminate every pain point</p>
-                    <div class="flex-row" style="width: 100%">
-                        <div class="glass-card flex-card" style="border-color: rgba(94,255,196,0.3); background: rgba(94,255,196,0.03)">
-                            <div class="icon-badge" style="color: var(--tension-green); border-color: var(--tension-green)">
-                                <i class="fa fa-gavel"></i>
-                            </div>
-                            <h4 class="text-gold text-lg">Double-Blind 3-Bid Auction</h4>
-                            <p class="text-md">Buyers get exactly <strong>3 private chances</strong> to meet a hidden reserve price. Bids from all buyers are sealed — no shill bidding, no penny-probing possible.</p>
-                        </div>
-                        <div class="glass-card flex-card" style="border-color: rgba(255,184,92,0.3); background: rgba(255,184,92,0.03)">
-                            <div class="icon-badge" style="color: var(--tension-yellow); border-color: var(--tension-yellow)">
-                                <i class="fa fa-tag"></i>
-                            </div>
-                            <h4 class="text-gold text-lg">Dual Pricing</h4>
-                            <p class="text-md">Sellers set a public <strong>Display Price</strong> and a private <strong>Secret Reserve</strong>. The system automatically matches without exposing the floor to buyers.</p>
-                        </div>
-                        <div class="glass-card flex-card" style="border-color: rgba(197,168,128,0.3); background: rgba(197,168,128,0.03)">
-                            <div class="icon-badge">
-                                <i class="fa fa-handshake"></i>
-                            </div>
-                            <h4 class="text-gold text-lg">Cryptographic Escrow</h4>
-                            <p class="text-md">On a successful bid, both parties receive a unique <strong>6-digit key</strong>. The transaction only closes when both keys are verified — mutual, tamper-proof consent.</p>
+                            <p class="text-md">
+                                Physical meetups lack proof of exchange, leaving both buyers and
+                                sellers vulnerable to scams.
+                            </p>
                         </div>
                     </div>
                 </section>
@@ -545,27 +552,21 @@
 
                     <div class="flex-row" style="width: 100%">
                         <div class="glass-card flex-card">
-                            <h3 class="text-gold" style="font-size: 1.4em; margin-bottom: 14px">
+                            <h3 class="text-gold" style="font-size: 1.5em; margin-bottom: 20px">
                                 <i class="fa fa-eye-slash"></i> Double-Blind Privacy
                             </h3>
                             <p class="text-lg" style="line-height: 1.5">
-                                Bids are completely sealed. Buyers cannot see each other's offers, eliminating bidding wars, shill bids, and peer pressure.
+                                Bids are completely vaulted. Buyers cannot see each other's offers,
+                                eliminating bidding wars and peer pressure.
                             </p>
                         </div>
                         <div class="glass-card flex-card">
-                            <h3 class="text-gold" style="font-size: 1.4em; margin-bottom: 14px">
-                                <i class="fa fa-gavel"></i> Strictly 3 Chances
+                            <h3 class="text-gold" style="font-size: 1.5em; margin-bottom: 20px">
+                                <i class="fa fa-gavel"></i> Capped Bidding
                             </h3>
                             <p class="text-lg" style="line-height: 1.5">
-                                Every buyer gets exactly <strong>3 bids</strong>. This directly kills reserve-sniffing — you can't probe with incremental bids when you only have 3 shots.
-                            </p>
-                        </div>
-                        <div class="glass-card flex-card">
-                            <h3 class="text-gold" style="font-size: 1.4em; margin-bottom: 14px">
-                                <i class="fa fa-tag"></i> Dual Pricing
-                            </h3>
-                            <p class="text-lg" style="line-height: 1.5">
-                                Seller sets a public <strong>Display Price</strong> and a private <strong>Secret Reserve</strong>. Both stay hidden — the system resolves automatically.
+                                Every buyer gets exactly <strong>3 chances</strong> to meet the
+                                seller's secret price. No more endless low-balling.
                             </p>
                         </div>
                     </div>
@@ -643,6 +644,58 @@
                                 GREEN (Matched)
                             </h4>
                             <p class="text-md">Reserve floor breached. Ready for escrow!</p>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- CASE STUDY: MACBOOK PRO SCENARIO -->
+                <section class="flex-center">
+                    <h2>Case Study: The MacBook Pro Scenario</h2>
+                    <p class="text-muted text-xl" style="margin-bottom: 12px">
+                        Setting the dual-pricing bounds before bidding begins
+                    </p>
+
+                    <div class="flex-row" style="width: 100%; gap: 15px;">
+                        <!-- Seller Setup -->
+                        <div class="glass-card flex-card" style="border-color: rgba(197, 168, 128, 0.4); padding: 8px 16px;">
+                            <div class="icon-badge" style="width: 44px; height: 44px; font-size: 1.1em; margin-bottom: 4px;">
+                                <i class="fa fa-tags"></i>
+                            </div>
+                            <h3 class="text-gold" style="font-size: 1.25em; margin-bottom: 6px">Seller's Setup</h3>
+                            <div style="text-align: left; line-height: 1.3">
+                                <div style="margin-bottom: 8px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 4px;">
+                                    <span class="text-muted text-sm">DISPLAY PRICE:</span><br>
+                                    <strong class="text-gold text-xl" style="font-size: 1.8em">$1,500</strong>
+                                </div>
+                                <div style="margin-bottom: 6px">
+                                    <span class="text-muted text-sm">SECRET RESERVE FLOOR:</span><br>
+                                    <strong style="color: var(--tension-green); font-size: 1.8em">$1,200</strong>
+                                </div>
+                                <p class="text-sm text-muted">
+                                    The $1,500 anchors the negotiation while the hidden $1,200 protects the seller from low-ballers.
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- Buyer's Guard -->
+                        <div class="glass-card flex-card" style="border-color: rgba(255, 94, 94, 0.4); padding: 8px 16px;">
+                            <div class="icon-badge" style="color: var(--tension-red); border-color: var(--tension-red); width: 44px; height: 44px; font-size: 1.1em; margin-bottom: 4px;">
+                                <i class="fa fa-shield-halved"></i>
+                            </div>
+                            <h3 style="color: var(--tension-red) !important; font-size: 1.25em; margin-bottom: 6px">Buyer's Challenge</h3>
+                            <div style="text-align: left; line-height: 1.3">
+                                <div style="margin-bottom: 8px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 4px;">
+                                    <span class="text-muted text-sm">TOTAL ATTEMPTS:</span><br>
+                                    <strong class="text-gold text-xl" style="font-size: 1.8em">3 Bids Only</strong>
+                                </div>
+                                <div style="margin-bottom: 6px">
+                                    <span class="text-muted text-sm">ARENA TYPE:</span><br>
+                                    <strong style="color: var(--tension-yellow); font-size: 1.4em">Double-Blind Silent</strong>
+                                </div>
+                                <p class="text-sm text-muted">
+                                    The buyer must negotiate against the display price, using proximity feedback to guide their 3 bid attempts.
+                                </p>
+                            </div>
                         </div>
                     </div>
                 </section>
@@ -772,6 +825,189 @@
                             transaction is instantly verified and finalized, preventing scams and
                             guaranteeing proof of exchange.
                         </p>
+                    </div>
+                </section>
+
+                <!-- TECHNICAL STACK SLIDE -->
+                <section class="flex-center">
+                    <h2>Our Engineering Stack</h2>
+                    <p class="text-muted text-xl" style="margin-bottom: 30px">
+                        A robust, lightweight stack designed for zero-friction auctions
+                    </p>
+
+                    <div class="flex-row" style="width: 100%">
+                        <!-- FRONTEND -->
+                        <div class="glass-card flex-card" style="border-color: rgba(197, 168, 128, 0.4)">
+                            <div class="icon-badge">
+                                <i class="fa fa-laptop-code"></i>
+                            </div>
+                            <h4 class="text-gold text-lg">Frontend UI</h4>
+                            <p class="text-md" style="text-align: left; line-height: 1.4">
+                                • <strong>Vanilla HTML5 &amp; CSS3</strong> for highly customized styling.<br>
+                                • <strong>Modern JS (ES6+)</strong> powering the dynamic bidding arena.<br>
+                                • <strong>Minimalist Sepia</strong> theme with premium gold & terra-cotta tones.
+                            </p>
+                        </div>
+
+                        <!-- BACKEND -->
+                        <div class="glass-card flex-card" style="border-color: rgba(255, 184, 92, 0.4)">
+                            <div class="icon-badge" style="color: var(--tension-yellow); border-color: var(--tension-yellow)">
+                                <i class="fa fa-gears"></i>
+                            </div>
+                            <h4 class="text-gold text-lg" style="color: var(--tension-yellow) !important">Backend Engine</h4>
+                            <p class="text-md" style="text-align: left; line-height: 1.4">
+                                • <strong>Node.js &amp; Express</strong> for fast REST API routing.<br>
+                                • <strong>JWT &amp; BcryptJS</strong> secure session authentication.<br>
+                                • <strong>Rate Limiter &amp; Multer</strong> for listing media uploads.
+                            </p>
+                        </div>
+
+                        <!-- DATABASE & HOSTING -->
+                        <div class="glass-card flex-card" style="border-color: rgba(94, 255, 196, 0.4)">
+                            <div class="icon-badge" style="color: var(--tension-green); border-color: var(--tension-green)">
+                                <i class="fa fa-database"></i>
+                            </div>
+                            <h4 class="text-gold text-lg" style="color: var(--tension-green) !important">Database &amp; Cloud</h4>
+                            <p class="text-md" style="text-align: left; line-height: 1.4">
+                                • <strong>PostgreSQL</strong> relational database with SSL security.<br>
+                                • <strong>High-Speed Indexing</strong> for rapid bid query resolution.<br>
+                                • <strong>Vercel Serverless Hosting</strong> for edge deployment.
+                            </p>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- TECHNICAL DETAILS: RGB FEEDBACK -->
+                <section class="flex-center">
+                    <h2>Technical Details: RGB Feedback</h2>
+                    <p class="text-muted text-xl" style="margin-bottom: 20px">
+                        Algorithmic proximity tracking and gamified tension feedback
+                    </p>
+
+                    <!-- Formula Bar -->
+                    <div class="glass-card" style="width: 90%; margin-bottom: 20px; border-color: var(--brand-gold)">
+                        <div style="font-family: 'Fira Code', monospace; font-size: 1.2em; font-weight: bold;">
+                            Percentage = (<span class="text-gold">Placed Bid</span> / <span style="color: var(--tension-green)">Secret Reserve Price</span>) * 100
+                        </div>
+                    </div>
+
+                    <div class="flex-row" style="width: 100%">
+                        <!-- RED -->
+                        <div class="glass-card flex-card" style="border-color: rgba(255, 94, 94, 0.4); background: rgba(255, 94, 94, 0.05)">
+                            <h4 style="color: var(--tension-red); font-size: 1.2em; margin-bottom: 10px;">
+                                <i class="fa fa-snowflake"></i> COLD STATE (&lt;70%)
+                            </h4>
+                            <p class="text-md" style="text-align: left; line-height: 1.4">
+                                • <strong>Trigger:</strong> Bid is far below floor.<br>
+                                • <strong>Action:</strong> UI glows red and shakes.<br>
+                                • <strong>Result:</strong> Signals buyer to raise bid.
+                            </p>
+                        </div>
+
+                        <!-- YELLOW -->
+                        <div class="glass-card flex-card" style="border-color: rgba(255, 184, 92, 0.4); background: rgba(255, 184, 92, 0.05)">
+                            <h4 style="color: var(--tension-yellow); font-size: 1.2em; margin-bottom: 10px;">
+                                <i class="fa fa-fire"></i> PROXIMITY STATE (70% - 99%)
+                            </h4>
+                            <p class="text-md" style="text-align: left; line-height: 1.4">
+                                • <strong>Trigger:</strong> Bid is within 70% of floor.<br>
+                                • <strong>Action:</strong> UI pulses yellow.<br>
+                                • <strong>Result:</strong> Alerts buyer they are hot.
+                            </p>
+                        </div>
+
+                        <!-- GREEN -->
+                        <div class="glass-card flex-card" style="border-color: rgba(94, 255, 196, 0.4); background: rgba(94, 255, 196, 0.05)">
+                            <h4 style="color: var(--tension-green); font-size: 1.2em; margin-bottom: 10px;">
+                                <i class="fa fa-check"></i> MATCH STATE (&gt;=100%)
+                            </h4>
+                            <p class="text-md" style="text-align: left; line-height: 1.4">
+                                • <strong>Trigger:</strong> Bid breaches reserve price.<br>
+                                • <strong>Action:</strong> Confetti, lock input.<br>
+                                • <strong>Result:</strong> Generates escrow codes.
+                            </p>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- SYSTEM ARCHITECTURE & DATA FLOW -->
+                <section class="flex-center">
+                    <h2>System Architecture &amp; Data Flow</h2>
+                    <p class="text-muted text-xl" style="margin-bottom: 25px">
+                        Decentralized, blind client-server pipeline securing transaction states
+                    </p>
+
+                    <div class="arch-container">
+                        <!-- TIER 1: CLIENT -->
+                        <div class="arch-tier" style="border-color: rgba(197, 168, 128, 0.4)">
+                            <div class="icon-badge">
+                                <i class="fa fa-desktop"></i>
+                            </div>
+                            <h4 class="text-gold">1. Client UI Tier</h4>
+                            <ul>
+                                <li><strong>Vanilla HTML5 &amp; CSS3:</strong> Custom minimalist Sepia interface.</li>
+                                <li><strong>Bidding Engine:</strong> Handles local countdown desync guards.</li>
+                                <li><strong>Local State:</strong> Controls blind feedback simulator rendering.</li>
+                            </ul>
+                            <div class="flow-badge">Bid Placement</div>
+                        </div>
+
+                        <!-- ARROW 1 -->
+                        <div class="arch-arrow">
+                            <i class="fa fa-circle-chevron-right"></i>
+                        </div>
+
+                        <!-- TIER 2: GATEWAY -->
+                        <div class="arch-tier" style="border-color: rgba(255, 94, 94, 0.4)">
+                            <div class="icon-badge" style="color: var(--tension-red); border-color: var(--tension-red)">
+                                <i class="fa fa-shield-halved"></i>
+                            </div>
+                            <h4 style="color: var(--tension-red) !important">2. Secure Gateway</h4>
+                            <ul>
+                                <li><strong>JWT Handshake:</strong> Validates user session integrity &amp; signatures.</li>
+                                <li><strong>Express Security:</strong> Rate limiting protects the active bid vault.</li>
+                                <li><strong>Input Sanitization:</strong> Blocks reserve-sniffing script vectors.</li>
+                            </ul>
+                            <div class="flow-badge" style="color: var(--tension-red); border-color: var(--tension-red)">Verify &amp; Limit</div>
+                        </div>
+
+                        <!-- ARROW 2 -->
+                        <div class="arch-arrow">
+                            <i class="fa fa-circle-chevron-right"></i>
+                        </div>
+
+                        <!-- TIER 3: ENGINE -->
+                        <div class="arch-tier" style="border-color: rgba(255, 184, 92, 0.4)">
+                            <div class="icon-badge" style="color: var(--tension-yellow); border-color: var(--tension-yellow)">
+                                <i class="fa fa-gears"></i>
+                            </div>
+                            <h4 style="color: var(--tension-yellow) !important">3. Business Logic</h4>
+                            <ul>
+                                <li><strong>3-Chance Gatekeeper:</strong> Strict validation of remaining chances.</li>
+                                <li><strong>RGB Formula:</strong> Proximity percentage calculated blind.</li>
+                                <li><strong>Cryptographic Escrow:</strong> Triggers dual 6-digit key handshakes.</li>
+                            </ul>
+                            <div class="flow-badge" style="color: var(--tension-yellow); border-color: var(--tension-yellow)">Apply Logic</div>
+                        </div>
+
+                        <!-- ARROW 3 -->
+                        <div class="arch-arrow">
+                            <i class="fa fa-circle-chevron-right"></i>
+                        </div>
+
+                        <!-- TIER 4: PERSISTENCE -->
+                        <div class="arch-tier" style="border-color: rgba(94, 255, 196, 0.4)">
+                            <div class="icon-badge" style="color: var(--tension-green); border-color: var(--tension-green)">
+                                <i class="fa fa-database"></i>
+                            </div>
+                            <h4 style="color: var(--tension-green) !important">4. PostgreSQL Database</h4>
+                            <ul>
+                                <li><strong>Relational Storage:</strong> Vaults Users, Listings, Bids, Escrows.</li>
+                                <li><strong>Transaction Isolation:</strong> Ensures robust, ACID-compliant state management.</li>
+                                <li><strong>SSL Encrypted Connection:</strong> Encrypted, low-latency secure database connection.</li>
+                            </ul>
+                            <div class="flow-badge" style="color: var(--tension-green); border-color: var(--tension-green)">Final Commit</div>
+                        </div>
                     </div>
                 </section>
 
@@ -1037,16 +1273,15 @@
                 history: true,
                 transition: "slide",
                 backgroundTransition: "fade",
-                center: true,
+                center: true, // Keeps content centered when it fits perfectly
                 controls: true,
                 progress: true,
                 slideNumber: "c/t",
                 width: 1280,
                 height: 720,
-                margin: 0,
-                minScale: 0.1,
-                maxScale: 1.5,
-                disableLayout: false,
+                margin: 0.2, // Keeps slide elements constrained to exactly 80% of viewport
+                minScale: 0.2,
+                maxScale: 2.0,
             });
 
             // LIVE INTERACTIVE 3-BID SIMULATOR LOGIC

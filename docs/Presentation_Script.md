@@ -14,54 +14,86 @@
 
 ---
 
-## Part 2: Simulated Walkthrough & Core Logic
+## Part 2: Core Platform Mechanics & Bidding Scenario
 **Speaker:** Masud
 
-### Slide 3: A Real Scenario: Selling a MacBook
-**Masud:** "Let's look at a real scenario. Imagine you want to sell a MacBook. You hope to get $1,500, but you absolutely won't take less than $1,200. In LastPrice, you set two prices. The Display Price of $1,500 is what everyone sees. The Secret Reserve Price of $1,200 is completely hidden. This automates the bargaining phase. The buyer feels they are negotiating down from $1,500, while the seller knows they are protected by the $1,200 floor."
+### Slide 3: 1. The Silent 3-Bid Arena
+**Masud:** "Thank you, Mehedi. To address these market challenges, we designed the core transaction engine of LastPrice around a **Silent 3-Bid Arena**. 
+First, we introduce **Double-Blind Privacy**: bids are completely vaulted. Buyers negotiate independently without peer pressure, avoiding artificial bidding wars. 
+Second, we enforce **Capped Bidding**: every buyer gets exactly 3 chances to meet the seller's secret price. This completely eliminates low-ball spam and forces the buyer to make decisive, serious offers."
 
-### Slide 4: A Real Scenario: The Buyer's Journey
-**Masud:** "Now, let's look at the buyer. They see $1,500 and know they have 3 chances. 
-- In Round 1, they try to low-ball at $800. The system says RED—it's too low. 
-- Realizing they only have two chances left, in Round 2, they adjust to $1,100. The system says YELLOW—meaning they are very close.
-- For their final chance, they bid $1,250. The system flashes GREEN! The hidden $1,200 reserve is breached. 
-If multiple buyers breach the reserve, our background engine applies a first-mover advantage to resolve ties automatically. Both parties are satisfied without a single text message sent."
+### Slide 4: 2. Proximity Tension Shield
+**Masud:** "But how do we guide buyers to bid fairly if the reserve price is hidden? We introduced our **Proximity Tension Shield**—a gamified color feedback system:
+- **RED (Cold):** Means the bid is far below the seller's threshold (under 70% of the reserve).
+- **YELLOW (Hot):** Tells the buyer they are extremely close (between 70% and 99%), prompting them to make a final fair push.
+- **GREEN (Matched):** Triggers when the reserve floor is breached, locking the item and moving it directly to escrow."
 
-### Slide 5: Final Step: Escrow & Handover
-**Masud:** "Once the bid matches, we initiate a dual-key validation handshake. The system generates distinct 6-digit cryptographic codes—one for the buyer, one for the seller. When they meet physically to exchange the MacBook, they enter both keys into the portal. The system instantly validates them, creating a tamper-proof record of mutual consent. No scams, no disputes."
+### Slide 5: Case Study: The MacBook Pro Scenario
+**Masud:** "Let's put this into a concrete real-world scenario. Imagine a seller wants to sell a MacBook Pro. They hope to get $1,500, but their absolute lowest walk-away price is $1,200.
+In LastPrice, they set a **Display Price** of $1,500—which acts as the visible anchor that buyers see. 
+And they set a hidden **Secret Reserve Floor** of $1,200. The seller is protected, the bargaining is completely automated, and no awkward back-and-forth negotiation texts are needed."
+
+### Slide 6: Interactive 3-Bid Demo
+**Masud:** "Let's see this in action with a live interactive simulation right here on our slide! 
+- In Round 1, the buyer makes a low-ball bid of $800. The tension bar glows RED—the system warns them they are cold.
+- Realizing they only have 2 chances left, in Round 2 they raise it to $1,100. The bar pulses YELLOW—meaning they are getting hot.
+- On their final attempt, they bid $1,250. The screen flashes GREEN! The $1,200 floor is breached, a match is struck, and the deal is locked!"
+
+### Slide 7: 3. Double-Verification Escrows
+**Masud:** "Once the match is made, the final safety check is our **Double-Verification Escrow**. 
+The backend automatically generates a pair of distinct 6-digit cryptographic keys—one for the buyer, one for the seller. When they meet physically for the handover, they exchange the MacBook, and both keys are entered into the portal. The escrow system validates the pair, securing the transaction state with mutual consent."
 
 ---
 
 ## Part 3: Technical Details & Visual Walkthrough
 **Speaker:** Hasib
 
-### Slide 6: Technical Details: The RGB Feedback System
+### Slide 8: Our Engineering Stack
+**Hasib:** "Before we dive into the technical details of the RGB feedback, let's look at the underlying technology stack that makes LastPrice possible. We designed a modern, robust, and lightweight architecture aimed at maximizing transaction velocity and reducing friction.
+- On the **Frontend UI**, we utilized vanilla HTML5, CSS3, and ES6+ JavaScript. This allowed us to build custom glassmorphic cards, custom typography, micro-interactions, and our interactive simulator without the heavy load of modern single-page frameworks, aligning perfectly with our premium 'Sepia' design theme.
+- For the **Backend Engine**, we built a Node.js and Express server. It implements secure authentication using JSON Web Tokens (JWT) and BcryptJS password hashing, rate limiting to protect the bidding arenas, and Multer to handle high-fidelity product image uploads.
+- For our **Database & Cloud**, we used Neon PostgreSQL, a serverless database that provides low-latency pg connection pooling, combined with secure SSL connections. The system is deployed via Vercel for high-availability edge routing."
+
+### Slide 9: Technical Details: The RGB Feedback System
 **Hasib:** "Technically, how do we handle the tension in the bidding arena? We use an RGB Feedback System based on a strict algorithmic calculation: Percentage = (Bid / Reserve Price) * 100.
 - If the bid is under 70%, the UI glows **RED** and shakes.
 - If it's between 70% and 99%, the UI pulses **YELLOW**.
 - If it hits 100% or more, the screen flashes **GREEN**, triggering confetti and locking the escrow process. It's a psychological tension mechanic that keeps buyers engaged."
 
-### Slides 7-10: Platform Walkthrough
-**Hasib:** *(Click through the screenshots briefly)* 
-"Here are some snapshots of our implementation. You can see our landing page, the marketplace showing current active auctions, the simplified creation form where sellers set their dual pricing, and finally, the actual Bidding Arena where the UI color-codes the user's bids as they play their 3 chances."
+### Slide 10: Neon Serverless Database Branching
+**Hasib:** "A critical engineering highlight of our system is how we manage our database environment. Using Neon serverless PostgreSQL, we integrated instant database branching directly into our development pipeline.
+- This allowed us to clone our entire production database schema and table state in one click, creating isolated development branches.
+- We were able to test complex relational database migrations and multi-stage 3-chance bid constraint validations concurrently, without any risk to the live data or introducing database downtime.
+- In addition, Neon's serverless scaling dynamically adjusts database compute resources to handle concurrent traffic spikes in the bidding arena, scaling down to zero when inactive to prevent resource waste."
+
+### Slide 11: System Architecture & Data Flow
+**Hasib:** "Now, to put all these engineering pieces together, here is our full high-level System Architecture and Data Flow pipeline. 
+1. The **Client UI Tier** acts as the presentation layer built with lightweight HTML5/CSS3, communicating users' actions securely.
+2. The **Secure Gateway** processes these requests using a JWT handshake to authenticate user identity and limits incoming rates to prevent brute-force attacks on active listing vaults.
+3. The **Business Logic Engine** runs our 3-chance gatekeeper logic and calculates proximity percentages blind, managing active escrows and generating cryptographic code validation pairs.
+4. Finally, the **Neon Database** relationally persists these records, taking advantage of automated backups and instant compute scaling to handle peak traffic."
 
 ---
 
-## Part 4: Limitations, Future Scope & Conclusion
+## Part 4: Walkthrough, Limitations, Future Scope & Conclusion
 **Speaker:** Rudro
 
-### Slide 11: Limitations & What We Learned
+### Slides 12-18: Platform Walkthrough
+**Rudro:** *(Click through the screenshots briefly)* 
+"Here are some snapshots of our implementation. You can see our landing page, the marketplace showing current active auctions, the simplified creation form where sellers set their dual pricing, and finally, the actual Bidding Arena where the UI color-codes the user's bids as they play their 3 chances."
+
+### Slide 19: Limitations & What We Learned
 **Rudro:** "Every system has room for growth. A few limitations we encountered:
 1. Our UI is currently best optimized for Desktop.
 2. We used REST polling for the timers, which sometimes causes slight desyncs. 
 3. Escrow currently only handles one item per physical meeting. 
 Looking back, we realize we should have used WebSockets for real-time bid updates and prioritized more automated testing for the edge cases in our auction logic."
 
-### Slide 12: Future Scope
+### Slide 20: Future Scope
 **Rudro:** "For the future, we envision:
 1. **Customizable Limits:** Letting sellers choose whether they want to allow 2 to 5 bid chances.
 2. **Buyer Selection:** If multiple buyers match the reserve, allowing the seller to pick the winner.
 3. **Trust Points:** A gamified reputation system based entirely on successful cryptographic handovers."
 
-### Slide 13: Thank You & Q/A
+### Slide 21: Thank You & Q/A
 **Rudro:** "That concludes our presentation. LastPrice completely reinvents the peer-to-peer selling experience by removing the chatbox and adding a layer of secure, game-like tension. We'd now like to open the floor to any questions."

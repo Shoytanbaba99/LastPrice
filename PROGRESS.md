@@ -67,6 +67,6 @@ Open **http://localhost:3005** in your browser.
 ## Current Progress (Refined)
 
 - [x] **Presentation Polish**: Test the flow from end-to-end (Register -> Post Listing -> Log in as someone else -> Bid -> Win).
-- [x] **Theme Overhaul**: Implemented **SepiaDog** brand identity.
+- [x] **Theme Overhaul**: Implemented **Minimalist Sepia** brand identity.
 - [x] **Deployment Ready**: Configured for Vercel with automated routing.
 - [x] Initialized Git repository and cleaned up development artifacts.

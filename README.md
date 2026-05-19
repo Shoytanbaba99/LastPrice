@@ -34,9 +34,9 @@ Open **http://localhost:3005** in your browser.
 
 ---
 
-## 🎨 Theme: SepiaDog
+## 🎨 Theme: Minimalist Sepia
 
-The application features a premium **SepiaDog** theme with:
+The application features a premium **Minimalist Sepia** theme with:
 
 - **Background**: `#0D0D0D` / `#1A1510`
 - **Headings/Titles**: `#FFF5E6` (Cream)
