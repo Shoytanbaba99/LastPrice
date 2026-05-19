@@ -307,7 +307,7 @@ The system must maintain high performance to support real-time bidding:
 User data and auction integrity are protected by strict security measures:
 \begin{itemize}
     \item Passwords must be hashed using the bcrypt algorithm before database storage.
-    \item The API must filter and strip the `reserve_floor` attribute from listings to prevent reserve sniffing.
+    \item The API must filter and strip the \texttt{reserve\_floor} attribute from listings to prevent reserve sniffing.
     \item Security tokens must be stored in secure, HTTP-only session cookies to prevent cross-site scripting (XSS) extraction.
     \item All client inputs must be validated and sanitized using express-validator middleware to prevent SQL injection and cross-site scripting (XSS) attacks.
 \end{itemize}
@@ -339,7 +339,7 @@ This chapter details the structural and behavioral design of LastPrice, followin
 The Use Case Diagram (Figure \ref{fig:usecase_full}) maps out user and system interactions. The Seller acts as the listing creator, the Buyer places bids, and the Background System Engine manages timing and resolves outcomes.
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.85\textwidth]{Diagrams/UseCase_Diagram.jpeg}
+    \includegraphics[width=0.85\textwidth]{Diagrams/UseCase-Diagram.jpeg}
     \caption{LastPrice Unified Use Case Diagram}
     \label{fig:usecase_full}
 \end{figure}
@@ -357,7 +357,7 @@ The DFD Level-1 diagram (Figure \ref{fig:dfd_full}) traces data flow from user a
 The database structure (Figure \ref{fig:erd_full}) is normalized to 3NF to ensure data integrity and prevent update anomalies.
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.85\textwidth]{Diagrams/Er_Diagram.jpeg}
+    \includegraphics[width=0.85\textwidth]{Diagrams/Er-Diagram.jpeg}
     \caption{LastPrice Entity Relationship Diagram}
     \label{fig:erd_full}
 \end{figure}
@@ -374,7 +374,7 @@ The relationship structure is defined as:
 The Class Diagram (Figure \ref{fig:class_full}) displays the controller routing boundaries, middleware schemas, database models, and service layer classes.
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.85\textwidth]{Diagrams/Class_Diagram.jpeg}
+    \includegraphics[width=0.85\textwidth]{Diagrams/Class-Diagram.jpeg}
     \caption{LastPrice Object-Oriented Class Diagram}
     \label{fig:class_full}
 \end{figure}
@@ -383,7 +383,7 @@ The Class Diagram (Figure \ref{fig:class_full}) displays the controller routing 
 Figure \ref{fig:sequence_full} demonstrates the exact sequence of events when a buyer places a bid, showcasing how bid-cap limits and timing parameters are validated in real-time.
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.9\textwidth]{Diagrams/Sequence_Diagram.jpeg}
+    \includegraphics[width=0.9\textwidth]{Diagrams/Sequence-Diagram.jpeg}
     \caption{Interactive Bidding and Verification Sequence Diagram}
     \label{fig:sequence_full}
 \end{figure}
@@ -392,7 +392,7 @@ Figure \ref{fig:sequence_full} demonstrates the exact sequence of events when a 
 The Listing State Machine (Figure \ref{fig:state_full}) illustrates the transition paths of an item listing from creation, to live status, and finally to completed, unmatched, or cancelled states.
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.85\textwidth]{Diagrams/State_Diagram.jpeg}
+    \includegraphics[width=0.85\textwidth]{Diagrams/State-Diagram.jpeg}
     \caption{Listing Lifecycle State Machine Diagram}
     \label{fig:state_full}
 \end{figure}
@@ -558,7 +558,7 @@ This chapter details the exact steps and interactive flow of the LastPrice platf
 When users visit the application, they are greeted by a modern, high-contrast dark interface featuring micro-animations that highlight the platform's core benefits: frictionless silent bidding and physical escrow protection.
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.85\textwidth]{Images/1_landing_page.png}
+    \includegraphics[width=0.85\textwidth]{Images/1-landing-page.png}
     \caption{LastPrice Landing Homepage Interface}
     \label{fig:ui_landing}
 \end{figure}
@@ -567,7 +567,7 @@ When users visit the application, they are greeted by a modern, high-contrast da
 Users can register or log in securely. All password inputs are hashed, and session keys are stored in secure cookies to protect user accounts.
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.85\textwidth]{Images/2_login_register.png}
+    \includegraphics[width=0.85\textwidth]{Images/2-login-register.png}
     \caption{User Authentication Portal}
     \label{fig:ui_login}
 \end{figure}
@@ -576,7 +576,7 @@ Users can register or log in securely. All password inputs are hashed, and sessi
 The active marketplace displays all live auctions. Each grid item features a real-time countdown widget synchronized to the backend server and displays key listing metadata.
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.85\textwidth]{Images/3_marketplace.png}
+    \includegraphics[width=0.85\textwidth]{Images/3-marketplace.png}
     \caption{Active Marketplace Listings Grid}
     \label{fig:ui_marketplace}
 \end{figure}
@@ -585,7 +585,7 @@ The active marketplace displays all live auctions. Each grid item features a rea
 Sellers create listings by entering details, setting a secret reserve floor price, and specifying the auction's end date and time.
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.85\textwidth]{Images/4_create_listing.png}
+    \includegraphics[width=0.85\textwidth]{Images/4-create-listing.png}
     \caption{Create Listing Interface for Sellers}
     \label{fig:ui_create_listing}
 \end{figure}
@@ -594,7 +594,7 @@ Sellers create listings by entering details, setting a secret reserve floor pric
 Inside the Bidding Arena, buyers place their anonymous bids. The UI features a unique tension bar, an active timer, and indicates how many of the 3 capped bids remain.
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.85\textwidth]{Images/5_bidding_arena.png}
+    \includegraphics[width=0.85\textwidth]{Images/5-bidding-arena.png}
     \caption{Bidding Arena showing Real-time Tension and 3-Bid Cap}
     \label{fig:ui_bidding_arena}
 \end{figure}
@@ -603,7 +603,7 @@ Inside the Bidding Arena, buyers place their anonymous bids. The UI features a u
 The Unified User Dashboard serves as the central operational hub for registered users. It displays key quick action links, summary statistics, and active transactions.
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.85\textwidth]{Images/6_user_dashboard.png}
+    \includegraphics[width=0.85\textwidth]{Images/6-user-dashboard.png}
     \caption{Unified User Dashboard Hub}
     \label{fig:ui_user_dashboard}
 \end{figure}
@@ -612,7 +612,7 @@ The Unified User Dashboard serves as the central operational hub for registered 
 Sellers use their centralized control panel to inspect active listings, verify high-bid status relative to reserve indicators, and retrieve transaction codes.
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.85\textwidth]{Images/7_seller_panel.png}
+    \includegraphics[width=0.85\textwidth]{Images/7-seller-panel.png}
     \caption{Seller Listing Management Panel}
     \label{fig:ui_seller_panel}
 \end{figure}
@@ -621,7 +621,7 @@ Sellers use their centralized control panel to inspect active listings, verify h
 During the physical meet-up, both parties enter their respective 6-digit verification codes. The transaction resolves in real-time, releasing funds or marking the item as secured.
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.85\textwidth]{Images/8_escrow_transaction.png}
+    \includegraphics[width=0.85\textwidth]{Images/8-escrow-transaction.png}
     \caption{Double-Verification Handshake Escrow Page}
     \label{fig:ui_escrow}
 \end{figure}
@@ -833,23 +833,23 @@ Upload the following files to their respective folders:
     \item \textbf{Diagrams Folder:}
     \begin{enumerate}
         \item Upload the university logo or custom logo as \texttt{Logo.png}.
-        \item Upload the Use Case diagram as \texttt{UseCase\_Diagram.jpeg}.
+        \item Upload the Use Case diagram as \texttt{UseCase-Diagram.jpeg}.
         \item Upload the DFD diagram as \texttt{DFD.jpeg}.
-        \item Upload the ERD diagram as \texttt{Er\_Diagram.jpeg}.
-        \item Upload the Class diagram as \texttt{Class\_Diagram.jpeg}.
-        \item Upload the Sequence diagram as \texttt{Sequence\_Diagram.jpeg}.
-        \item Upload the State Machine diagram as \texttt{State\_Diagram.jpeg}.
+        \item Upload the ERD diagram as \texttt{Er-Diagram.jpeg}.
+        \item Upload the Class diagram as \texttt{Class-Diagram.jpeg}.
+        \item Upload the Sequence diagram as \texttt{Sequence-Diagram.jpeg}.
+        \item Upload the State Machine diagram as \texttt{State-Diagram.jpeg}.
     \end{enumerate}
     \item \textbf{Images Folder:}
     \begin{enumerate}
-        \item Upload the homepage screenshot as \texttt{1\_landing\_page.png}.
-        \item Upload the authentication portal screenshot as \texttt{2\_login\_register.png}.
-        \item Upload the marketplace grid screenshot as \texttt{3\_marketplace.png}.
-        \item Upload the listing creator page screenshot as \texttt{4\_create\_listing.png}.
-        \item Upload the bidding arena page screenshot as \texttt{5\_bidding\_arena.png}.
-        \item Upload the unified dashboard page screenshot as \texttt{6\_user\_dashboard.png}.
-        \item Upload the seller control panel screenshot as \texttt{7\_seller\_panel.png}.
-        \item Upload the escrow validation page screenshot as \texttt{8\_escrow\_transaction.png}.
+        \item Upload the homepage screenshot as \texttt{1-landing-page.png}.
+        \item Upload the authentication portal screenshot as \texttt{2-login-register.png}.
+        \item Upload the marketplace grid screenshot as \texttt{3-marketplace.png}.
+        \item Upload the listing creator page screenshot as \texttt{4-create-listing.png}.
+        \item Upload the bidding arena page screenshot as \texttt{5-bidding-arena.png}.
+        \item Upload the unified dashboard page screenshot as \texttt{6-user-dashboard.png}.
+        \item Upload the seller control panel screenshot as \texttt{7-seller-panel.png}.
+        \item Upload the escrow validation page screenshot as \texttt{8-escrow-transaction.png}.
     \end{enumerate}
 \end{itemize}
 
