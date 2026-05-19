@@ -1,0 +1,996 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <title>LastPrice: Frictionless Silent Auction & Escrow Marketplace</title>
+        <meta
+            name="viewport"
+            content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+        />
+
+        <link
+            rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.5.0/reveal.min.css"
+        />
+        <link
+            rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.5.0/theme/black.min.css"
+        />
+        <link
+            href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800&family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Fira+Code:wght@400;500&display=swap"
+            rel="stylesheet"
+        />
+        <link
+            rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+        />
+
+        <style>
+            :root {
+                --brand-dark: #120e0c;
+                --brand-charcoal: #1a1512;
+                --brand-gold: #c5a880;
+                --brand-gold-glow: rgba(197, 168, 128, 0.4);
+                --brand-light: #eae1d4;
+                --glass-bg: rgba(26, 21, 18, 0.7);
+                --glass-border: rgba(197, 168, 128, 0.2);
+                --text-muted: #a69c8e;
+
+                --tension-red: #ff5e5e;
+                --tension-yellow: #ffb85e;
+                --tension-green: #5effc4;
+            }
+
+            .reveal {
+                font-family: "Outfit", sans-serif;
+                background: radial-gradient(circle at center, #261f1a 0%, #0c0908 100%);
+                color: var(--brand-light);
+                font-size: 32px;
+            }
+
+            .reveal h1,
+            .reveal h2,
+            .reveal h3,
+            .reveal h4 {
+                font-family: "Outfit", sans-serif;
+                font-weight: 800;
+                text-transform: none;
+                letter-spacing: -0.5px;
+                color: #ffffff;
+            }
+
+            .reveal h1 {
+                font-family: "Playfair Display", serif;
+                font-weight: 700;
+                color: #ffffff;
+                text-shadow: 0 4px 12px rgba(0, 0, 0, 0.6);
+            }
+
+            .reveal h2 {
+                font-size: 2em;
+                margin-bottom: 30px;
+                border-bottom: 2px solid var(--brand-gold);
+                display: inline-block;
+                padding-bottom: 15px;
+            }
+
+            .text-gold {
+                color: var(--brand-gold) !important;
+                text-shadow: 0 0 10px var(--brand-gold-glow);
+            }
+
+            .text-muted {
+                color: var(--text-muted) !important;
+            }
+
+            /* Glassmorphic Container Cards */
+            .glass-card {
+                background: var(--glass-bg);
+                backdrop-filter: blur(12px);
+                -webkit-backdrop-filter: blur(12px);
+                border: 1px solid var(--glass-border);
+                border-radius: 16px;
+                padding: 20px 30px; /* Reduced vertical padding */
+                box-shadow:
+                    0 20px 50px rgba(0, 0, 0, 0.6),
+                    inset 0 1px 0 rgba(255, 255, 255, 0.05);
+                margin: 10px auto; /* Reduced margin from 20px to 10px */
+                text-align: center;
+            }
+
+            .flex-center {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+            }
+
+            .flex-row {
+                display: flex;
+                flex-direction: row;
+                justify-content: center;
+                align-items: stretch;
+                gap: 30px;
+                flex-wrap: wrap;
+            }
+
+            .flex-card {
+                flex: 1;
+                min-width: 250px;
+                margin: 0 !important;
+            }
+
+            .icon-badge {
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                width: 80px;
+                height: 80px;
+                border-radius: 50%;
+                background: rgba(197, 168, 128, 0.15);
+                border: 2px solid var(--brand-gold);
+                color: var(--brand-gold);
+                margin-bottom: 20px;
+                font-size: 2em;
+                box-shadow: 0 0 20px var(--brand-gold-glow);
+            }
+
+            /* Walkthrough images styling */
+            .media-frame {
+                border: 4px solid rgba(197, 168, 128, 0.4);
+                border-radius: 16px;
+                background: #000000;
+                padding: 8px;
+                box-shadow: 0 25px 50px rgba(0, 0, 0, 0.8);
+                max-height: 420px; /* Reduced from 550px to fit headers and layout cleanly */
+                max-width: 95%;
+                object-fit: contain;
+                margin: 15px auto;
+                display: block;
+            }
+
+            /* SIMULATOR STYLES UPDATED FOR FULL WIDTH */
+            .sim-container {
+                display: flex;
+                flex-direction: row;
+                gap: 30px;
+                width: 100%;
+                max-width: 1100px;
+                margin: 0 auto;
+                text-align: left;
+            }
+
+            .sim-panel {
+                flex: 1.5;
+                background: rgba(18, 14, 12, 0.95);
+                border: 2px solid var(--brand-gold);
+                border-radius: 14px;
+                padding: 30px;
+                box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
+            }
+
+            .sim-listing-header {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+                padding-bottom: 15px;
+                margin-bottom: 20px;
+            }
+
+            .sim-chances-badge {
+                background: #1a1512;
+                border: 2px solid var(--brand-gold);
+                color: var(--brand-gold);
+                padding: 8px 18px;
+                border-radius: 25px;
+                font-weight: 700;
+                font-size: 0.9em;
+            }
+
+            .sim-tension-gauge {
+                width: 100%;
+                height: 18px;
+                background: #2b231e;
+                border-radius: 10px;
+                overflow: hidden;
+                margin: 20px 0 10px 0;
+                position: relative;
+            }
+
+            .sim-tension-fill {
+                height: 100%;
+                width: 0%;
+                background: var(--tension-red);
+                transition:
+                    width 0.8s cubic-bezier(0.1, 0.8, 0.3, 1),
+                    background-color 0.5s ease;
+            }
+
+            .sim-input-row {
+                display: flex;
+                gap: 15px;
+                margin-top: 25px;
+            }
+
+            .sim-input {
+                flex: 1;
+                background: #0f0b0a;
+                border: 2px solid var(--glass-border);
+                color: #ffffff;
+                border-radius: 10px;
+                padding: 15px 20px;
+                font-size: 1.2em;
+                font-family: inherit;
+            }
+
+            .sim-input:focus {
+                outline: none;
+                border-color: var(--brand-gold);
+                box-shadow: 0 0 15px var(--brand-gold-glow);
+            }
+
+            .sim-btn {
+                background: linear-gradient(135deg, #c5a880 0%, #a68b65 100%);
+                border: none;
+                color: #120e0c;
+                padding: 15px 30px;
+                border-radius: 10px;
+                font-weight: 800;
+                font-size: 1.1em;
+                cursor: pointer;
+                transition:
+                    transform 0.2s,
+                    box-shadow 0.2s;
+            }
+
+            .sim-btn:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 8px 20px var(--brand-gold-glow);
+            }
+
+            .sim-history-panel {
+                flex: 1;
+                background: rgba(18, 14, 12, 0.5);
+                border: 2px dashed var(--brand-gold);
+                border-radius: 14px;
+                padding: 25px;
+                display: flex;
+                flex-direction: column;
+            }
+
+            /* Fix slide overflow by allowing individual long slides to scroll cleanly */
+            .reveal .slides section {
+                max-height: 95% !important;
+                overflow-y: auto !important;
+                padding: 20px 10px !important;
+                box-sizing: border-box !important;
+            }
+
+            /* Optional: Style the scrollbar so it fits your premium dark theme */
+            .reveal .slides section::-webkit-scrollbar {
+                width: 8px;
+            }
+            .reveal .slides section::-webkit-scrollbar-track {
+                background: rgba(0, 0, 0, 0.2);
+                border-radius: 4px;
+            }
+            .reveal .slides section::-webkit-scrollbar-thumb {
+                background: var(--brand-gold);
+                border-radius: 4px;
+            }
+
+            .sim-history-list {
+                list-style: none;
+                padding: 0;
+                margin: 0;
+                display: flex;
+                flex-direction: column;
+                gap: 12px;
+            }
+
+            .sim-history-item {
+                background: rgba(255, 255, 255, 0.05);
+                border-left: 6px solid var(--text-muted);
+                padding: 12px 18px;
+                border-radius: 0 8px 8px 0;
+                font-size: 1.1em;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
+
+            .sim-feedback-card {
+                border: 2px solid var(--glass-border);
+                border-radius: 10px;
+                padding: 18px;
+                margin-top: 25px;
+                font-size: 1.1em;
+                background: rgba(255, 255, 255, 0.03);
+                text-align: center;
+                font-weight: 600;
+            }
+
+            .text-xl {
+                font-size: 1.3em;
+            }
+            .text-lg {
+                font-size: 1.1em;
+            }
+            .text-md {
+                font-size: 0.9em;
+            }
+
+            /* Ensure slides take up more width */
+            .reveal .slides {
+                width: 90% !important;
+                max-width: 1400px !important;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="reveal">
+            <div class="slides">
+                <!-- COVER SLIDE -->
+                <section class="flex-center">
+                    <img
+                        src="./Images/UITS.png"
+                        alt="UITS Logo"
+                        style="
+                            width: 140px;
+                            border: none;
+                            background: transparent;
+                            filter: drop-shadow(0 0 20px rgba(197, 168, 128, 0.3));
+                            margin-bottom: 20px;
+                        "
+                    />
+                    <h1 style="font-size: 3.5em; margin-bottom: 10px">
+                        Last<span class="text-gold">Price</span>
+                    </h1>
+                    <p
+                        class="text-gold"
+                        style="
+                            font-size: 1.2em;
+                            letter-spacing: 3px;
+                            font-weight: 600;
+                            margin-bottom: 40px;
+                        "
+                    >
+                        FRICTIONLESS SILENT AUCTION & ESCROW
+                    </p>
+
+                    <div class="flex-row" style="width: 100%; gap: 40px; margin-top: 20px">
+                        <div
+                            class="glass-card flex-card"
+                            style="text-align: left; font-size: 0.85em"
+                        >
+                            <h4 class="text-gold" style="margin-bottom: 15px">
+                                <i class="fa fa-users"></i> PRESENTED BY
+                            </h4>
+                            <div style="line-height: 1.6; color: var(--brand-light)">
+                                <strong>Mehedi Hassan Bhuiyan</strong> (0432320005101080)<br />
+                                <strong>Md. Masud Rahman</strong> (0432320005101064)<br />
+                                <strong>Hasib Al Mahmud Siddique</strong> (0432320005101095)<br />
+                                <strong>Rudro Antony Mrong</strong> (0432320005101059)
+                            </div>
+                        </div>
+
+                        <div
+                            class="glass-card flex-card"
+                            style="text-align: right; font-size: 0.85em"
+                        >
+                            <h4 class="text-gold" style="margin-bottom: 15px">
+                                <i class="fa fa-graduation-cap"></i> SUPERVISED BY
+                            </h4>
+                            <div style="line-height: 1.6; color: var(--brand-light)">
+                                <strong>Dhrubo Barua</strong> & <strong>Md. Faysal</strong><br />
+                                Faculty Members, Dept. of CSE<br />
+                                University of Information Technology & Sciences<br />
+                                <em>Software Engineering & System Analysis Lab</em>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- THE PROBLEM -->
+                <section class="flex-center">
+                    <h2>The Problem</h2>
+                    <p class="text-muted text-xl" style="margin-bottom: 40px">
+                        Why traditional marketplaces fall short
+                    </p>
+
+                    <div class="flex-row" style="width: 100%">
+                        <div class="glass-card flex-card">
+                            <div
+                                class="icon-badge"
+                                style="color: var(--tension-red); border-color: var(--tension-red)"
+                            >
+                                <i class="fa fa-comments-dollar"></i>
+                            </div>
+                            <h4 class="text-gold text-lg">Haggling Fatigue</h4>
+                            <p class="text-md">
+                                Endless text conversations and low-ball offers lead to frustration
+                                and high transaction dropout rates.
+                            </p>
+                        </div>
+
+                        <div class="glass-card flex-card">
+                            <div
+                                class="icon-badge"
+                                style="
+                                    color: var(--tension-yellow);
+                                    border-color: var(--tension-yellow);
+                                "
+                            >
+                                <i class="fa fa-mask"></i>
+                            </div>
+                            <h4 class="text-gold text-lg">Reserve Sniffing</h4>
+                            <p class="text-md">
+                                Bad actors use incremental penny bids just to expose the seller's
+                                secret minimum price.
+                            </p>
+                        </div>
+
+                        <div class="glass-card flex-card">
+                            <div
+                                class="icon-badge"
+                                style="color: var(--tension-red); border-color: var(--tension-red)"
+                            >
+                                <i class="fa fa-shield-halved"></i>
+                            </div>
+                            <h4 class="text-gold text-lg">Handover Fraud</h4>
+                            <p class="text-md">
+                                Physical meetups lack proof of exchange, leaving both buyers and
+                                sellers vulnerable to scams.
+                            </p>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- CORE FEATURE 1: SILENT 3-BID ARENA -->
+                <section class="flex-center">
+                    <h2>1. The Silent 3-Bid Arena</h2>
+                    <p class="text-muted text-xl" style="margin-bottom: 40px">
+                        Fast, private, and decisive bidding
+                    </p>
+
+                    <div class="flex-row" style="width: 100%">
+                        <div class="glass-card flex-card">
+                            <h3 class="text-gold" style="font-size: 1.5em; margin-bottom: 20px">
+                                <i class="fa fa-eye-slash"></i> Double-Blind Privacy
+                            </h3>
+                            <p class="text-lg" style="line-height: 1.5">
+                                Bids are completely vaulted. Buyers cannot see each other's offers,
+                                eliminating bidding wars and peer pressure.
+                            </p>
+                        </div>
+                        <div class="glass-card flex-card">
+                            <h3 class="text-gold" style="font-size: 1.5em; margin-bottom: 20px">
+                                <i class="fa fa-gavel"></i> Capped Bidding
+                            </h3>
+                            <p class="text-lg" style="line-height: 1.5">
+                                Every buyer gets exactly <strong>3 chances</strong> to meet the
+                                seller's secret price. No more endless low-balling.
+                            </p>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- CORE FEATURE 2: TENSION BARS -->
+                <section class="flex-center">
+                    <h2>2. Proximity Tension Shield</h2>
+                    <p class="text-muted text-xl" style="margin-bottom: 40px">
+                        Guiding buyers without revealing the secret price
+                    </p>
+
+                    <div class="flex-row" style="width: 100%">
+                        <div
+                            class="glass-card flex-card"
+                            style="
+                                border-color: rgba(255, 94, 94, 0.4);
+                                background: rgba(255, 94, 94, 0.05);
+                            "
+                        >
+                            <div
+                                class="icon-badge"
+                                style="color: #000; background: var(--tension-red); border: none"
+                            >
+                                <i class="fa fa-snowflake"></i>
+                            </div>
+                            <h4
+                                class="text-gold text-lg"
+                                style="color: var(--tension-red) !important"
+                            >
+                                RED (Cold)
+                            </h4>
+                            <p class="text-md">Bid is far below the seller's threshold.</p>
+                        </div>
+
+                        <div
+                            class="glass-card flex-card"
+                            style="
+                                border-color: rgba(255, 184, 92, 0.4);
+                                background: rgba(255, 184, 92, 0.05);
+                            "
+                        >
+                            <div
+                                class="icon-badge"
+                                style="color: #000; background: var(--tension-yellow); border: none"
+                            >
+                                <i class="fa fa-fire"></i>
+                            </div>
+                            <h4
+                                class="text-gold text-lg"
+                                style="color: var(--tension-yellow) !important"
+                            >
+                                YELLOW (Hot)
+                            </h4>
+                            <p class="text-md">Bid is close! Within 70% of the reserve price.</p>
+                        </div>
+
+                        <div
+                            class="glass-card flex-card"
+                            style="
+                                border-color: rgba(94, 255, 196, 0.4);
+                                background: rgba(94, 255, 196, 0.05);
+                            "
+                        >
+                            <div
+                                class="icon-badge"
+                                style="color: #000; background: var(--tension-green); border: none"
+                            >
+                                <i class="fa fa-check"></i>
+                            </div>
+                            <h4
+                                class="text-gold text-lg"
+                                style="color: var(--tension-green) !important"
+                            >
+                                GREEN (Matched)
+                            </h4>
+                            <p class="text-md">Reserve floor breached. Ready for escrow!</p>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- INTERACTIVE DEMO SLIDE -->
+                <section>
+                    <h2 style="text-align: center">Interactive 3-Bid Demo</h2>
+                    <p class="text-muted text-xl" style="text-align: center; margin-bottom: 30px">
+                        Try it live! (Seller's Secret Reserve is $1,200)
+                    </p>
+
+                    <div class="sim-container">
+                        <!-- Left Panel: Arena Controller -->
+                        <div class="sim-panel">
+                            <div class="sim-listing-header">
+                                <div>
+                                    <h3 style="margin: 0">
+                                        <i class="fa fa-laptop text-gold"></i> MacBook Pro M3
+                                    </h3>
+                                </div>
+                                <div class="sim-chances-badge">
+                                    CHANCES: <span id="sim-chances">3</span> / 3
+                                </div>
+                            </div>
+
+                            <div class="text-lg" style="margin-bottom: 10px">
+                                Tension Signal:
+                                <strong id="sim-tension-text" class="text-muted"
+                                    >Waiting for bid...</strong
+                                >
+                            </div>
+
+                            <div class="sim-tension-gauge">
+                                <div id="sim-tension-fill" class="sim-tension-fill"></div>
+                            </div>
+
+                            <div class="sim-input-row">
+                                <span
+                                    style="
+                                        align-self: center;
+                                        font-weight: 700;
+                                        color: var(--brand-gold);
+                                        font-size: 1.5em;
+                                    "
+                                    >$</span
+                                >
+                                <input
+                                    type="number"
+                                    id="sim-bid-amount"
+                                    class="sim-input"
+                                    placeholder="Enter bid..."
+                                    min="1"
+                                />
+                                <button
+                                    onclick="submitDemoBid()"
+                                    class="sim-btn"
+                                    id="sim-submit-btn"
+                                >
+                                    Submit Bid
+                                </button>
+                            </div>
+
+                            <div id="sim-feedback" class="sim-feedback-card">
+                                Enter a bid amount to begin.
+                            </div>
+                        </div>
+
+                        <!-- Right Panel: Bid Log -->
+                        <div class="sim-history-panel">
+                            <h4 class="text-gold" style="text-align: center; margin-bottom: 20px">
+                                <i class="fa fa-list-ul"></i> BID HISTORY
+                            </h4>
+                            <div style="flex: 1; overflow-y: auto">
+                                <ul id="sim-history" class="sim-history-list">
+                                    <li
+                                        style="
+                                            text-align: center;
+                                            color: var(--text-muted);
+                                            margin-top: 40px;
+                                            font-style: italic;
+                                        "
+                                    >
+                                        No bids placed yet.
+                                    </li>
+                                </ul>
+                            </div>
+                            <button
+                                onclick="resetDemoArena()"
+                                class="sim-btn"
+                                style="
+                                    margin-top: 20px;
+                                    background: transparent;
+                                    border: 2px solid rgba(255, 255, 255, 0.2);
+                                    color: white;
+                                "
+                            >
+                                <i class="fa fa-arrows-rotate"></i> Reset Arena
+                            </button>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- CORE FEATURE 3: ESCROWS -->
+                <section class="flex-center">
+                    <h2>3. Double-Verification Escrows</h2>
+                    <p class="text-muted text-xl" style="margin-bottom: 40px">
+                        Securing the physical face-to-face handover
+                    </p>
+
+                    <div class="glass-card" style="width: 80%">
+                        <div
+                            class="icon-badge"
+                            style="width: 100px; height: 100px; font-size: 2.5em"
+                        >
+                            <i class="fa fa-handshake"></i>
+                        </div>
+                        <p class="text-lg" style="line-height: 1.6; margin-top: 20px">
+                            When a bid is successful, the system generates unique
+                            <strong>6-digit cryptographic codes</strong> for both the buyer and the
+                            seller.
+                        </p>
+                        <p
+                            class="text-lg"
+                            style="line-height: 1.6; margin-top: 15px; color: var(--tension-green)"
+                        >
+                            During the meetup, both parties enter their codes into the portal. The
+                            transaction is instantly verified and finalized, preventing scams and
+                            guaranteeing proof of exchange.
+                        </p>
+                    </div>
+                </section>
+
+                <!-- WALKTHROUGH 1 -->
+                <section class="flex-center">
+                    <h2>Platform Walkthrough</h2>
+                    <p class="text-gold text-xl" style="margin-bottom: 20px">
+                        Premium Landing Page
+                    </p>
+                    <img class="media-frame" src="./Images/1_landing_page.png" alt="Landing Page" />
+                </section>
+
+                <!-- WALKTHROUGH 2 -->
+                <section class="flex-center">
+                    <h2>Platform Walkthrough</h2>
+                    <p class="text-gold text-xl" style="margin-bottom: 20px">
+                        Secure Authentication
+                    </p>
+                    <img class="media-frame" src="./Images/2_login_register.png" alt="Login Page" />
+                </section>
+
+                <!-- WALKTHROUGH 3 -->
+                <section class="flex-center">
+                    <h2>Platform Walkthrough</h2>
+                    <p class="text-gold text-xl" style="margin-bottom: 20px">
+                        Marketplace Listings
+                    </p>
+                    <img class="media-frame" src="./Images/3_marketplace.png" alt="Marketplace" />
+                </section>
+
+                <!-- WALKTHROUGH 4 -->
+                <section class="flex-center">
+                    <h2>Platform Walkthrough</h2>
+                    <p class="text-gold text-xl" style="margin-bottom: 20px">Creating an Auction</p>
+                    <img
+                        class="media-frame"
+                        src="./Images/4_create_listing.png"
+                        alt="Create Listing"
+                    />
+                </section>
+
+                <!-- WALKTHROUGH 5 -->
+                <section class="flex-center">
+                    <h2>Platform Walkthrough</h2>
+                    <p class="text-gold text-xl" style="margin-bottom: 20px">The Bidding Arena</p>
+                    <img
+                        class="media-frame"
+                        src="./Images/5_bidding_arena.png"
+                        alt="Bidding Arena"
+                    />
+                </section>
+
+                <!-- WALKTHROUGH 6 -->
+                <section class="flex-center">
+                    <h2>Platform Walkthrough</h2>
+                    <p class="text-gold text-xl" style="margin-bottom: 20px">User Dashboard</p>
+                    <img class="media-frame" src="./Images/6_user_dashboard.png" alt="Dashboard" />
+                </section>
+
+                <!-- WALKTHROUGH 7 -->
+                <section class="flex-center">
+                    <h2>Platform Walkthrough</h2>
+                    <p class="text-gold text-xl" style="margin-bottom: 20px">
+                        Escrow Handshake Verification
+                    </p>
+                    <img
+                        class="media-frame"
+                        src="./Images/8_escrow_transaction.png"
+                        alt="Escrow Verification"
+                    />
+                </section>
+
+                <!-- FUTURE SCOPE -->
+                <section class="flex-center">
+                    <h2>Future Scope</h2>
+                    <p class="text-muted text-xl" style="margin-bottom: 40px">
+                        Where LastPrice goes next
+                    </p>
+
+                    <div class="flex-row" style="width: 100%">
+                        <div class="glass-card flex-card">
+                            <h4 class="text-gold text-lg">
+                                <i class="fa fa-sliders"></i> Customizable Limits
+                            </h4>
+                            <p class="text-md">
+                                Letting sellers choose the exact number of bids allowed (e.g. 2 to 5
+                                chances) to control transaction velocity.
+                            </p>
+                        </div>
+
+                        <div class="glass-card flex-card">
+                            <h4 class="text-gold text-lg">
+                                <i class="fa fa-user-check"></i> Buyer Selection
+                            </h4>
+                            <p class="text-md">
+                                Allowing sellers to manually pick the winning buyer from the
+                                successful pool based on reputation or location.
+                            </p>
+                        </div>
+
+                        <div class="glass-card flex-card">
+                            <h4 class="text-gold text-lg">
+                                <i class="fa fa-star"></i> Trust Points
+                            </h4>
+                            <p class="text-md">
+                                A gamified reputation system awarding points for successful physical
+                                handovers to encourage honest behavior.
+                            </p>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- CONCLUSION -->
+                <section class="flex-center">
+                    <img
+                        src="./Images/UITS.png"
+                        alt="UITS Logo"
+                        style="
+                            width: 120px;
+                            border: none;
+                            background: transparent;
+                            filter: drop-shadow(0 0 20px rgba(197, 168, 128, 0.3));
+                            margin-bottom: 30px;
+                        "
+                    />
+                    <h1 style="font-size: 3.5em; margin-bottom: 10px">Thank You!</h1>
+                    <p
+                        class="text-gold text-xl"
+                        style="letter-spacing: 2px; margin-bottom: 30px; font-weight: 600"
+                    >
+                        LASTPRICE MARKETPLACE
+                    </p>
+
+                    <div class="glass-card" style="width: 70%">
+                        <p class="text-lg" style="margin: 0; line-height: 1.5">
+                            LastPrice eliminates haggling fatigue and protects face-to-face
+                            transactions, delivering a fast, private, and secure peer-to-peer
+                            commerce experience.
+                        </p>
+                    </div>
+
+                    <div style="margin-top: 40px">
+                        <strong class="text-gold text-xl"
+                            ><i class="fa fa-question-circle"></i> Questions & Answers</strong
+                        >
+                    </div>
+                </section>
+            </div>
+        </div>
+
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.5.0/reveal.min.js"></script>
+
+        <script>
+            Reveal.initialize({
+                hash: true,
+                history: true,
+                transition: "slide",
+                backgroundTransition: "fade",
+                center: true, // Keeps content centered when it fits perfectly
+                controls: true,
+                progress: true,
+                slideNumber: "c/t",
+                width: 1280,
+                height: 720,
+                margin: 0.05, // Reduced from 0.1 to maximize screen space usage
+                minScale: 0.2,
+                maxScale: 2.0,
+            });
+
+            // LIVE INTERACTIVE 3-BID SIMULATOR LOGIC
+            let demoChances = 3;
+            const reserveFloor = 1200.0;
+            let submittedBids = [];
+
+            function submitDemoBid() {
+                const bidInput = document.getElementById("sim-bid-amount");
+                const bidAmountStr = bidInput.value.trim();
+
+                if (!bidAmountStr) {
+                    showFeedback("Please enter a valid bid amount.", "var(--tension-red)");
+                    return;
+                }
+
+                const bidAmount = parseFloat(bidAmountStr);
+                if (isNaN(bidAmount) || bidAmount <= 0) {
+                    showFeedback("Please enter a positive bid amount.", "var(--tension-red)");
+                    return;
+                }
+
+                if (demoChances <= 0) {
+                    showFeedback(
+                        "Bidding arena closed. You have exhausted your 3 chances!",
+                        "var(--tension-red)",
+                    );
+                    return;
+                }
+
+                if (submittedBids.some((b) => b.amount === bidAmount)) {
+                    showFeedback("Error: Bid amounts must be unique.", "var(--tension-red)");
+                    return;
+                }
+
+                demoChances--;
+                document.getElementById("sim-chances").innerText = demoChances;
+
+                let tension = "";
+                let color = "";
+                let percentage = 0;
+
+                if (bidAmount >= reserveFloor) {
+                    tension = "GREEN";
+                    color = "var(--tension-green)";
+                    percentage = 100;
+                } else if (bidAmount >= reserveFloor * 0.7) {
+                    tension = "YELLOW";
+                    color = "var(--tension-yellow)";
+                    percentage = Math.floor((bidAmount / reserveFloor) * 100);
+                } else {
+                    tension = "RED";
+                    color = "var(--tension-red)";
+                    percentage = Math.max(10, Math.floor((bidAmount / (reserveFloor * 0.7)) * 70));
+                }
+
+                const currentRound = 3 - demoChances;
+                submittedBids.push({
+                    round: currentRound,
+                    amount: bidAmount,
+                    tension,
+                    color,
+                    percentage,
+                });
+
+                const fillElement = document.getElementById("sim-tension-fill");
+                fillElement.style.width = percentage + "%";
+                fillElement.style.backgroundColor = color;
+                fillElement.style.boxShadow = `0 0 15px ${color}`;
+
+                const textElement = document.getElementById("sim-tension-text");
+                textElement.innerText = tension;
+                textElement.style.color = color;
+
+                let feedbackMsg = "";
+                if (tension === "GREEN") {
+                    feedbackMsg = `SUCCESS: Bid of $${bidAmount.toLocaleString()} met reserve! Dual Escrow keys generated.`;
+                    document.getElementById("sim-submit-btn").disabled = true;
+                    document.getElementById("sim-submit-btn").style.opacity = 0.5;
+                } else if (tension === "YELLOW") {
+                    feedbackMsg = `Bid of $${bidAmount.toLocaleString()} is within range (70% of floor)! ${demoChances} chances remaining.`;
+                } else {
+                    feedbackMsg = `Bid of $${bidAmount.toLocaleString()} is too low. Step up your valuation!`;
+                }
+
+                if (demoChances === 0 && tension !== "GREEN") {
+                    feedbackMsg +=
+                        "<br><span style='color: var(--tension-red); font-weight:700;'>ARENA CLOSED. Listing unmatched.</span>";
+                    document.getElementById("sim-submit-btn").disabled = true;
+                    document.getElementById("sim-submit-btn").style.opacity = 0.5;
+                }
+
+                showFeedback(feedbackMsg, color);
+                renderHistory();
+                bidInput.value = "";
+            }
+
+            function showFeedback(text, color) {
+                const fb = document.getElementById("sim-feedback");
+                fb.innerHTML = text;
+                fb.style.borderColor = color || "var(--glass-border)";
+                fb.style.color = color || "var(--brand-light)";
+            }
+
+            function renderHistory() {
+                const histList = document.getElementById("sim-history");
+                histList.innerHTML = "";
+
+                if (submittedBids.length === 0) {
+                    histList.innerHTML = `<li style="text-align: center; color: var(--text-muted); margin-top: 40px; font-style: italic;">No bids placed yet.</li>`;
+                    return;
+                }
+
+                submittedBids.forEach((b) => {
+                    const li = document.createElement("li");
+                    li.className = "sim-history-item";
+                    li.style.borderLeftColor = b.color;
+                    li.innerHTML = `
+                    <span><strong>Round ${b.round}:</strong> $${b.amount.toLocaleString()}</span>
+                    <span style="color: ${b.color}; font-weight: 700; font-size: 0.9em; letter-spacing: 1px;">${b.tension}</span>
+                `;
+                    histList.appendChild(li);
+                });
+            }
+
+            function resetDemoArena() {
+                demoChances = 3;
+                submittedBids = [];
+                document.getElementById("sim-chances").innerText = demoChances;
+
+                const fillElement = document.getElementById("sim-tension-fill");
+                fillElement.style.width = "0%";
+                fillElement.style.backgroundColor = "var(--tension-red)";
+                fillElement.style.boxShadow = "none";
+
+                const textElement = document.getElementById("sim-tension-text");
+                textElement.innerText = "Waiting for bid...";
+                textElement.style.color = "var(--text-muted)";
+
+                const submitBtn = document.getElementById("sim-submit-btn");
+                submitBtn.disabled = false;
+                submitBtn.style.opacity = 1;
+
+                showFeedback("Enter a bid amount to begin.", "var(--glass-border)");
+                renderHistory();
+                document.getElementById("sim-bid-amount").value = "";
+            }
+        </script>
+    </body>
+</html>
