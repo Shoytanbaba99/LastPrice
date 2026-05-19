@@ -1,0 +1,48 @@
+@startuml
+skinparam monochrome true
+skinparam shadowing false
+
+' Initial state
+[*] --> Active : User Creates Listing
+
+' =========================
+' ACTIVE STATE
+' =========================
+state Active
+Active : entry / Set expiresAt Timer
+Active : do / Accept Incoming Bids
+Active : do / Update Display Price
+
+' =========================
+' PENDING HANDOVER STATE
+' =========================
+state Pending_Handover
+Pending_Handover : entry / Generate Handshake Tokens
+Pending_Handover : do / Await Physical Meeting
+
+' =========================
+' COMPLETED STATE
+' =========================
+state Completed
+Completed : entry / Finalize Transaction
+Completed : do / Archive Listing Data
+
+' =========================
+' EXPIRED STATE
+' =========================
+state Expired
+Expired : entry / Notify Seller
+
+' =========================
+' TRANSITIONS
+' =========================
+Active --> Pending_Handover : Seller Accepts Bid\n[Bid >= Reserve Price]
+Active --> Expired : Timer Expires\n[No Acceptable Bids]
+
+Pending_Handover --> Completed : Tokens Mutually Verified\n[System Validates]
+Pending_Handover --> Active : Handshake Failed\n[Meeting Cancelled]
+
+Completed --> [*]
+Expired --> [*]
+
+@enduml

@@ -1,0 +1,52 @@
+@startuml
+skinparam monochrome true
+skinparam shadowing false
+left to right direction
+
+' --- Entities (Rectangles) ---
+rectangle "User" as User
+rectangle "Listing" as Listing
+rectangle "Bid" as Bid
+
+' --- Relationships (Use usecase ovals as labels) ---
+usecase "Manages" as Manages
+usecase "Places" as Places
+usecase "Receives" as Receives
+
+' --- User Attributes (Ovals) ---
+usecase "id (PK)" as U_ID
+usecase "name" as U_Name
+usecase "email" as U_Email
+
+' --- Listing Attributes (Ovals) ---
+usecase "id (PK)" as L_ID
+usecase "title" as L_Title
+usecase "reservePrice" as L_ReservePrice
+
+' --- Bid Attributes (Ovals) ---
+usecase "id (PK)" as B_ID
+usecase "amount" as B_Amount
+
+' --- Connect Attributes to Entities ---
+U_ID --- User
+U_Name --- User
+U_Email --- User
+
+L_ID --- Listing
+L_Title --- Listing
+L_ReservePrice --- Listing
+
+B_ID --- Bid
+B_Amount --- Bid
+
+' --- Connect Entities via Relationships ---
+User --- Manages
+Manages --- Listing
+
+User --- Places
+Places --- Bid
+
+Listing --- Receives
+Receives --- Bid
+
+@enduml

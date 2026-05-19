@@ -1,0 +1,51 @@
+@startuml
+title LastPrice System
+
+' Make the diagram look like the reference image
+skinparam sequence {
+    LifeLineBorderColor #1E8449
+    LifeLineBackgroundColor #FFFFFF
+    ParticipantBorderColor #1E8449
+    ParticipantBackgroundColor #0B8F4D
+    ParticipantFontColor White
+    ActorBorderColor Black
+    ActorBackgroundColor White
+    ArrowThickness 2
+    BoxBorderColor #1E8449
+}
+
+hide footbox
+
+actor Buyer
+participant "LastPrice System" as LPS
+actor Seller
+
+' 1. Buyer places bid
+Buyer -> LPS : Place Bid
+activate LPS #D5F5D5
+
+' 2. System notifies seller
+LPS -> Seller : Notify Bid
+deactivate LPS
+
+' 3. Seller accepts bid
+Seller -> LPS : Accept Bid
+activate LPS #D5F5D5
+
+' 4. System sends handshake tokens to both parties
+LPS -> Buyer : Provide Handshake Tokens
+LPS -> Seller : Provide Handshake Tokens
+
+' 5. Buyer and seller enter each other's tokens
+Buyer -> LPS : Input Seller's Token
+Seller -> LPS : Input Buyer's Token
+
+' 6. Internal verification (self message)
+LPS -> LPS : Verify Both Tokens
+
+' 7. Transaction completed notifications
+LPS -> Buyer : Transaction Completed
+LPS -> Seller : Transaction Completed
+
+deactivate LPS
+@enduml

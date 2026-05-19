@@ -1,0 +1,24 @@
+@startuml
+left to right direction
+skinparam packageStyle rectangle
+
+actor Buyer
+actor Seller
+
+rectangle "LastPrice System" {
+    usecase "Browse Listings" as UC_Browse
+    usecase "Place a Bid" as UC_Bid
+    usecase "Register / Login" as UC_Login
+    usecase "Verify Handshake Tokens" as UC_Verify
+    usecase "Create New Listing" as UC_Create
+}
+
+Buyer --> UC_Browse
+Buyer --> UC_Bid
+Buyer --> UC_Login
+Buyer --> UC_Verify
+
+Seller --> UC_Verify
+Seller --> UC_Create
+
+@enduml

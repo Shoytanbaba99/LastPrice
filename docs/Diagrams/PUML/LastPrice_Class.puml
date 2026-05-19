@@ -1,0 +1,64 @@
+@startuml
+skinparam monochrome true
+skinparam shadowing false
+skinparam classAttributeIconSize 0
+
+' =========================
+' USER CLASS
+' =========================
+class User {
+  - id : String
+  - name : String
+  - email : String
+  - password : String
+
+  + login()
+  + createListing()
+  + placeBid()
+}
+
+' =========================
+' LISTING CLASS
+' =========================
+class Listing {
+  - id : String
+  - sellerId : String
+  - title : String
+  - reservePrice : Float
+  - status : String
+
+  + updateStatus()
+}
+
+' =========================
+' BID CLASS
+' =========================
+class Bid {
+  - id : String
+  - buyerId : String
+  - listingId : String
+  - amount : Float
+}
+
+' =========================
+' TRANSACTION CLASS
+' =========================
+class Transaction {
+  - id : String
+  - listingId : String
+  - buyerToken : String
+  - sellerToken : String
+
+  + verifyTokens()
+}
+
+' =========================
+' RELATIONSHIPS
+' =========================
+User "1" --> "*" Listing : manages
+User "1" --> "*" Bid : places
+Listing "1" --> "*" Bid : receives
+User "1" --> "*" Transaction : involved in
+Listing "1" --> "1" Transaction : results in
+
+@enduml
