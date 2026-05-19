@@ -106,8 +106,8 @@ This project was developed as part of a **Software Engineering Lab** course. It 
 
 - **[Shoytanbaba99](https://github.com/Shoytanbaba99)** — Project Refactoring, PostgreSQL/Neon Integration & Cloud Deployment.
 - **[Mehedi032003](https://github.com/Mehedi032003)** — Original Frontend UI/UX Design & Implementation.
-- Member 3 — Documentation & System Requirements.
-- Member 4 — Quality Assurance & Testing.
+- **[hasibXtreme](https://github.com/hasibXtreme) — Documentation & System Requirements.
+-  — Quality Assurance & Testing.
 
 ---
 
