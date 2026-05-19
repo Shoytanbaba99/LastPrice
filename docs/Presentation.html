@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" style="margin:0;padding:0;width:100%;height:100%;overflow:hidden;">
     <head>
         <meta charset="utf-8" />
         <title>LastPrice: Frictionless Silent Auction & Escrow Marketplace</title>
@@ -41,11 +41,24 @@
                 --tension-green: #5effc4;
             }
 
+            html, body {
+                margin: 0;
+                padding: 0;
+                width: 100%;
+                height: 100%;
+                overflow: hidden;
+            }
+
             .reveal {
                 font-family: "Outfit", sans-serif;
                 background: radial-gradient(circle at center, #261f1a 0%, #0c0908 100%);
                 color: var(--brand-light);
                 font-size: 32px;
+                position: fixed !important;
+                top: 0 !important;
+                left: 0 !important;
+                width: 100% !important;
+                height: 100% !important;
             }
 
             .reveal h1,
@@ -90,11 +103,11 @@
                 -webkit-backdrop-filter: blur(12px);
                 border: 1px solid var(--glass-border);
                 border-radius: 16px;
-                padding: 20px 30px; /* Reduced vertical padding */
+                padding: 16px 28px;
                 box-shadow:
                     0 20px 50px rgba(0, 0, 0, 0.6),
                     inset 0 1px 0 rgba(255, 255, 255, 0.05);
-                margin: 10px auto; /* Reduced margin from 20px to 10px */
+                margin: 8px auto;
                 text-align: center;
             }
 
@@ -103,6 +116,32 @@
                 flex-direction: column;
                 align-items: center;
                 justify-content: center;
+                width: 100%;
+                height: 100%;
+            }
+
+            /* Walkthrough slide: header pinned top, image fills remaining space */
+            .slide-walkthrough {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                width: 100%;
+                height: 100%;
+                padding: 0 !important;
+            }
+            .slide-walkthrough .slide-header {
+                flex: 0 0 auto;
+                text-align: center;
+                padding-top: 10px;
+            }
+            .slide-walkthrough .slide-body {
+                flex: 1 1 0;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                width: 100%;
+                min-height: 0; /* critical: lets flex children shrink */
+                padding: 8px 0 12px;
             }
 
             .flex-row {
@@ -110,13 +149,14 @@
                 flex-direction: row;
                 justify-content: center;
                 align-items: stretch;
-                gap: 30px;
+                gap: 24px;
                 flex-wrap: wrap;
+                width: 100%;
             }
 
             .flex-card {
                 flex: 1;
-                min-width: 250px;
+                min-width: 220px;
                 margin: 0 !important;
             }
 
@@ -124,28 +164,29 @@
                 display: inline-flex;
                 align-items: center;
                 justify-content: center;
-                width: 80px;
-                height: 80px;
+                width: 70px;
+                height: 70px;
                 border-radius: 50%;
                 background: rgba(197, 168, 128, 0.15);
                 border: 2px solid var(--brand-gold);
                 color: var(--brand-gold);
-                margin-bottom: 20px;
-                font-size: 2em;
+                margin-bottom: 14px;
+                font-size: 1.8em;
                 box-shadow: 0 0 20px var(--brand-gold-glow);
             }
 
-            /* Walkthrough images styling */
+            /* Viewport-aware walkthrough images — fill available height, never overflow */
             .media-frame {
-                border: 4px solid rgba(197, 168, 128, 0.4);
-                border-radius: 16px;
-                background: #000000;
-                padding: 8px;
-                box-shadow: 0 25px 50px rgba(0, 0, 0, 0.8);
-                max-height: 420px; /* Reduced from 550px to fit headers and layout cleanly */
-                max-width: 95%;
+                border: 3px solid rgba(197, 168, 128, 0.4);
+                border-radius: 14px;
+                background: #000;
+                padding: 6px;
+                box-shadow: 0 20px 40px rgba(0, 0, 0, 0.8);
+                max-width: 94%;
+                max-height: 100%; /* fill the flex container */
+                width: auto;
+                height: auto;
                 object-fit: contain;
-                margin: 15px auto;
                 display: block;
             }
 
@@ -259,25 +300,54 @@
                 flex-direction: column;
             }
 
-            /* Fix slide overflow by allowing individual long slides to scroll cleanly */
+            /* Slides: fill the full reveal viewport, no overflow */
+            .reveal .slides {
+                width: 100% !important;
+                max-width: 100% !important;
+                height: 100% !important;
+                left: 0 !important;
+                top: 0 !important;
+                margin: 0 !important;
+            }
+            
             .reveal .slides section {
-                max-height: 95% !important;
-                overflow-y: auto !important;
-                padding: 20px 10px !important;
+                height: 100% !important;
+                max-height: 100% !important;
+                overflow: hidden !important;
+                padding: 30px 50px 20px 50px !important;
                 box-sizing: border-box !important;
+                display: flex !important;
+                flex-direction: column !important;
+                align-items: center !important;
+                justify-content: flex-start !important;
             }
 
-            /* Optional: Style the scrollbar so it fits your premium dark theme */
-            .reveal .slides section::-webkit-scrollbar {
-                width: 8px;
+            .slide-header {
+                width: 100%;
+                flex: 0 0 auto;
+                text-align: center;
+                margin-bottom: 20px;
             }
-            .reveal .slides section::-webkit-scrollbar-track {
-                background: rgba(0, 0, 0, 0.2);
-                border-radius: 4px;
+
+            .slide-header h2 {
+                margin: 0 0 5px 0 !important;
+                padding-bottom: 5px !important;
+                font-size: 1.8em !important;
             }
-            .reveal .slides section::-webkit-scrollbar-thumb {
-                background: var(--brand-gold);
-                border-radius: 4px;
+
+            .slide-body {
+                width: 100%;
+                flex: 1 1 0;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                min-height: 0; /* critical for overflow prevention */
+            }
+
+            .slide-cover {
+                justify-content: center !important;
+                padding: 20px !important;
             }
 
             .sim-history-list {
@@ -320,54 +390,61 @@
             .text-md {
                 font-size: 0.9em;
             }
-
-            /* Ensure slides take up more width */
-            .reveal .slides {
-                width: 90% !important;
-                max-width: 1400px !important;
-            }
         </style>
+        <script>
+            window.MathJax = {
+                tex: {
+                    inlineMath: [['$', '$'], ['\\(', '\\)']],
+                    displayMath: [['$$', '$$'], ['\\[', '\\]']]
+                },
+                options: {
+                    skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre']
+                }
+            };
+        </script>
+        <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+        <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     </head>
     <body>
         <div class="reveal">
             <div class="slides">
                 <!-- COVER SLIDE -->
-                <section class="flex-center">
+                <section class="flex-center slide-cover" style="padding: 20px !important;">
                     <img
                         src="./Images/UITS.png"
                         alt="UITS Logo"
                         style="
-                            width: 140px;
+                            width: 100px;
                             border: none;
                             background: transparent;
-                            filter: drop-shadow(0 0 20px rgba(197, 168, 128, 0.3));
-                            margin-bottom: 20px;
+                            filter: drop-shadow(0 0 15px rgba(197, 168, 128, 0.3));
+                            margin-bottom: 12px;
                         "
                     />
-                    <h1 style="font-size: 3.5em; margin-bottom: 10px">
+                    <h1 style="font-size: 2.8em; margin-bottom: 5px">
                         Last<span class="text-gold">Price</span>
                     </h1>
                     <p
                         class="text-gold"
                         style="
-                            font-size: 1.2em;
-                            letter-spacing: 3px;
+                            font-size: 0.95em;
+                            letter-spacing: 2px;
                             font-weight: 600;
-                            margin-bottom: 40px;
+                            margin-bottom: 20px;
                         "
                     >
                         FRICTIONLESS SILENT AUCTION & ESCROW
                     </p>
 
-                    <div class="flex-row" style="width: 100%; gap: 40px; margin-top: 20px">
+                    <div class="flex-row" style="width: 100%; gap: 24px; margin-top: 10px">
                         <div
                             class="glass-card flex-card"
-                            style="text-align: left; font-size: 0.85em"
+                            style="text-align: left; font-size: 0.72em; padding: 12px 20px;"
                         >
-                            <h4 class="text-gold" style="margin-bottom: 15px">
+                            <h4 class="text-gold" style="margin-bottom: 8px; font-size: 1.1em;">
                                 <i class="fa fa-users"></i> PRESENTED BY
                             </h4>
-                            <div style="line-height: 1.6; color: var(--brand-light)">
+                            <div style="line-height: 1.4; color: var(--brand-light)">
                                 <strong>Mehedi Hassan Bhuiyan</strong> (0432320005101080)<br />
                                 <strong>Md. Masud Rahman</strong> (0432320005101064)<br />
                                 <strong>Hasib Al Mahmud Siddique</strong> (0432320005101095)<br />
@@ -377,16 +454,16 @@
 
                         <div
                             class="glass-card flex-card"
-                            style="text-align: right; font-size: 0.85em"
+                            style="text-align: right; font-size: 0.72em; padding: 12px 20px;"
                         >
-                            <h4 class="text-gold" style="margin-bottom: 15px">
+                            <h4 class="text-gold" style="margin-bottom: 8px; font-size: 1.1em;">
                                 <i class="fa fa-graduation-cap"></i> SUPERVISED BY
                             </h4>
-                            <div style="line-height: 1.6; color: var(--brand-light)">
-                                <strong>Dhrubo Barua</strong> & <strong>Md. Faysal</strong><br />
+                            <div style="line-height: 1.4; color: var(--brand-light)">
+                                <strong>Dhrubo Barua</strong> &amp; <strong>Md. Faysal</strong><br />
                                 Faculty Members, Dept. of CSE<br />
-                                University of Information Technology & Sciences<br />
-                                <em>Software Engineering & System Analysis Lab</em>
+                                University of Information Technology &amp; Sciences<br />
+                                <em>Software Engineering &amp; System Analysis Lab</em>
                             </div>
                         </div>
                     </div>
@@ -395,54 +472,66 @@
                 <!-- THE PROBLEM -->
                 <section class="flex-center">
                     <h2>The Problem</h2>
-                    <p class="text-muted text-xl" style="margin-bottom: 40px">
-                        Why traditional marketplaces fall short
+                    <p class="text-muted text-xl" style="margin-bottom: 28px">
+                        Why platforms like Bikroy, Facebook Marketplace &amp; eBay fall short
                     </p>
-
                     <div class="flex-row" style="width: 100%">
                         <div class="glass-card flex-card">
-                            <div
-                                class="icon-badge"
-                                style="color: var(--tension-red); border-color: var(--tension-red)"
-                            >
+                            <div class="icon-badge" style="color: var(--tension-red); border-color: var(--tension-red)">
                                 <i class="fa fa-comments-dollar"></i>
                             </div>
                             <h4 class="text-gold text-lg">Haggling Fatigue</h4>
-                            <p class="text-md">
-                                Endless text conversations and low-ball offers lead to frustration
-                                and high transaction dropout rates.
-                            </p>
+                            <p class="text-md">Buyers &amp; sellers waste time on endless manual negotiations. Sellers rarely get true market value; buyers face constant friction.</p>
                         </div>
-
                         <div class="glass-card flex-card">
-                            <div
-                                class="icon-badge"
-                                style="
-                                    color: var(--tension-yellow);
-                                    border-color: var(--tension-yellow);
-                                "
-                            >
+                            <div class="icon-badge" style="color: var(--tension-yellow); border-color: var(--tension-yellow)">
                                 <i class="fa fa-mask"></i>
                             </div>
                             <h4 class="text-gold text-lg">Reserve Sniffing</h4>
-                            <p class="text-md">
-                                Bad actors use incremental penny bids just to expose the seller's
-                                secret minimum price.
-                            </p>
+                            <p class="text-md">Dishonest buyers submit tiny incremental bids — $1, $2, $3 — purely to reverse-engineer the seller's secret minimum without ever intending a fair offer.</p>
                         </div>
-
                         <div class="glass-card flex-card">
-                            <div
-                                class="icon-badge"
-                                style="color: var(--tension-red); border-color: var(--tension-red)"
-                            >
+                            <div class="icon-badge" style="color: var(--tension-red); border-color: var(--tension-red)">
                                 <i class="fa fa-shield-halved"></i>
                             </div>
                             <h4 class="text-gold text-lg">Handover Fraud</h4>
-                            <p class="text-md">
-                                Physical meetups lack proof of exchange, leaving both buyers and
-                                sellers vulnerable to scams.
-                            </p>
+                            <p class="text-md">Offline cash-on-delivery relies on verbal agreements only. Sellers face payment disputes; buyers are vulnerable to false non-delivery claims.</p>
+                        </div>
+                        <div class="glass-card flex-card">
+                            <div class="icon-badge" style="color: var(--text-muted); border-color: var(--text-muted)">
+                                <i class="fa fa-clock-rotate-left"></i>
+                            </div>
+                            <h4 class="text-gold text-lg">Clock Drift</h4>
+                            <p class="text-md">Real-time bidding suffers from client-server time mismatches, causing disputes over bids placed in the final seconds of an auction.</p>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- OUR SOLUTION -->
+                <section class="flex-center">
+                    <h2>Our Solution</h2>
+                    <p class="text-muted text-xl" style="margin-bottom: 28px">Three interlocking mechanisms that eliminate every pain point</p>
+                    <div class="flex-row" style="width: 100%">
+                        <div class="glass-card flex-card" style="border-color: rgba(94,255,196,0.3); background: rgba(94,255,196,0.03)">
+                            <div class="icon-badge" style="color: var(--tension-green); border-color: var(--tension-green)">
+                                <i class="fa fa-gavel"></i>
+                            </div>
+                            <h4 class="text-gold text-lg">Double-Blind 3-Bid Auction</h4>
+                            <p class="text-md">Buyers get exactly <strong>3 private chances</strong> to meet a hidden reserve price. Bids from all buyers are sealed — no shill bidding, no penny-probing possible.</p>
+                        </div>
+                        <div class="glass-card flex-card" style="border-color: rgba(255,184,92,0.3); background: rgba(255,184,92,0.03)">
+                            <div class="icon-badge" style="color: var(--tension-yellow); border-color: var(--tension-yellow)">
+                                <i class="fa fa-tag"></i>
+                            </div>
+                            <h4 class="text-gold text-lg">Dual Pricing</h4>
+                            <p class="text-md">Sellers set a public <strong>Display Price</strong> and a private <strong>Secret Reserve</strong>. The system automatically matches without exposing the floor to buyers.</p>
+                        </div>
+                        <div class="glass-card flex-card" style="border-color: rgba(197,168,128,0.3); background: rgba(197,168,128,0.03)">
+                            <div class="icon-badge">
+                                <i class="fa fa-handshake"></i>
+                            </div>
+                            <h4 class="text-gold text-lg">Cryptographic Escrow</h4>
+                            <p class="text-md">On a successful bid, both parties receive a unique <strong>6-digit key</strong>. The transaction only closes when both keys are verified — mutual, tamper-proof consent.</p>
                         </div>
                     </div>
                 </section>
@@ -456,21 +545,27 @@
 
                     <div class="flex-row" style="width: 100%">
                         <div class="glass-card flex-card">
-                            <h3 class="text-gold" style="font-size: 1.5em; margin-bottom: 20px">
+                            <h3 class="text-gold" style="font-size: 1.4em; margin-bottom: 14px">
                                 <i class="fa fa-eye-slash"></i> Double-Blind Privacy
                             </h3>
                             <p class="text-lg" style="line-height: 1.5">
-                                Bids are completely vaulted. Buyers cannot see each other's offers,
-                                eliminating bidding wars and peer pressure.
+                                Bids are completely sealed. Buyers cannot see each other's offers, eliminating bidding wars, shill bids, and peer pressure.
                             </p>
                         </div>
                         <div class="glass-card flex-card">
-                            <h3 class="text-gold" style="font-size: 1.5em; margin-bottom: 20px">
-                                <i class="fa fa-gavel"></i> Capped Bidding
+                            <h3 class="text-gold" style="font-size: 1.4em; margin-bottom: 14px">
+                                <i class="fa fa-gavel"></i> Strictly 3 Chances
                             </h3>
                             <p class="text-lg" style="line-height: 1.5">
-                                Every buyer gets exactly <strong>3 chances</strong> to meet the
-                                seller's secret price. No more endless low-balling.
+                                Every buyer gets exactly <strong>3 bids</strong>. This directly kills reserve-sniffing — you can't probe with incremental bids when you only have 3 shots.
+                            </p>
+                        </div>
+                        <div class="glass-card flex-card">
+                            <h3 class="text-gold" style="font-size: 1.4em; margin-bottom: 14px">
+                                <i class="fa fa-tag"></i> Dual Pricing
+                            </h3>
+                            <p class="text-lg" style="line-height: 1.5">
+                                Seller sets a public <strong>Display Price</strong> and a private <strong>Secret Reserve</strong>. Both stay hidden — the system resolves automatically.
                             </p>
                         </div>
                     </div>
@@ -681,72 +776,179 @@
                 </section>
 
                 <!-- WALKTHROUGH 1 -->
-                <section class="flex-center">
-                    <h2>Platform Walkthrough</h2>
-                    <p class="text-gold text-xl" style="margin-bottom: 20px">
-                        Premium Landing Page
-                    </p>
-                    <img class="media-frame" src="./Images/1_landing_page.png" alt="Landing Page" />
+                <section class="slide-walkthrough">
+                    <div class="slide-header">
+                        <h2 style="margin-bottom: 4px">Platform Walkthrough</h2>
+                        <p class="text-gold text-xl">Premium Landing Page</p>
+                    </div>
+                    <div class="slide-body">
+                        <img
+                            class="media-frame"
+                            src="./Images/1_landing_page.png"
+                            alt="Landing Page"
+                        />
+                    </div>
                 </section>
 
                 <!-- WALKTHROUGH 2 -->
-                <section class="flex-center">
-                    <h2>Platform Walkthrough</h2>
-                    <p class="text-gold text-xl" style="margin-bottom: 20px">
-                        Secure Authentication
-                    </p>
-                    <img class="media-frame" src="./Images/2_login_register.png" alt="Login Page" />
+                <section class="slide-walkthrough">
+                    <div class="slide-header">
+                        <h2 style="margin-bottom: 4px">Platform Walkthrough</h2>
+                        <p class="text-gold text-xl">Secure Authentication</p>
+                    </div>
+                    <div class="slide-body">
+                        <img
+                            class="media-frame"
+                            src="./Images/2_login_register.png"
+                            alt="Login Page"
+                        />
+                    </div>
                 </section>
 
                 <!-- WALKTHROUGH 3 -->
-                <section class="flex-center">
-                    <h2>Platform Walkthrough</h2>
-                    <p class="text-gold text-xl" style="margin-bottom: 20px">
-                        Marketplace Listings
-                    </p>
-                    <img class="media-frame" src="./Images/3_marketplace.png" alt="Marketplace" />
+                <section class="slide-walkthrough">
+                    <div class="slide-header">
+                        <h2 style="margin-bottom: 4px">Platform Walkthrough</h2>
+                        <p class="text-gold text-xl">Marketplace Listings</p>
+                    </div>
+                    <div class="slide-body">
+                        <img
+                            class="media-frame"
+                            src="./Images/3_marketplace.png"
+                            alt="Marketplace"
+                        />
+                    </div>
                 </section>
 
                 <!-- WALKTHROUGH 4 -->
-                <section class="flex-center">
-                    <h2>Platform Walkthrough</h2>
-                    <p class="text-gold text-xl" style="margin-bottom: 20px">Creating an Auction</p>
-                    <img
-                        class="media-frame"
-                        src="./Images/4_create_listing.png"
-                        alt="Create Listing"
-                    />
+                <section class="slide-walkthrough">
+                    <div class="slide-header">
+                        <h2 style="margin-bottom: 4px">Platform Walkthrough</h2>
+                        <p class="text-gold text-xl">Creating an Auction</p>
+                    </div>
+                    <div class="slide-body">
+                        <img
+                            class="media-frame"
+                            src="./Images/4_create_listing.png"
+                            alt="Create Listing"
+                        />
+                    </div>
                 </section>
 
                 <!-- WALKTHROUGH 5 -->
-                <section class="flex-center">
-                    <h2>Platform Walkthrough</h2>
-                    <p class="text-gold text-xl" style="margin-bottom: 20px">The Bidding Arena</p>
-                    <img
-                        class="media-frame"
-                        src="./Images/5_bidding_arena.png"
-                        alt="Bidding Arena"
-                    />
+                <section class="slide-walkthrough">
+                    <div class="slide-header">
+                        <h2 style="margin-bottom: 4px">Platform Walkthrough</h2>
+                        <p class="text-gold text-xl">The Bidding Arena</p>
+                    </div>
+                    <div class="slide-body">
+                        <img
+                            class="media-frame"
+                            src="./Images/5_bidding_arena.png"
+                            alt="Bidding Arena"
+                        />
+                    </div>
                 </section>
 
                 <!-- WALKTHROUGH 6 -->
-                <section class="flex-center">
-                    <h2>Platform Walkthrough</h2>
-                    <p class="text-gold text-xl" style="margin-bottom: 20px">User Dashboard</p>
-                    <img class="media-frame" src="./Images/6_user_dashboard.png" alt="Dashboard" />
+                <section class="slide-walkthrough">
+                    <div class="slide-header">
+                        <h2 style="margin-bottom: 4px">Platform Walkthrough</h2>
+                        <p class="text-gold text-xl">User Dashboard</p>
+                    </div>
+                    <div class="slide-body">
+                        <img
+                            class="media-frame"
+                            src="./Images/6_user_dashboard.png"
+                            alt="Dashboard"
+                        />
+                    </div>
                 </section>
 
                 <!-- WALKTHROUGH 7 -->
+                <section class="slide-walkthrough">
+                    <div class="slide-header">
+                        <h2 style="margin-bottom: 4px">Platform Walkthrough</h2>
+                        <p class="text-gold text-xl">Escrow Handshake Verification</p>
+                    </div>
+                    <div class="slide-body">
+                        <img
+                            class="media-frame"
+                            src="./Images/8_escrow_transaction.png"
+                            alt="Escrow Verification"
+                        />
+                    </div>
+                </section>
+
+                <!-- LIMITATIONS -->
                 <section class="flex-center">
-                    <h2>Platform Walkthrough</h2>
-                    <p class="text-gold text-xl" style="margin-bottom: 20px">
-                        Escrow Handshake Verification
+                    <h2>Limitations &amp; What We Learned</h2>
+                    <p class="text-muted text-xl" style="margin-bottom: 30px">
+                        Every system has room for growth
                     </p>
-                    <img
-                        class="media-frame"
-                        src="./Images/8_escrow_transaction.png"
-                        alt="Escrow Verification"
-                    />
+                    <div class="flex-row" style="width: 100%; align-items: stretch">
+                        <div
+                            class="glass-card flex-card"
+                            style="
+                                border-color: rgba(255, 94, 94, 0.3);
+                                background: rgba(255, 94, 94, 0.04);
+                            "
+                        >
+                            <div
+                                class="icon-badge"
+                                style="
+                                    color: var(--tension-red);
+                                    border-color: var(--tension-red);
+                                    background: rgba(255, 94, 94, 0.1);
+                                "
+                            >
+                                <i class="fa fa-desktop"></i>
+                            </div>
+                            <h4 class="text-lg" style="color: var(--tension-red)">Desktop Only</h4>
+                            <p class="text-md">
+                                UI is currently optimised for desktop. Mobile responsiveness was
+                                deprioritised during the sprint.
+                            </p>
+                        </div>
+                        <div
+                            class="glass-card flex-card"
+                            style="
+                                border-color: rgba(255, 184, 92, 0.3);
+                                background: rgba(255, 184, 92, 0.04);
+                            "
+                        >
+                            <div
+                                class="icon-badge"
+                                style="
+                                    color: var(--tension-yellow);
+                                    border-color: var(--tension-yellow);
+                                    background: rgba(255, 184, 92, 0.1);
+                                "
+                            >
+                                <i class="fa fa-clock"></i>
+                            </div>
+                            <h4 class="text-lg" style="color: var(--tension-yellow)">
+                                Timer Desync
+                            </h4>
+                            <p class="text-md">
+                                REST-based countdown polling occasionally produces minor desyncs.
+                                WebSockets would solve this cleanly.
+                            </p>
+                        </div>
+                        <div
+                            class="glass-card flex-card"
+                            style="border-color: rgba(197, 168, 128, 0.3)"
+                        >
+                            <div class="icon-badge">
+                                <i class="fa fa-box"></i>
+                            </div>
+                            <h4 class="text-lg text-gold">Single-Item Escrow</h4>
+                            <p class="text-md">
+                                The escrow system currently handles one item per physical meeting.
+                                Batch transactions are a future target.
+                            </p>
+                        </div>
+                    </div>
                 </section>
 
                 <!-- FUTURE SCOPE -->
@@ -835,15 +1037,16 @@
                 history: true,
                 transition: "slide",
                 backgroundTransition: "fade",
-                center: true, // Keeps content centered when it fits perfectly
+                center: true,
                 controls: true,
                 progress: true,
                 slideNumber: "c/t",
                 width: 1280,
                 height: 720,
-                margin: 0.05, // Reduced from 0.1 to maximize screen space usage
-                minScale: 0.2,
-                maxScale: 2.0,
+                margin: 0,
+                minScale: 0.1,
+                maxScale: 1.5,
+                disableLayout: false,
             });
 
             // LIVE INTERACTIVE 3-BID SIMULATOR LOGIC
