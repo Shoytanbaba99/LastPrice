@@ -184,9 +184,9 @@
                     if (api.timeOffset === 0) await api.syncTime();
                     container.innerHTML = listings
                         .map((l) => {
-                            const startTime = new Date(l.arena_start_time);
-                            const endTime = new Date(startTime.getTime() + api.auctionDurationMins * 60 * 1000);
-                            const isExpired = api.getSyncedDate() >= endTime;
+                             const startTime = new Date(l.created_at);
+                             const endTime = new Date(l.arena_start_time);
+                             const isExpired = api.getSyncedDate() >= endTime;
                             const actions = [];
                             if (l.status === "live" && isExpired)
                                 actions.push(

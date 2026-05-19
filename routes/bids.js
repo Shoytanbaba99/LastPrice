@@ -31,7 +31,7 @@ router.post("/", auth, async (req, res) => {
 
         // 1. Fetch listing (including reserve_floor for tension computation)
         const { rows: listings } = await db.query(
-            `SELECT id, seller_id, status, arena_start_time, reserve_floor FROM Listings WHERE id = $1`,
+            `SELECT id, seller_id, status, arena_start_time, created_at, reserve_floor FROM Listings WHERE id = $1`,
             [listing_id],
         );
         if (!listings.length) return res.status(404).json({ error: "Listing not found" });
@@ -42,9 +42,11 @@ router.post("/", auth, async (req, res) => {
             return res.status(400).json({ error: "This arena is not currently live" });
 
         const now = new Date();
-        const startTime = new Date(listing.arena_start_time);
+        const startTime = new Date(listing.created_at);
+        const endTime = new Date(listing.arena_start_time);
 
         if (now < startTime) return res.status(400).json({ error: "Arena has not started yet" });
+        if (now >= endTime) return res.status(400).json({ error: "This arena has already concluded" });
 
         const { rows: countRows } = await db.query(
             "SELECT COUNT(*) as count FROM Bids WHERE listing_id = $1 AND buyer_id = $2",

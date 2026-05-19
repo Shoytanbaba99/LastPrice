@@ -298,8 +298,8 @@
                 if (countdownInterval) clearInterval(countdownInterval);
                 function update() {
                     const now = api.getSyncedDate(),
-                        startTime = new Date(listing.arena_start_time),
-                        endTime = new Date(startTime.getTime() + api.auctionDurationMins * 60 * 1000); 
+                        startTime = new Date(listing.created_at),
+                        endTime = new Date(listing.arena_start_time); 
 
                     const el = document.getElementById("countdown-display"),
                         lbl = document.getElementById("countdown-label"),
@@ -397,15 +397,15 @@
                 document.getElementById("display-price").textContent =
                     "$" + parseFloat(listing.display_price).toFixed(2);
                 document.getElementById("end-time-label").textContent =
-                    "Starts: " + new Date(listing.arena_start_time).toLocaleString();
+                    "Ends: " + new Date(listing.arena_start_time).toLocaleString();
                 document.getElementById("participant-count").textContent =
                     listing.participant_count;
                 if (listing.photo_url)
                     document.getElementById("listing-img-wrap").innerHTML =
                         `<img src="${listing.photo_url}" class="w-full h-full object-cover" alt="${escHtml(listing.title)}">`;
                 startCountdown();
-                const startTime = new Date(listing.arena_start_time);
-                const endTime = new Date(startTime.getTime() + api.auctionDurationMins * 60 * 1000);
+                const startTime = new Date(listing.created_at);
+                const endTime = new Date(listing.arena_start_time);
                 const isEnded = api.getSyncedDate() >= endTime || listing.status !== "live";
                 const isSeller = loggedIn && user && listing.seller_id === user.id;
 

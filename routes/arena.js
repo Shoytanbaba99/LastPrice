@@ -17,7 +17,7 @@ router.get("/:listingId/status", auth, async (req, res) => {
         const { listingId } = req.params;
 
         const { rows: listings } = await db.query(
-            "SELECT id, status, arena_start_time FROM Listings WHERE id = $1",
+            "SELECT id, status, arena_start_time, created_at FROM Listings WHERE id = $1",
             [listingId],
         );
         if (!listings.length) return res.status(404).json({ error: "Listing not found" });
@@ -34,9 +34,8 @@ router.get("/:listingId/status", auth, async (req, res) => {
         );
 
         const now = new Date();
-        const startTime = new Date(listing.arena_start_time);
-        const durationMins = parseInt(process.env.AUCTION_DURATION_MINS || "1440");
-        const endTime = new Date(startTime.getTime() + durationMins * 60 * 1000); 
+        const startTime = new Date(listing.created_at);
+        const endTime = new Date(listing.arena_start_time);
 
         let timeLeftMs = 0;
         let isWaiting = false;
@@ -77,8 +76,7 @@ router.post("/resolve/:listingId", auth, async (req, res) => {
         const listing = listings[0];
 
         // Allow seller OR after timer to trigger
-        const durationMins = parseInt(process.env.AUCTION_DURATION_MINS || "1440");
-        const endTime = new Date(new Date(listing.arena_start_time).getTime() + durationMins * 60 * 1000);
+        const endTime = new Date(listing.arena_start_time);
         const isExpired = new Date() >= endTime;
         const isSeller = listing.seller_id === req.user.id;
 
