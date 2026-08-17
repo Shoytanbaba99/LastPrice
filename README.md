@@ -1,3 +1,7 @@
+## Project Overview
+
+LastPrice is a marketplace designed around silent bidding, allowing users to compete for products without seeing other users' bids.
+
 # Create T3 App
 
 This is a [T3 Stack](https://create.t3.gg/) project bootstrapped with `create-t3-app`.
